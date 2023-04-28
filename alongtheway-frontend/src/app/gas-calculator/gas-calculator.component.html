@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Fuel Calculator</title>
+  <style>
+    label {
+      display: block;
+      margin-bottom: 10px;
+    }
+    input[type=text] {
+      padding: 5px;
+      width: 100%;
+      box-sizing: border-box;
+      margin-bottom: 10px;
+    }
+    button {
+      padding: 10px 20px;
+      background-color: #4CAF50;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 16px;
+    }
+    button:hover {
+      background-color: #45a049;
+    }
+    #output {
+      margin-top: 20px;
+    }
+  </style>
+
+</head>
+<body>
+<label for="startLocation">Start Location:</label>
+<input type="text" id="startLocation" name="startLocation"><br><br>
+
+<label for="endLocation">End Location:</label>
+<input type="text" id="endLocation" name="endLocation"><br><br>
+
+<label for="mpg">MPG:</label>
+<input type="number" id="mpg" name="mpg"><br><br>
+
+<label for="tankCapacity">Tank Capacity:</label>
+<input type="number" id="tankCapacity" name="tankCapacity"><br><br>
+
+<label for="fuelCapacity">Fuel Capacity (Miles):</label>
+<input type="text" id="fuelCapacity" name="fuelCapacity" readonly><br><br>
+
+<label for="distance">Distance (Miles):</label>
+<input type="text" id="distance" name="distance" readonly><br><br>
+
+<p id="stopsRequired"></p>
+
+
+<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAveULz0kjUIAZ--Ufdo0n7wBswHdo_y8o&callback=initMap&libraries=places" defer></script>
+<script src="script.js"></script>
+</body>
+</html>
