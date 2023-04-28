@@ -8,55 +8,46 @@ declare var google: any;
   styleUrls: ['./gas-calculator.component.css']
 })
 export class GasCalculatorComponent implements OnInit {
-  directionsService: any;
-  startInput: any;
-  endInput: any;
-  fuelCapacityInput: any;
-  mpg: any;
-  tankCapacity: any;
+  startLocation: string = '';
+  endLocation: string = '';
+  fuelCapacity: string = '';
+  distance: string = '';
+  mpg: number = 0;
+  tankCapacity: number = 0;
 
-  constructor() {
-    this.directionsService = new google.maps.DirectionsService();
-  }
+  constructor() { }
 
-  ngOnInit(): void {
-    this.startInput = document.getElementById('startLocation');
-    this.endInput = document.getElementById('endLocation');
-    this.fuelCapacityInput = document.getElementById('fuelCapacity');
+  ngOnInit() {
+    const inputStart = document.getElementById('startLocation') as HTMLInputElement;
+    const inputEnd = document.getElementById('endLocation') as HTMLInputElement;
+    const options = {
+      types: ['geocode'],
+      componentRestrictions: {country: 'us'}
+    };
 
-    const startAutocomplete = new google.maps.places.Autocomplete(this.startInput);
-    const endAutocomplete = new google.maps.places.Autocomplete(this.endInput);
-
-    this.mpg = document.getElementById('mpg').value;
-    this.tankCapacity = document.getElementById('tankCapacity').value;
-
-    document.getElementById('mpg').addEventListener('change', () => {
-      this.mpg = document.getElementById('mpg').value;
-      this.updateFuelCapacity();
-    });
-
-    document.getElementById('tankCapacity').addEventListener('change', () => {
-      this.tankCapacity = document.getElementById('tankCapacity').value;
-      this.updateFuelCapacity();
-    });
+    if (typeof google !== 'undefined') {
+      const autocompleteStart = new google.maps.places.Autocomplete(inputStart, options);
+      const autocompleteEnd = new google.maps.places.Autocomplete(inputEnd, options);
+    }
   }
 
   updateFuelCapacity() {
     const fuelCapacity = this.mpg * this.tankCapacity;
-    this.fuelCapacityInput.value = fuelCapacity.toFixed(2);
+    this.fuelCapacity = fuelCapacity.toFixed(2);
   }
 
   calculateFuelAndDistance() {
-    const startLocation = document.getElementById('startLocation').value;
-    const endLocation = document.getElementById('endLocation').value;
-    this.mpg = document.getElementById('mpg').value;
-    this.tankCapacity = document.getElementById('tankCapacity').value;
-    this.fuelCapacityInput = document.getElementById('fuelCapacity');
-    const distanceInput = document.getElementById('distance');
-    const stopsRequiredOutput = document.getElementById('stopsRequired');
+    if (this.startLocation && this.endLocation && this.mpg && this.tankCapacity) {
+      const directionsService = new google.maps.DirectionsService();
+      const startLocation = this.startLocation;
+      const endLocation = this.endLocation;
+      const mpg = this.mpg;
+      const tankCapacity = this.tankCapacity;
+      const fuelCapacityInput = document.getElementById('fuelCapacity') as HTMLInputElement;
+      const distanceInput = document.getElementById('distance') as HTMLInputElement;
+      const stopsRequiredOutput = document.getElementById('stopsRequired');
 
-    if (startLocation !== '' && endLocation !== '' && this.mpg !== '' && this.tankCapacity !== '') {
-      this.directionsService.route(
+      directionsService.route(
         {
           origin: startLocation,
           destination: endLocation,
@@ -65,24 +56,38 @@ export class GasCalculatorComponent implements OnInit {
         (response: any, status: any) => {
           if (status === google.maps.DirectionsStatus.OK) {
             const distance = response.routes[0].legs[0].distance.value / 1609.34;
-            distanceInput.value = distance.toFixed(2);
-            const fuelCapacity = parseFloat(this.mpg) * parseFloat(this.tankCapacity);
-            this.fuelCapacityInput.value = fuelCapacity.toFixed(2);
+            if (distanceInput) {
+              this.distance = distance.toFixed(2);
+            }
+
+            const fuelCapacity = parseFloat(String(mpg)) * parseFloat(String(tankCapacity));
+            fuelCapacityInput.value = fuelCapacity.toFixed(2);
 
             const stopsRequired = Math.ceil(distance / fuelCapacity);
-            stopsRequiredOutput.innerHTML = `You will need to make ${stopsRequired} stop(s) for gas.`;
+            if (stopsRequiredOutput) {
+              stopsRequiredOutput.innerHTML = `You will need to make ${stopsRequired} stop(s) for gas.`;
+            }
+
           } else {
-            distanceInput.value = '';
-            this.fuelCapacityInput.value = '';
-            stopsRequiredOutput.innerHTML = '';
+            if (fuelCapacityInput) {
+              fuelCapacityInput.value = '';
+            }
+            if (stopsRequiredOutput) {
+              stopsRequiredOutput.innerHTML = '';
+            }
             alert(`Directions request failed due to ${status}`);
           }
         }
       );
     } else {
-      distanceInput.value = '';
-      this.fuelCapacityInput.value = '';
-      stopsRequiredOutput.innerHTML = '';
+      const fuelCapacityInput = document.getElementById('fuelCapacity') as HTMLInputElement;
+      const stopsRequiredOutput = document.getElementById('stopsRequired');
+      if (fuelCapacityInput) {
+        fuelCapacityInput.value = '';
+      }
+      if (stopsRequiredOutput) {
+        stopsRequiredOutput.innerHTML = '';
+      }
     }
   }
 

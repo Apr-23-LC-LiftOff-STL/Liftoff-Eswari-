@@ -29,31 +29,38 @@
       margin-top: 20px;
     }
   </style>
-
+  <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAveULz0kjUIAZ--Ufdo0n7wBswHdo_y8o&libraries=places"></script>
 </head>
 <body>
-<label for="startLocation">Start Location:</label>
-<input type="text" id="startLocation" name="startLocation"><br><br>
+  <div class="form-group">
+    <label for="startLocation">Start Location:</label>
+    <input type="text" id="startLocation" name="startLocation" [(ngModel)]="startLocation" (input)="onInputChange()" />
 
-<label for="endLocation">End Location:</label>
-<input type="text" id="endLocation" name="endLocation"><br><br>
-
-<label for="mpg">MPG:</label>
-<input type="number" id="mpg" name="mpg"><br><br>
-
-<label for="tankCapacity">Tank Capacity:</label>
-<input type="number" id="tankCapacity" name="tankCapacity"><br><br>
-
-<label for="fuelCapacity">Fuel Capacity (Miles):</label>
-<input type="text" id="fuelCapacity" name="fuelCapacity" readonly><br><br>
-
-<label for="distance">Distance (Miles):</label>
-<input type="text" id="distance" name="distance" readonly><br><br>
-
-<p id="stopsRequired"></p>
+    <label for="endLocation">End Location:</label>
+    <input type="text" id="endLocation" name="endLocation" [(ngModel)]="endLocation" (input)="onInputChange()" />
 
 
-<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAveULz0kjUIAZ--Ufdo0n7wBswHdo_y8o&callback=initMap&libraries=places" defer></script>
-<script src="script.js"></script>
+    <label for="mpg">MPG:</label>
+    <input type="number" id="mpg" name="mpg" [(ngModel)]="mpg" (change)="onInputChange()" />
+
+    <label for="tankCapacity">Tank Capacity:</label>
+    <input type="number" id="tankCapacity" name="tankCapacity" [(ngModel)]="tankCapacity" (change)="onInputChange()" />
+
+    <label for="fuelCapacity">Fuel Capacity (Miles):</label>
+    <input type="text" id="fuelCapacity" name="fuelCapacity" readonly [(ngModel)]="fuelCapacity" />
+
+    <label for="distance">Distance (Miles):</label>
+    <input type="text" id="distance" name="distance" readonly [(ngModel)]="distance" />
+
+    <p id="stopsRequired"></p>
+
+    <button type="button" (click)="calculateFuelAndDistance()">Calculate</button>
+
+  </div>
+
+
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
 </body>
 </html>
