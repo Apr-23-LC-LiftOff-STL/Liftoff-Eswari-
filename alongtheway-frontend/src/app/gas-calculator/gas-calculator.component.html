@@ -7,12 +7,14 @@
       display: block;
       margin-bottom: 10px;
     }
-    input[type=text] {
+
+    input[type=text], input[type=number] {
       padding: 5px;
-      width: 100%;
+      width: 300px;
       box-sizing: border-box;
       margin-bottom: 10px;
     }
+
     button {
       padding: 10px 20px;
       background-color: #4CAF50;
@@ -22,45 +24,54 @@
       cursor: pointer;
       font-size: 16px;
     }
+
     button:hover {
       background-color: #45a049;
     }
+
     #output {
       margin-top: 20px;
     }
+
   </style>
-  <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAveULz0kjUIAZ--Ufdo0n7wBswHdo_y8o&libraries=places"></script>
+  <script src="https://maps.googleapis.com/maps/api/js?key=YOUR_API_KEY&libraries=places"></script>
 </head>
 <body>
-  <div class="form-group">
-    <label for="startLocation">Start Location:</label>
-    <input type="text" id="startLocation" name="startLocation" [(ngModel)]="startLocation" (input)="onInputChange()" />
+<div class="form-group">
+  <label for="startLocation">Start Location:</label>
+  <input type="text" id="startLocation" name="startLocation" />
 
-    <label for="endLocation">End Location:</label>
-    <input type="text" id="endLocation" name="endLocation" [(ngModel)]="endLocation" (input)="onInputChange()" />
-
-
-    <label for="mpg">MPG:</label>
-    <input type="number" id="mpg" name="mpg" [(ngModel)]="mpg" (change)="onInputChange()" />
-
-    <label for="tankCapacity">Tank Capacity:</label>
-    <input type="number" id="tankCapacity" name="tankCapacity" [(ngModel)]="tankCapacity" (change)="onInputChange()" />
-
-    <label for="fuelCapacity">Fuel Capacity (Miles):</label>
-    <input type="text" id="fuelCapacity" name="fuelCapacity" readonly [(ngModel)]="fuelCapacity" />
-
-    <label for="distance">Distance (Miles):</label>
-    <input type="text" id="distance" name="distance" readonly [(ngModel)]="distance" />
-
-    <p id="stopsRequired"></p>
-
-    <button type="button" (click)="calculateFuelAndDistance()">Calculate</button>
-
-  </div>
+  <label for="endLocation">End Location:</label>
+  <input type="text" id="endLocation" name="endLocation" />
 
 
+  <label for="mpg">MPG:</label>
+  <input type="number" id="mpg" name="mpg" />
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
+  <label for="tankCapacity">Tank Capacity:</label>
+  <input type="number" id="tankCapacity" name="tankCapacity" />
+
+  <label for="fuelCapacity">Fuel Capacity (Miles):</label>
+  <input type="text" id="fuelCapacity" name="fuelCapacity" readonly />
+
+  <label for="distance">Distance (Miles):</label>
+  <input type="text" id="distance" name="distance" readonly />
+
+  <p id="stopsRequired"></p>
+
+  <button type="button" onclick="calculateFuelAndDistance()">Calculate</button>
+
+</div>
+
+<script>
+  function initAutocomplete() {
+    const startInput = document.getElementById('startLocation');
+    const endInput = document.getElementById('endLocation');
+    const autocompleteStart = new google.maps.places.Autocomplete(startInput);
+    const autocompleteEnd = new google.maps.places.Autocomplete(endInput);
+  }
+</script>
+<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAveULz0kjUIAZ--Ufdo0n7wBswHdo_y8o&libraries=places&callback=initAutocomplete"
+        async defer></script>
 </body>
 </html>
