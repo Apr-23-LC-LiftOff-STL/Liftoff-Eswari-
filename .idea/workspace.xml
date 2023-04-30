@@ -5,33 +5,9 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="45948366-ff35-4736-aa10-691547868c8f" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/alongtheway-angular/.browserslistrc" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/alongtheway-angular/.editorconfig" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/alongtheway-angular/.gitignore" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/alongtheway-angular/README.md" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/alongtheway-angular/angular.json" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/alongtheway-angular/karma.conf.js" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/alongtheway-angular/package-lock.json" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/alongtheway-angular/package.json" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/alongtheway-angular/src/app/app.component.css" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/alongtheway-angular/src/app/app.component.html" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/alongtheway-angular/src/app/app.component.spec.ts" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/alongtheway-angular/src/app/app.component.ts" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/alongtheway-angular/src/app/app.module.ts" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/alongtheway-angular/src/assets/.gitkeep" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/alongtheway-angular/src/environments/environment.prod.ts" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/alongtheway-angular/src/environments/environment.ts" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/alongtheway-angular/src/favicon.ico" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/alongtheway-angular/src/index.html" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/alongtheway-angular/src/main.ts" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/alongtheway-angular/src/polyfills.ts" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/alongtheway-angular/src/styles.css" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/alongtheway-angular/src/test.ts" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/alongtheway-angular/tsconfig.app.json" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/alongtheway-angular/tsconfig.json" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/alongtheway-angular/tsconfig.spec.json" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/alongtheway-frontend/src/app/review/models/review.ts" beforeDir="false" afterPath="$PROJECT_DIR$/alongtheway-frontend/src/app/review/models/review.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/alongtheway-frontend/src/app/review/review-create/review-create.component.ts" beforeDir="false" afterPath="$PROJECT_DIR$/alongtheway-frontend/src/app/review/review-create/review-create.component.ts" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -62,7 +38,7 @@
   &quot;keyToString&quot;: {
     &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
     &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
-    &quot;last_opened_file_path&quot;: &quot;C:/Users/Jonathan/Documents/LaunchCode 101/Java Practice/java-web-dev-exercises/src/org/launchcode/java/projects/Project 4&quot;
+    &quot;last_opened_file_path&quot;: &quot;C:/Users/wtwen/development/LaunchCode/Liftoff/Liftoff-Eswari-&quot;
   }
 }</component>
   <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
@@ -73,7 +49,11 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1682313745653</updated>
+      <workItem from="1682895694279" duration="73000" />
     </task>
     <servers />
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="3" />
   </component>
 </project>
