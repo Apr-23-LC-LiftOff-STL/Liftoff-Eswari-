@@ -1,0 +1,6 @@
+<!-- In review.component.html -->
+<form [formGroup]="reviewForm" (ngSubmit)="onSubmit()">
+  <!-- Other form controls for review text, etc. -->
+  <input type="file" (change)="onFileSelected($event)" />
+  <button type="submit">Submit</button>
+</form>
