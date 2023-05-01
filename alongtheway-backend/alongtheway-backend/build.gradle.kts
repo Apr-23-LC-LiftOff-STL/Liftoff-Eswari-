@@ -13,11 +13,12 @@ repositories {
 }
 
 dependencies {
+	implementation ("org.springframework.boot:spring-boot-starter-thymeleaf")
 	implementation("org.springframework.boot:spring-boot-starter-data-jpa")
 	implementation("org.springframework.boot:spring-boot-starter-web")
 	implementation ("org.springframework.security:spring-security-crypto")
 	implementation ("org.springframework.boot:spring-boot-starter-validation")
-	implementation ("org.jetbrains:annotations:23.0.0")
+	implementation ("mysql:mysql-connector-java:8.0.29")
 	developmentOnly("org.springframework.boot:spring-boot-devtools")
 	testImplementation("org.springframework.boot:spring-boot-starter-test")
 }

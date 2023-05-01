@@ -1,6 +1,6 @@
 package com.alongtheway.alongthewaybackend.models.dto;
 
-public class SignupForm extends LoginForm{
+public class SignupForm extends LoginForm {
 
     private String verifyPassword;
 

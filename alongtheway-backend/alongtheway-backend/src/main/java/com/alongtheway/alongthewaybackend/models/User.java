@@ -24,6 +24,9 @@ public class User {
 
     private static final BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
 
+
+    public User() {}
+
     public User (String username, String password) {
         this.username = username;
         this. pwhash = encoder.encode(password);
