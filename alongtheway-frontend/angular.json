@@ -29,7 +29,9 @@
             "styles": [
               "src/styles.css"
             ],
-            "scripts": []
+            "scripts": [
+              "https://maps.googleapis.com/maps/api/js?key=AIzaSyB2X3kIDgVjzB4oBpL02fB0VMeuIg2t7b4&callback=initMap&libraries=places&v=weekly"
+            ]
           },
           "configurations": {
             "production": {
