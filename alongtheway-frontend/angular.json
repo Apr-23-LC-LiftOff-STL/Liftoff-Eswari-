@@ -102,5 +102,8 @@
       }
     }
   },
-  "defaultProject": "alongtheway-frontend"
+  "defaultProject": "alongtheway-frontend",
+  "cli": {
+    "analytics": false
+  }
 }
