@@ -67,16 +67,20 @@ export class AppComponent implements OnInit {
   }
 
   calculateRoute(): void {
+    console.log("Calculating route...");
+    console.log("Start location:", this.startLocation);
+    console.log("End location:", this.endLocation);
+  
     if (!this.directionsService || !this.directionsRenderer) {
       console.error("Directions service or renderer not initialized");
       return;
     }
-
+  
     if (!this.startLocation || !this.endLocation) {
       console.error("Start or end location not set");
       return;
     }
-
+  
     this.directionsService.route(
       {
         origin: this.startLocation,
@@ -85,6 +89,7 @@ export class AppComponent implements OnInit {
       },
       (result, status) => {
         if (status === google.maps.DirectionsStatus.OK) {
+          console.log("Route calculated successfully");
           this.directionsRenderer?.setDirections(result);
         } else {
           console.error("Directions request failed:", status);
@@ -92,4 +97,5 @@ export class AppComponent implements OnInit {
       }
     );
   }
+  
 }
