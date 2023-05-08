@@ -56,7 +56,7 @@ public class AuthenticationController {
     public String processSignupForm(@ModelAttribute @Valid SignupForm signupForm,
                                           Errors errors, HttpServletRequest request,
                                           Model model) {
-
+        //rejects validation errors
         if (errors.hasErrors()) {
             model.addAttribute("title", "Sign Up");
             return "signup";
@@ -64,12 +64,14 @@ public class AuthenticationController {
 
         User existingUser = userRepository.findByUsername(signupForm.getUsername());
 
+        //rejects username if it matches an existing username
         if (existingUser != null) {
             errors.rejectValue("username", "username.alreadyexists", "A user with that username already exists");
             model.addAttribute("title", "Sign Up");
             return "signup";
         }
 
+        //rejects passwords if both fields do not match
         String password = signupForm.getPassword();
         String verifyPassword = signupForm.getVerifyPassword();
         if (!password.equals(verifyPassword)) {
@@ -78,9 +80,11 @@ public class AuthenticationController {
             return "signup";
         }
 
+        //assigns new user
         User newUser = new User(signupForm.getUsername(), signupForm.getPassword());
         userRepository.save(newUser);
         setUserInSession(request.getSession(), newUser);
+
 
         return "redirect:/login";
     }
@@ -96,7 +100,7 @@ public class AuthenticationController {
     public String processLoginForm(@ModelAttribute @Valid LoginForm loginForm,
                                    Errors errors, HttpServletRequest request,
                                    Model model) {
-
+        //rejects validation errors
         if (errors.hasErrors()) {
             model.addAttribute("title", "Log In");
             return "login";
@@ -104,6 +108,7 @@ public class AuthenticationController {
 
         User theUser = userRepository.findByUsername(loginForm.getUsername());
 
+        //rejects username if it matches an existing username
         if (theUser == null) {
             errors.rejectValue("username", "user.invalid", "The given username does not exist");
             model.addAttribute("title", "Log In");
@@ -112,6 +117,7 @@ public class AuthenticationController {
 
         String password = loginForm.getPassword();
 
+        //rejects password if it does not match existing hash
         if (!theUser.isMatchingPassword(password)) {
             errors.rejectValue("password", "password.invalid", "Invalid password");
             model.addAttribute("title", "Log In");
