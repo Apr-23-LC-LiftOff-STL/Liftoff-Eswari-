@@ -1,0 +1,15 @@
+<app-header></app-header>
+
+<div>
+  <label for="start-input">Start location:</label>
+  <input id="start-input" type="text">
+
+  <label for="end-input">End location:</label>
+  <input id="end-input" type="text">
+
+  <button (click)="calculateRoute()">Calculate Route</button>
+</div>
+
+<div id="map" class="full"></div>
+
+<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyC7TfA2reVISM_h9MIhhaoUH6FXsopH8ZA&libraries=places"></script>
