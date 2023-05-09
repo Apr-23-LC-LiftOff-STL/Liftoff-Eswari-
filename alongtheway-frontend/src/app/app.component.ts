@@ -1,19 +1,17 @@
 import { Component, OnInit } from '@angular/core';
 import { Loader } from '@googlemaps/js-api-loader';
-import { WeatherService } from './weather.service';
-
 
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
-  styleUrls: ['./app.component.css'],
-  selector: 'app-weather',
-
+  styleUrls: ['./app.component.css']
 })
 export class AppComponent implements OnInit {
   title = 'alongtheway-frontend';
   startLocation: string = "";
   endLocation: string = "";
+  averageMPG: number = 0;
+  tankCapacity: number = 0;
   map: google.maps.Map | null = null;
   directionsService: google.maps.DirectionsService | null = null;
   directionsRenderer: google.maps.DirectionsRenderer | null = null;
@@ -45,6 +43,8 @@ export class AppComponent implements OnInit {
   initAutocomplete(): void {
     const startInput = document.getElementById("start-input") as HTMLInputElement;
     const endInput = document.getElementById("end-input") as HTMLInputElement;
+    const mpgInput = document.getElementById("mpg-input") as HTMLInputElement;
+    const tankInput = document.getElementById("tank-input") as HTMLInputElement;
 
     const startAutocomplete = new google.maps.places.Autocomplete(startInput);
     const endAutocomplete = new google.maps.places.Autocomplete(endInput);
@@ -68,12 +68,28 @@ export class AppComponent implements OnInit {
         console.log("End location:", this.endLocation);
       }
     });
+
+    mpgInput.addEventListener("change", () => {
+      this.averageMPG = Number(mpgInput.value);
+      console.log("Average MPG:", this.averageMPG);
+    });
+
+    tankInput.addEventListener("change", () => {
+      this.tankCapacity = Number(tankInput.value);
+      console.log("Tank Capacity:", this.tankCapacity);
+    });
   }
 
   calculateRoute(): void {
+    this.averageMPG = +this.averageMPG;
+    this.tankCapacity = +this.tankCapacity;
+
+
     console.log("Calculating route...");
     console.log("Start location:", this.startLocation);
     console.log("End location:", this.endLocation);
+    console.log("Average MPG:", this.averageMPG);
+    console.log("Tank Capacity:", this.tankCapacity);
 
     if (!this.directionsService || !this.directionsRenderer) {
       console.error("Directions service or renderer not initialized");
@@ -85,7 +101,12 @@ export class AppComponent implements OnInit {
       return;
     }
 
-    this.directionsService.route(
+    if (!this.averageMPG || !this.tankCapacity) {
+      console.error("Average MPG or tank capacity not set");
+      return;
+    }
+
+    this.directionsService?.route(
       {
         origin: this.startLocation,
         destination: this.endLocation,
@@ -95,50 +116,47 @@ export class AppComponent implements OnInit {
         if (status === google.maps.DirectionsStatus.OK) {
           console.log("Route calculated successfully");
           this.directionsRenderer?.setDirections(result);
+
+          // Get the direction steps
+          const steps = result?.routes[0]?.legs[0]?.steps;
+          if (steps) {
+            this.showSteps(steps);
+          }
+
+          // Calculate gas usage
+          const distanceMeters = result?.routes[0]?.legs[0]?.distance?.value;
+          if (distanceMeters) {
+            const distanceMiles = distanceMeters * 0.000621371; // Convert meters to miles
+            const tanksNeeded = distanceMiles / (this.averageMPG * this.tankCapacity);
+            console.log("Tanks of gas needed:", tanksNeeded);
+
+            // Display gas usage
+            const gasUsageInfoElement = document.getElementById("gas-usage-info");
+            if (gasUsageInfoElement) {
+              gasUsageInfoElement.textContent = `Distance: ${distanceMiles.toFixed(2)} miles. Tanks of gas needed: ${tanksNeeded.toFixed(2)}`;
+            }
+          } else {
+            console.error("Could not calculate distance");
+          }
         } else {
           console.error("Directions request failed:", status);
         }
       }
-      
-   
-      export class WeatherComponent implements OnInit {
-      myWeather: any;
-      temperature: number = 0;
-      feelsLikeTemp: number = 0;
-      humidity: number = 0;
-      pressure: number = 0;
-      summary: string = '';
-      iconURL: string = '';
-      city: string = 'Saint Louis';
-      units: string = 'imperial';
-
-      constructor(private weatherService: WeatherService) { }
-
-      ngOnInit(): void {
-        this.weatherService.getweather(this.city, this.units).subscribe({
-
-          next: (res) => {
-            console.log(res);
-            this.myWeather = res;
-            console.log(this.myWeather);
-            this.temperature = this.myWeather.main.temp;
-            this.feelsLikeTemp = this.myWeather.main.feels_like;
-            this.humidity = this.myWeather.main.humidity;
-            this.pressure = this.myWeather.main.pressure;
-            this.summary = this.myWeather.weather[0].main;
-
-            this.iconURL = 'https://openweathermap.org/img/wn/' + this.myWeather.weather[0].icon + '@2x.png';
-          },
-
-          error: (error) => console.log(error.message),
-
-          complete: () => console.info('API call completed')
-        })
-      }
-
-    }
     );
   }
 
+  showSteps(steps: any[]): void {
+    const stepsContainer = document.getElementById('direction-steps');
+    if (stepsContainer) {
+      stepsContainer.innerHTML = ""; // Clear previous steps
 
+      steps.forEach((step: any) => {
+        const stepDiv = document.createElement('div');
+        stepDiv.innerHTML = step.instructions;
+        stepsContainer.appendChild(stepDiv);
+      });
+    }
+  }
 }
+
+
