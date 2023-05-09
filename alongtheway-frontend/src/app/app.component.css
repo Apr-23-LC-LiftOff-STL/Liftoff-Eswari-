@@ -1,44 +1,40 @@
 .container {
-  display: flex;
-  background-image: linear-gradient(#07487D, #77CECF);
+    display: flex;
+    background-image: linear-gradient(#07487D, #77CECF);
 }
 
 .form-container {
-  flex: 1;
+    flex: 1;
 }
 
 .queue {
-  flex: 1;
-  border: 1px solid black;
-  position: relative;
-  background-color: #fff;
-  
-  padding: 10px;
-  overflow-y: auto;
+    flex: 1;
+    border: 1px solid black;
+    /* position: relative; */
+    background-color: #fff;
+    height: 60vh;
+    padding: 10px;
+    overflow-y: scroll;
 }
 
 .map-container {
-  flex: 2;
-  height: 60vh; /* Adjust this as needed */
-}
-
-html {
-  background-color: #77CECF;
-}
-
-/* .full {
     flex: 2;
-    width: 48vw;
-    height: 48vh;
-    margin: 0;
-    padding: 0;
-    
-} */
-
-
+    height: 88vh;
+    /* Adjust this as needed */
+}
 
 .mycontainer {
     display: flex;
     flex-direction: column;
     align-items: center;
 }
+
+
+/* .full {
+      flex: 2;
+      width: 48vw;
+      height: 48vh;
+      margin: 0;
+      padding: 0;
+      
+  } */
