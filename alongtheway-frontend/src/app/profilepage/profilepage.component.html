@@ -1,32 +1,17 @@
 <h1>My Profile</h1>
+<h2>My Info</h2>
 <img src="assets/ABCD.jpg" alt="Image description"> <!--We need a database to hold pictures-->
 
-<h3>My Trips</h3>
+<h2>My Saved Trips</h2>
   <p>
     <!--Need to develop this. Possibly getting the info from 
         the HomePage, user search and save trips would display here?-->
-      Trip 1
+      Trip name 
   </p>
 
-  <h2>Add Vehicle</h2>
-  <form #carForm="ngForm" (ngSubmit)="saveCar(carForm.value); clearInputs(carForm)">
-    <label for="year">Year:</label>
-    <input type="number" id="year" name="year" ngModel required>
-  
-    <label for="make">Make:</label>
-    <input type="text" id="make" name="make" ngModel required>
-  
-    <label for="model">Model:</label>
-    <input type="text" id="model" name="model" ngModel required>
-  
-    <label for="mpg">MPG:</label>
-    <input type="number" id="mpg" name="mpg" ngModel required>
-  
-    <button type="submit">Add Car</button>
-  </form>
-  
-  <div *ngIf="showMyVehicles">
-    <h2>My Saved Vehicles</h2>
+   <div *ngIf="showMyVehicles">
+
+<h2>My Saved Vehicles</h2>
     <table>
       <thead>
         <tr>
@@ -68,6 +53,23 @@
       </tbody>
     </table>
   </div> 
+  
+<h3>Add Vehicle</h3>
+  <form #carForm="ngForm" (ngSubmit)="saveCar(carForm.value); clearInputs(carForm)">
+    <label for="year">Year:</label>
+    <input type="number" id="year" name="year" ngModel required>
+  
+    <label for="make">Make:</label>
+    <input type="text" id="make" name="make" ngModel required>
+  
+    <label for="model">Model:</label>
+    <input type="text" id="model" name="model" ngModel required>
+  
+    <label for="mpg">MPG:</label>
+    <input type="number" id="mpg" name="mpg" ngModel required>
+  
+    <button type="submit">Add Car</button>
+  </form>
 <!-- 
   +edit vehicles-upon any text input during edit, clicking cancel button still saves the new input.
   +connect with database
