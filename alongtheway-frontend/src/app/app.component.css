@@ -10,7 +10,7 @@
 .queue {
   flex: 1;
   border: 1px solid black;
-  position: relative;
+  /* position: relative; */
   background-color: #fff;
   
   padding: 10px;
@@ -19,12 +19,10 @@
 
 .map-container {
   flex: 2;
-  height: 60vh; /* Adjust this as needed */
+  height: 88vh; /* Adjust this as needed */
 }
 
-html {
-  background-color: #77CECF;
-}
+
 
 /* .full {
     flex: 2;
