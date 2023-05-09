@@ -12,9 +12,9 @@
   border: 1px solid black;
   /* position: relative; */
   background-color: #fff;
-  
+  height: 60vh;
   padding: 10px;
-  overflow-y: auto;
+  overflow-y: scroll;
 }
 
 .map-container {
