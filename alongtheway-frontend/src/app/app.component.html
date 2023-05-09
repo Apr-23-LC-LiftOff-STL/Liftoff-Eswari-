@@ -1,15 +1,30 @@
 <app-header></app-header>
 
-<div>
-  <label for="start-input">Start location:</label>
-  <input id="start-input" type="text">
+<div class="container">
+  <div class="form-container">
+    <label for="start-input">Start location:</label>
+    <input id="start-input" type="text">
+    <br>
 
-  <label for="end-input">End location:</label>
-  <input id="end-input" type="text">
+    <label for="end-input">End location:</label>
+    <input id="end-input" type="text">
+    <br>
 
-  <button (click)="calculateRoute()">Calculate Route</button>
+    <label for="average-mpg-input">Average MPG:</label>
+    <input id="average-mpg-input" type="number" min="0" [(ngModel)]="averageMPG">
+    <br>
+
+    <label for="tank-capacity-input">Tank Capacity (Gallons):</label>
+    <input id="tank-capacity-input" type="number" min="0" [(ngModel)]="tankCapacity">
+    <br>
+
+    <button (click)="calculateRoute()">Calculate Route</button>
+
+    <div id="gas-usage-info"></div>
+    <div id="direction-steps" class="queue"></div>
+  </div>
+  
+  <div id="map" class="map-container"></div>
 </div>
-
-<div id="map" class="full"></div>
 
 <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyC7TfA2reVISM_h9MIhhaoUH6FXsopH8ZA&libraries=places"></script>
