@@ -1,4 +1,4 @@
-<img src="assets/images/aboutuscurrent05112023.png" alt="current">
+<img src="src/assets/images/aboutuscurrent05112023.png" alt="current">
 
 # AlongthewayFrontend
 
