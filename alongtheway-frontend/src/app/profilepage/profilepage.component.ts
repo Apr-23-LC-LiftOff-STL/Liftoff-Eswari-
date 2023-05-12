@@ -31,6 +31,7 @@ export class ProfilepageComponent implements OnInit {
   }
 
   editCar(index: number) {
+    this.editedCar = { ...this.carList[index] };
     this.editedCarIndex = index;
   }
 
@@ -41,9 +42,12 @@ export class ProfilepageComponent implements OnInit {
   }
 
   cancelEdit() {
-    this.editedCarIndex = null;
+    if (this.editedCarIndex !== null) {
+      this.carList[this.editedCarIndex] = { ...this.editedCar };
+      this.editedCarIndex = null;
+      this.editedCar = {};
+    }
   }
-
   removeCar(index: number): void {
     this.carList.splice(index, 1);
   }
