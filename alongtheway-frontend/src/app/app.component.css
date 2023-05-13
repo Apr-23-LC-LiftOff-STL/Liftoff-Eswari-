@@ -45,14 +45,16 @@ input[type="text"] {
 }
 
 h4 {
-  font: 25px Roboto, "Helvetica Neue", sans-serif;
+  font: 22px Roboto, "Helvetica Neue", sans-serif;
   font-weight: bold;
   font-style: italic;
+  margin-top: 8px;
 }
 
 p {
   font: 20px Roboto, "Helvetica Neue", sans-serif;
   margin-left: 12px;
+  margin-top: 5px;
 }
 
 .searchresults {
@@ -62,4 +64,12 @@ p {
 
 body {
   margin-top: 8px;
+}
+
+button#search {
+  margin: 0 auto;
+  font-size: 12pt;
+  padding: 4px 14px;
+  border-radius: 5px;
+  background-color: #d1d1d1;
 }
