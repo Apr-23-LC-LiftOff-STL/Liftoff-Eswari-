@@ -27,7 +27,7 @@ public class AuthenticationController {
     private static final String userSessionKey = "user";
 
     public User getUserFromSession(HttpSession session) {
-        Integer userId = (Integer) session.getAttribute(userSessionKey);
+        String userId = (String) session.getAttribute(userSessionKey);
         if (userId == null) {
             return null;
         }
@@ -62,9 +62,9 @@ public class AuthenticationController {
             return "signup";
         }
 
-        User existingUser = userRepository.findByUsername(signupForm.getUsername());
 
         //rejects username if it matches an existing username
+        User existingUser = userRepository.findByUsername(signupForm.getUsername());
         if (existingUser != null) {
             errors.rejectValue("username", "username.alreadyexists", "A user with that username already exists");
             model.addAttribute("title", "Sign Up");
@@ -82,7 +82,7 @@ public class AuthenticationController {
 
         //assigns new user
         User newUser = new User(signupForm.getUsername(), signupForm.getPassword());
-        userRepository.save(newUser);
+        userRepository.save(new User(signupForm.getUsername(), signupForm.getPassword()));
         setUserInSession(request.getSession(), newUser);
 
 
@@ -106,18 +106,19 @@ public class AuthenticationController {
             return "login";
         }
 
-        User theUser = userRepository.findByUsername(loginForm.getUsername());
 
         //rejects username if it matches an existing username
+        User theUser = userRepository.findByUsername(loginForm.getUsername());
+
         if (theUser == null) {
             errors.rejectValue("username", "user.invalid", "The given username does not exist");
             model.addAttribute("title", "Log In");
             return "login";
         }
 
-        String password = loginForm.getPassword();
-
         //rejects password if it does not match existing hash
+        String password = loginForm.getPassword();
+        //TODO password not being read even when they should be matching
         if (!theUser.isMatchingPassword(password)) {
             errors.rejectValue("password", "password.invalid", "Invalid password");
             model.addAttribute("title", "Log In");
@@ -125,7 +126,6 @@ public class AuthenticationController {
         }
 
         setUserInSession(request.getSession(), theUser);
-
         return "redirect:/login";
     }
 

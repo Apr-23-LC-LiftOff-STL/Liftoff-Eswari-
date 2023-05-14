@@ -1,12 +1,21 @@
 package com.alongtheway.alongthewaybackend.models.data;
 
 import com.alongtheway.alongthewaybackend.models.User;
-import org.springframework.data.repository.CrudRepository;
+import org.springframework.data.mongodb.repository.MongoRepository;
+import org.springframework.data.mongodb.repository.Query;
 import org.springframework.stereotype.Repository;
 
-@Repository
-public interface UserRepository extends CrudRepository<User, Integer> {
+import java.util.List;
 
+@Repository
+public interface UserRepository extends MongoRepository<User, String> {
+
+    @Query("{username:'?0'}")
     User findByUsername(String username);
+
+//    @Query(value="{TEMPSEARCH:'?0'}", fields="{'name' : 1, 'quantity' : 1}")
+//    List<User> findAll(String TEMPSEARCH);
+
+    public long count();
 
 }
