@@ -118,7 +118,6 @@ public class AuthenticationController {
 
         //rejects password if it does not match existing hash
         String password = loginForm.getPassword();
-        //TODO password not being read even when they should be matching
         if (!theUser.isMatchingPassword(password)) {
             errors.rejectValue("password", "password.invalid", "Invalid password");
             model.addAttribute("title", "Log In");
