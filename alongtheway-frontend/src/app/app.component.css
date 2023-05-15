@@ -5,6 +5,7 @@
   margin-right: 8px;
   border-radius: 5px;
   border: 2px solid black; /* Add black border */
+  box-shadow: 1px 1px black;
 }
 
 .column {
@@ -67,6 +68,7 @@ p {
   border-radius: 5px;
   background: #3f51b5;
   margin-top: 0px; /* Adjust the margin-top value to reduce spacing */
+  box-shadow: 1px 1px black;
 }
 
 .searchresults h4 {
@@ -83,7 +85,7 @@ button#search {
   padding: 4px 14px;
   border-radius: 5px;
   background-color: #d1d1d1;
-  box-shadow: 2px 3px #888888;
+  box-shadow: 2px 2px #888888;
 }
 
 button#search:hover {
@@ -101,6 +103,7 @@ button#search:active {
   border-radius: 5px;
   padding: 8px;
   margin-bottom: 5px;
+  box-shadow: 1px 1px black;
 }
 
 .input-container .row:last-child {
