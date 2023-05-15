@@ -4,6 +4,7 @@
   margin-top: 2px;
   margin-right: 8px;
   border-radius: 5px;
+  border: 2px solid black; /* Add black border */
 }
 
 .column {
