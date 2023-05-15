@@ -1,5 +1,5 @@
 h3.title {
-  color: #94bfff;
+  color: #white;
   font-size: 30pt;
   display: inline;
   margin-right: 20px;
@@ -41,24 +41,26 @@ h3.title {
 }
 
 a {
-  color: #ebf3ff;
+  color: white;
   text-decoration: none;
   margin-left: 18px;
-  font-size: 16pt;
-  font-weight: bold;
-  background-color: #76a2e8;
+  font-size: 15pt;
+  background-color: #06195e;
   border-style: solid;
   border-width: 2px;
-  border-color: black;
+  border-color: #8aa3ff;
   border-radius: 8px;
   padding-left: 10px;
   padding-right: 10px;
-  -webkit-text-stroke-width: .9px;
-  -webkit-text-stroke-color: #2e2e2e;
+
 }
 
 .nav-links {
   padding-inline-start: 20px;
   display: flex;
   align-items: center;
+}
+
+a:hover {
+  color: #fff36b;
 }
