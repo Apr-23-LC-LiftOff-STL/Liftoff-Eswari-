@@ -48,7 +48,9 @@ input[type="text"] {
 h4 {
   font: 22px Roboto, "Helvetica Neue", sans-serif;
   font-weight: bold;
-  font-style: italic;
+  color: white;
+  -webkit-text-stroke-width: .9px;
+  -webkit-text-stroke-color: black;
   margin-top: 8px;
 }
 
@@ -61,7 +63,13 @@ p {
 .searchresults {
   border-style: solid;
   border-width: 2px;
-  border-radius: 6px;
+  border-radius: 5px;
+  background: #3f51b5;
+  margin-top: 0px; /* Adjust the margin-top value to reduce spacing */
+}
+
+.searchresults h4 {
+  margin-top: 0px; /* Adjust the margin-top value to reduce spacing */
 }
 
 body {
@@ -85,4 +93,19 @@ button#search:active {
   background-color: #495dab;
   box-shadow: 2px 3px #666;
   transform: translateY(1px);
+}
+
+.input-container {
+  border: 2px solid black;
+  border-radius: 5px;
+  padding: 8px;
+  margin-bottom: 5px;
+}
+
+.input-container .row:last-child {
+  margin-bottom: 0; /* Remove bottom margin for the last row */
+}
+
+.input-container button#search {
+  margin-top: 5px; /* Adjust the margin-top value to reduce spacing */
 }

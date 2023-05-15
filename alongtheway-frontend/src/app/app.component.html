@@ -5,13 +5,14 @@
   <div class="row">
 
     <div class="column">
+      <div class="input-container">
       <div class="row">
         <label class="alignleft" for="origin">ORIGIN:</label>
-        <input class="alignright" type="text" id="origin" name="origin" placeholder="e.g. St. Louis, MO">
+        <input class="alignright" type="text" id="origin" name="origin" placeholder="Enter your origin">
       </div>
       <div class="row">
         <label class="alignleft" for="destination">DESTINATION:</label>
-        <input class="alignright" type="text" id="destination" name="destination" placeholder="e.g. Denver, CO">
+        <input class="alignright" type="text" id="destination" name="destination" placeholder="Enter your destination">
       </div>
       <div class="row">
         <label class="alignleft" for="searchfor">SEARCH FOR:</label>
@@ -41,6 +42,7 @@
       <div class="row">
         <button id="search" (click)="getDirections()">Search</button>
       </div>
+        </div>
       <div class="searchresults">
         <h4 style="text-align:center;margin-bottom:0">SEARCH RESULTS:</h4>
       </div>
