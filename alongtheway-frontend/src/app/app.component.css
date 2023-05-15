@@ -72,4 +72,15 @@ button#search {
   padding: 4px 14px;
   border-radius: 5px;
   background-color: #d1d1d1;
+  box-shadow: 2px 3px #888888;
+}
+
+button#search:hover {
+  background-color: #738fff;
+}
+
+button#search:active {
+  background-color: #495dab;
+  box-shadow: 2px 3px #666;
+  transform: translateY(1px);
 }
