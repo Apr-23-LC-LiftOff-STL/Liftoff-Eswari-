@@ -37,7 +37,7 @@
   flex-basis: auto;
   text-align: left;
   width: 250px;
-
+  z-index: 1;
   font: 20px Roboto, "Helvetica Neue", sans-serif;
 }
 
