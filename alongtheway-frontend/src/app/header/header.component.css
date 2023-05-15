@@ -2,7 +2,7 @@ h3.title {
   color: #white;
   font-size: 30pt;
   display: inline;
-  margin-right: 20px;
+  margin-right: 1px;
   margin-bottom: 45px;
   -webkit-text-stroke-width: 1.2px;
   -webkit-text-stroke-color: black;
@@ -23,7 +23,7 @@ h3.title {
   justify-content: space-between;
   border: solid black;
   border-radius: 15px;
-  padding-inline-start: 0;
+  margin-left: 3px;
 }
 
 .login-btn {
@@ -54,7 +54,7 @@ h3.title {
 a {
   color: white;
   text-decoration: none;
-  margin-left: 18px;
+  margin-left: 22px;
   font-size: 15pt;
   background-color: #06195e;
   border-style: solid;
@@ -67,7 +67,7 @@ a {
 }
 
 .nav-links {
-  padding-inline-start: 20px;
+  padding-inline-start: 5px;
   display: flex;
   align-items: center;
 }
