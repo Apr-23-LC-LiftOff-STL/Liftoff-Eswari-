@@ -1,6 +1,11 @@
 import { HttpClient } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
 import { Loader } from '@googlemaps/js-api-loader';
+import { LatLng, DirectionsRenderer, DirectionsResult, DirectionsService, DirectionsStatus } from "@googlemaps/google-maps-services-js";
+import { PlaceResult, PlacesServiceStatus } from "@googlemaps/google-maps-services-js/dist/places";
+import { decodePath } from "@googlemaps/google-maps-services-js/dist/common";
+
+
 
 @Component({
   selector: 'app-root',
@@ -48,9 +53,12 @@ export class AppComponent implements OnInit {
   endLocation: string = "";
   averageMPG: number = 0;
   tankCapacity: number = 0;
-  map: google.maps.Map | null = null;
+  map: google.maps.Map | undefined;
   directionsService: google.maps.DirectionsService | null = null;
   directionsRenderer: google.maps.DirectionsRenderer | null = null;
+
+  service: google.maps.places.PlacesService | undefined;
+
 
   ngOnInit(): void {
     const loader = new Loader({
@@ -65,11 +73,16 @@ export class AppComponent implements OnInit {
           center: { lat: 51.233334, lng: 6.78333 },
           zoom: 6
         });
+
+        this.service = new google.maps.places.PlacesService(this.map!);
+
         this.directionsService = new google.maps.DirectionsService();
         this.directionsRenderer = new google.maps.DirectionsRenderer({
           map: this.map
         });
         this.initAutocomplete();
+
+        this.calculateRoute();
       } else {
         console.error("Could not find map element");
       }
@@ -125,80 +138,108 @@ export class AppComponent implements OnInit {
   calculateRoute(): void {
     this.averageMPG = +this.averageMPG;
     this.tankCapacity = +this.tankCapacity;
-
-
+  
     console.log("Calculating route...");
     console.log("Start location:", this.startLocation);
     console.log("End location:", this.endLocation);
     console.log("Average MPG:", this.averageMPG);
     console.log("Tank Capacity:", this.tankCapacity);
-
+  
     if (!this.directionsService || !this.directionsRenderer) {
       console.error("Directions service or renderer not initialized");
       return;
     }
-
+  
     if (!this.startLocation || !this.endLocation) {
       console.error("Start or end location not set");
       return;
     }
-
+  
     if (!this.averageMPG || !this.tankCapacity) {
       console.error("Average MPG or tank capacity not set");
       return;
     }
-
+  
     this.directionsService?.route(
       {
         origin: this.startLocation,
         destination: this.endLocation,
         travelMode: google.maps.TravelMode.DRIVING
       },
-      (result, status) => {
+      (result: google.maps.DirectionsResult | null, status: google.maps.DirectionsStatus) => {
         if (status === google.maps.DirectionsStatus.OK) {
           console.log("Route calculated successfully");
           this.directionsRenderer?.setDirections(result);
+  
+          // Decode the polyline and get the waypoints
+          if (result && result.routes && result.routes.length > 0) {
 
-          // Get the direction steps
-          const steps = result?.routes[0]?.legs[0]?.steps;
-          if (steps) {
-            this.showSteps(steps);
-          }
-
-          // Calculate gas usage
-          const distanceMeters = result?.routes[0]?.legs[0]?.distance?.value;
-          if (distanceMeters) {
-            const distanceMiles = distanceMeters * 0.000621371; // Convert meters to miles
-            const tanksNeeded = distanceMiles / (this.averageMPG * this.tankCapacity);
-            console.log("Tanks of gas needed:", tanksNeeded);
-
-            // Display gas usage
-            const gasUsageInfoElement = document.getElementById("gas-usage-info");
-            if (gasUsageInfoElement) {
-              gasUsageInfoElement.textContent = `Distance: ${distanceMiles.toFixed(2)} miles. Tanks of gas needed: ${tanksNeeded.toFixed(2)}`;
+            const waypoints: google.maps.LatLng[] = google.maps.geometry.encoding.decodePath(result.routes[0].overview_polyline);
+          
+            // Calculate gas usage
+            const distanceMeters = result?.routes[0]?.legs[0]?.distance?.value;
+            if (distanceMeters) {
+              const distanceMiles = distanceMeters * 0.000621371; // Convert meters to miles
+              const tanksNeeded = distanceMiles / (this.averageMPG * this.tankCapacity);
+              console.log("Tanks of gas needed:", tanksNeeded);
+    
+              // Display gas usage
+              const gasUsageInfoElement = document.getElementById("gas-usage-info");
+              if (gasUsageInfoElement) {
+                gasUsageInfoElement.textContent = `Distance: ${distanceMiles.toFixed(2)} miles. Tanks of gas needed: ${tanksNeeded.toFixed(2)}`;
+              }
+            } else {
+              console.error("Could not calculate distance");
             }
-          } else {
-            console.error("Could not calculate distance");
+    
+            // Search for nearby places along the route
+            this.service = new google.maps.places.PlacesService(this.map!);
+            for (let j = 0; j < waypoints.length; j += 40) {
+              this.service.nearbySearch(
+                {
+                location: waypoints[j],
+                radius: 20000,
+                type: "restaurant|park"
+              }, (
+                results: google.maps.places.PlaceResult[] | null,
+                nearbyStatus: google.maps.places.PlacesServiceStatus,
+                pagination: google.maps.places.PlaceSearchPagination | null
+                ) => {
+                if (nearbyStatus === google.maps.places.PlacesServiceStatus.OK) {
+                  if (results) {
+                  for (let i = 0; i < results.length; i++) {
+                    const location = results[i]?.geometry?.location;
+                    const marker = new google.maps.Marker({
+                      position: location,
+                      map: this.map,
+                      title: "Hello World!"
+                      });
+                    }
+                  }
+                }
+              });
+            }
           }
-        } else {
-          console.error("Directions request failed:", status);
+         } else {
+            console.error("Directions request failed:", status);
+          }
         }
-      }
-    );
-  }
-
-  showSteps(steps: any[]): void {
-    const stepsContainer = document.getElementById('direction-steps');
-    if (stepsContainer) {
-      stepsContainer.innerHTML = ""; // Clear previous steps
-
-      steps.forEach((step: any) => {
-        const stepDiv = document.createElement('div');
-        stepDiv.innerHTML = step.instructions;
-        stepsContainer.appendChild(stepDiv);
-      });
+      );
     }
-  }
+  
+
+  // showSteps(steps: any[]): void {
+  //   const stepsContainer = document.getElementById('direction-steps');
+  //   if (stepsContainer) {
+  //     stepsContainer.innerHTML = ""; // Clear previous steps
+
+  //     steps.forEach((step: any) => {
+  //       const stepDiv = document.createElement('div');
+  //       stepDiv.innerHTML = step.instructions;
+  //       stepsContainer.appendChild(stepDiv);
+  //     });
+  //   }
+  // }
 }
 
 
