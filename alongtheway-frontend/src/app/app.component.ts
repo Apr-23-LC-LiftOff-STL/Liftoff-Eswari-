@@ -83,7 +83,7 @@ export class AppComponent implements OnInit {
   calculateRoute(): void {
     this.averageMPG = +this.averageMPG;
     this.tankCapacity = +this.tankCapacity;
-    
+
 
     console.log("Calculating route...");
     console.log("Start location:", this.startLocation);
@@ -158,6 +158,6 @@ export class AppComponent implements OnInit {
     }
 }
 }
-      
+
 
 
