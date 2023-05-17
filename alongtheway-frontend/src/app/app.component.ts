@@ -14,6 +14,7 @@ export class AppComponent implements OnInit {
   originAutocomplete: any;
   destinationAutocomplete: any;
   directionsRenderer: any;
+  PolygonBound: any;
   service!: google.maps.places.PlacesService;
 
   ngOnInit(): void {
@@ -62,7 +63,7 @@ export class AppComponent implements OnInit {
           waypoints = polyline.decode(response.routes[0].overview_polyline) as number[][];
 
           const PolygonCoords = this.PolygonPoints();
-          const PolygonBound = new google.maps.Polygon({
+          const newPolygonBound = new google.maps.Polygon({
             paths: PolygonCoords,
             strokeColor: "#FF0000",
             strokeOpacity: 0.8,
@@ -71,7 +72,16 @@ export class AppComponent implements OnInit {
             fillOpacity: 0.35,
           });
 
-          PolygonBound.setMap(this.map);
+          // Clear the previous PolygonBound from the map
+          if (this.PolygonBound) {
+            this.PolygonBound.setMap(null);
+          }
+
+          // Assign the new PolygonBound to this.PolygonBound
+          this.PolygonBound = newPolygonBound;
+
+          // Display the new PolygonBound on the map
+          this.PolygonBound.setMap(this.map);
 
           this.service = new google.maps.places.PlacesService(this.map);
 
@@ -105,8 +115,12 @@ export class AppComponent implements OnInit {
     const R = 6378137;
     const pi = 3.14;
     //distance in meters
-    const upper_offset = 8000;
-    const lower_offset = -8000;
+    const selectElement = document.getElementById('distance') as HTMLSelectElement;
+    const selectedValue = parseInt(selectElement.value); // Get the selected value as an integer
+
+    // Update the upper_offset and lower_offset based on the selected value
+    const upper_offset = parseFloat(selectElement.value) * 1609.34; // 1 mile is approximately 1609.34 meters
+    const lower_offset = -upper_offset;
 
     const Lat_up = upper_offset / R;
     const Lat_down = lower_offset / R;
