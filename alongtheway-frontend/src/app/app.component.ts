@@ -1,9 +1,9 @@
 import { HttpClient } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
 import { Loader } from '@googlemaps/js-api-loader';
-import { LatLng, DirectionsRenderer, DirectionsResult, DirectionsService, DirectionsStatus } from "@googlemaps/google-maps-services-js";
-import { PlaceResult, PlacesServiceStatus } from "@googlemaps/google-maps-services-js/dist/places";
-import { decodePath } from "@googlemaps/google-maps-services-js/dist/common";
+import { Client, PlacesNearbyRequest, PlacesNearbyResponse, PlaceDetailsRequest, PlaceDetailsResponse, DirectionsRequest, DirectionsResponse } from '@googlemaps/google-maps-services-js';
+
+
 
 
 
