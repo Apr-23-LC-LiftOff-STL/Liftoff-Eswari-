@@ -7,6 +7,15 @@
     flex: 1;
 }
 
+.weather-icon {
+  height:40px;
+  margin-bottom: -15px;
+}
+
+.weather-temp {
+  font-size: 18px;
+}
+
 .queue {
     flex: 1;
     border: 1px solid black;
