@@ -1,7 +1,6 @@
 <app-header></app-header>
 <app-weather></app-weather>
 
-
 <div class="container">
   <div class="form-container">
     <form (ngSubmit)="submitForm()">
@@ -22,13 +21,8 @@
       <input id="tank-capacity-input" type="number" min="0" [(ngModel)]="tankCapacity">
       <br>
 
-
-
       <button type="submit">Submit</button>
     </form>
-
-
-
 
     <div id="gas-usage-info"></div>
     <div id="direction-steps" class="queue"></div>
@@ -37,5 +31,4 @@
   <div id="map" class="map-container"></div>
 </div>
 
-<script
-  src="https://maps.googleapis.com/maps/api/js?key=AIzaSyC7TfA2reVISM_h9MIhhaoUH6FXsopH8ZA&libraries=places"></script>
+<script [src]="environment.mapUrl"></script>

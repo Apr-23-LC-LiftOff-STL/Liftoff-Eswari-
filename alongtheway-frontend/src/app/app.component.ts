@@ -1,6 +1,8 @@
 import { HttpClient } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
 import { Loader } from '@googlemaps/js-api-loader';
+import { environment } from '../environments/environment';
+
 
 @Component({
   selector: 'app-root',
@@ -8,6 +10,7 @@ import { Loader } from '@googlemaps/js-api-loader';
   styleUrls: ['./app.component.css']
 })
 export class AppComponent implements OnInit {
+  environment = environment;
 
   constructor(private http: HttpClient) { }
 
@@ -117,8 +120,8 @@ export class AppComponent implements OnInit {
   }
 
   submitForm(): void {
-    this.calculateRoute();
     this.getWeather();
+    this.calculateRoute();
   }
 
 
