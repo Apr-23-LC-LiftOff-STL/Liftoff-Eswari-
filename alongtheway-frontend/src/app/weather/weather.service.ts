@@ -13,7 +13,7 @@ import { environment } from 'src/app/environments/environment';
     providedIn: 'root'
 })
 export class WeatherService {
-    apiKey: string = environment.weatherApiKey
+    apiKey: string = environment.weatherApiKey;
     apiUrl: string = 'https://api.openweathermap.org/data/2.5/weather';
 
     constructor(private http: HttpClient) { }

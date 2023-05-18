@@ -8,6 +8,7 @@ import { WeatherService } from './weather/weather.service';
 import { WeatherComponent } from './weather/weather.component';
 import { HttpClientModule } from '@angular/common/http';
 import { AboutusandfaqComponent } from './aboutusandfaq/aboutusandfaq.component';
+import { AppRoutingModule } from './app-routing.module';
 
 @NgModule({
   declarations: [
@@ -21,6 +22,7 @@ import { AboutusandfaqComponent } from './aboutusandfaq/aboutusandfaq.component'
     BrowserModule,
     FormsModule,
     HttpClientModule,
+    AppRoutingModule,
   ],
   providers: [WeatherService],
   bootstrap: [AppComponent],
