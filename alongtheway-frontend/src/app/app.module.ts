@@ -9,6 +9,7 @@ import { WeatherComponent } from './weather/weather.component';
 import { HttpClientModule } from '@angular/common/http';
 import { AboutusandfaqComponent } from './aboutusandfaq/aboutusandfaq.component';
 import { AppRoutingModule } from './app-routing.module';
+import { ProfilepageComponent } from './profilepage/profilepage.component';
 
 @NgModule({
   declarations: [
@@ -16,7 +17,8 @@ import { AppRoutingModule } from './app-routing.module';
     HomeComponent,
     HeaderComponent,
     WeatherComponent,
-    AboutusandfaqComponent
+    AboutusandfaqComponent,
+    ProfilepageComponent
   ],
   imports: [
     BrowserModule,
