@@ -14,37 +14,41 @@ export class AppComponent implements OnInit {
 
   constructor(private http: HttpClient) { }
 
-  getWeather(): void {
-    const startCity = this.startLocation.split(',')[0].trim();
-    const endCity = this.endLocation.split(',')[0].trim();
-    if (this.startLocation && this.endLocation) {
-      const apiKey = '8cab3c364814f611340d4aa2e6d26d6c';
-
-      // Extract the city from the Autocomplete object
-
-
-      console.log('Start City:', startCity);
-      console.log('End City:', endCity);
-
-      const startWeatherUrl = `https://api.openweathermap.org/data/2.5/weather?q=${startCity}&appid=${apiKey}&units=imperial`;
-      const endWeatherUrl = `https://api.openweathermap.org/data/2.5/weather?q=${endCity}&appid=${apiKey}&units=imperial`;
-
-      console.log('Start Weather URL:', startWeatherUrl);
-      console.log('End Weather URL:', endWeatherUrl);
-
-      // Make the API requests for start and end locations
-      this.http.get(startWeatherUrl).subscribe((startWeather: any) => {
-        console.log('Start Location Weather:', startWeather);
-      });
-
-      this.http.get(endWeatherUrl).subscribe((endWeather: any) => {
-        console.log('End Location Weather:', endWeather);
-      });
-    } else {
-      console.error('Start or end location is not set');
+  getWeather(point: string, lat?: number, lng?: number, time?: number): void {
+    if (!lat || !lng) {
+      return;
     }
-  }
 
+    const apiKey = '8cab3c364814f611340d4aa2e6d26d6c';
+    const weatherUrl = `https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lng}&appid=${apiKey}&units=imperial`;
+    const forecastUrl = `https://api.openweathermap.org/data/2.5/forecast?lat=${lat}&lon=${lng}&appid=${apiKey}&units=imperial`;
+
+
+    this.http.get(weatherUrl).subscribe((weather: any) => {
+      this.http.get(forecastUrl).subscribe((forecast: any) => {
+        if (weather && forecast) {
+          let weatherIcon = weather.weather[0].icon;
+          let weatherTemp = weather.main.temp;
+
+          if (time) {
+            for (let f of forecast.list) {
+              if (f.dt < time) continue;
+
+              weatherIcon = f.weather[0].icon;
+              weatherTemp = f.main.temp;
+              break;
+            }
+          }
+
+          let iconElement = document.getElementById(`${point}-weather-icon`) as HTMLElement;
+          iconElement.setAttribute("src", "https://openweathermap.org/img/wn/" + weatherIcon + "@2x.png");
+
+          let tempElement = document.getElementById(`${point}-weather-temp`) as HTMLElement;
+          tempElement.textContent = Math.round(weatherTemp) + "°F";
+        }
+      });
+    });
+  }
 
   title = 'alongtheway-frontend';
   startLocation: string = "";
@@ -95,6 +99,8 @@ export class AppComponent implements OnInit {
         this.map?.setZoom(14);
         this.startLocation = place.formatted_address ?? "";
         console.log("Start location:", this.startLocation);
+
+        this.getWeather("start", place.geometry.location.lat(), place.geometry.location.lng());
       }
     });
 
@@ -105,6 +111,8 @@ export class AppComponent implements OnInit {
         this.map?.setZoom(14);
         this.endLocation = place.formatted_address ?? "";
         console.log("End location:", this.endLocation);
+
+        this.getWeather("end", place.geometry.location.lat(), place.geometry.location.lng());
       }
     });
 
@@ -120,7 +128,6 @@ export class AppComponent implements OnInit {
   }
 
   submitForm(): void {
-    this.getWeather();
     this.calculateRoute();
   }
 
@@ -161,6 +168,18 @@ export class AppComponent implements OnInit {
         if (status === google.maps.DirectionsStatus.OK) {
           console.log("Route calculated successfully");
           this.directionsRenderer?.setDirections(result);
+
+          //Get destination time for weather forecast
+          let destinationTime;
+          let duration = result?.routes[0]?.legs[0]?.duration?.value;
+          let lat = result?.routes[0]?.legs[0]?.end_location.lat();
+          let lng = result?.routes[0]?.legs[0]?.end_location.lng();
+
+          if (duration) {
+            destinationTime = Date.now() / 1000 + duration;
+          }
+
+          this.getWeather("end", lat, lng, destinationTime);
 
           // Get the direction steps
           const steps = result?.routes[0]?.legs[0]?.steps;
