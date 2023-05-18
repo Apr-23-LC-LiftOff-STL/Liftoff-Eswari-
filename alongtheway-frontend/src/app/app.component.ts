@@ -1,7 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
 import { Loader } from '@googlemaps/js-api-loader';
-import { environment } from '../environments/environment';
+import { environment } from 'src/app/environments/environment';
 
 
 @Component({
@@ -19,7 +19,7 @@ export class AppComponent implements OnInit {
       return;
     }
 
-    const apiKey = '8cab3c364814f611340d4aa2e6d26d6c';
+    const apiKey = environment.weatherApiKey
     const weatherUrl = `https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lng}&appid=${apiKey}&units=imperial`;
     const forecastUrl = `https://api.openweathermap.org/data/2.5/forecast?lat=${lat}&lon=${lng}&appid=${apiKey}&units=imperial`;
 
@@ -61,7 +61,7 @@ export class AppComponent implements OnInit {
 
   ngOnInit(): void {
     const loader = new Loader({
-      apiKey: 'AIzaSyC7TfA2reVISM_h9MIhhaoUH6FXsopH8ZA',
+      apiKey: environment.mapApiKey,
       libraries: ['places']
     });
 

@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { WeatherData } from './weather-data';
 import { Observable } from 'rxjs';
-import { environment } from '../environments/environment';
+import { environment } from 'src/app/environments/environment';
 
 // Access the API key
 
