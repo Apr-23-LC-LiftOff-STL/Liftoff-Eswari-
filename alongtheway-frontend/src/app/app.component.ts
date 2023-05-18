@@ -11,16 +11,39 @@ export class AppComponent implements OnInit {
 
   constructor(private http: HttpClient) { }
 
-  getWeather(point : string, location: google.maps.LatLng): void {
+  getWeather(point : string, lat?: number, lng?: number, time?: number): void {
+    if (!lat || !lng) {
+      return;
+    }
+
     const apiKey = '8cab3c364814f611340d4aa2e6d26d6c';
-    const weatherUrl = `https://api.openweathermap.org/data/2.5/weather?lat=${location.lat()}&lon=${location.lng()}&appid=${apiKey}&units=imperial`;
+    const weatherUrl = `https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lng}&appid=${apiKey}&units=imperial`;
+    const forecastUrl = `https://api.openweathermap.org/data/2.5/forecast?lat=${lat}&lon=${lng}&appid=${apiKey}&units=imperial`;
+
 
     this.http.get(weatherUrl).subscribe((weather: any) => {
-      let iconElement = document.getElementById(`${point}-weather-icon`) as HTMLElement;
-      iconElement.setAttribute("src", "https://openweathermap.org/img/wn/" + weather.weather[0].icon + "@2x.png");
+      this.http.get(forecastUrl).subscribe((forecast: any) => {
+        if (weather && forecast) {
+          let weatherIcon = weather.weather[0].icon;
+          let weatherTemp = weather.main.temp;
 
-      let tempElement = document.getElementById(`${point}-weather-temp`) as HTMLElement;
-      tempElement.textContent = Math.round(weather.main.temp) + "°F";
+          if (time) {
+            for (let f of forecast.list) {
+              if (f.dt < time) continue;
+
+              weatherIcon = f.weather[0].icon;
+              weatherTemp = f.main.temp;
+              break;
+            }
+          }
+
+          let iconElement = document.getElementById(`${point}-weather-icon`) as HTMLElement;
+          iconElement.setAttribute("src", "https://openweathermap.org/img/wn/" + weatherIcon + "@2x.png");
+
+          let tempElement = document.getElementById(`${point}-weather-temp`) as HTMLElement;
+          tempElement.textContent = Math.round(weatherTemp) + "°F";
+        }
+      });
     });
   }
 
@@ -74,7 +97,7 @@ export class AppComponent implements OnInit {
         this.startLocation = place.formatted_address ?? "";
         console.log("Start location:", this.startLocation);
 
-        this.getWeather("start", place.geometry.location);
+        this.getWeather("start", place.geometry.location.lat(), place.geometry.location.lng());
       }
     });
 
@@ -86,7 +109,7 @@ export class AppComponent implements OnInit {
         this.endLocation = place.formatted_address ?? "";
         console.log("End location:", this.endLocation);
 
-        this.getWeather("end", place.geometry.location);
+        this.getWeather("end", place.geometry.location.lat(), place.geometry.location.lng());
       }
     });
 
@@ -142,6 +165,18 @@ export class AppComponent implements OnInit {
         if (status === google.maps.DirectionsStatus.OK) {
           console.log("Route calculated successfully");
           this.directionsRenderer?.setDirections(result);
+
+          //Get destination time for weather forecast
+          let destinationTime;
+          let duration = result?.routes[0]?.legs[0]?.duration?.value;
+          let lat = result?.routes[0]?.legs[0]?.end_location.lat();
+          let lng = result?.routes[0]?.legs[0]?.end_location.lng();
+
+          if (duration) {
+            destinationTime = Date.now() / 1000 + duration;
+          }
+
+          this.getWeather("end", lat, lng, destinationTime);
 
           // Get the direction steps
           const steps = result?.routes[0]?.legs[0]?.steps;
