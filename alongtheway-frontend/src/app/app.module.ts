@@ -7,7 +7,7 @@ import { FormsModule } from '@angular/forms';
 import { WeatherService } from './weather/weather.service';
 import { WeatherComponent } from './weather/weather.component';
 import { HttpClientModule } from '@angular/common/http';
-
+import { AboutusandfaqComponent } from './aboutusandfaq/aboutusandfaq.component';
 
 @NgModule({
   declarations: [
@@ -15,7 +15,7 @@ import { HttpClientModule } from '@angular/common/http';
     HomeComponent,
     HeaderComponent,
     WeatherComponent,
-
+    AboutusandfaqComponent
   ],
   imports: [
     BrowserModule,
