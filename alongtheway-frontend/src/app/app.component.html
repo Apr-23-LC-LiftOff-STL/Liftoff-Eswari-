@@ -4,23 +4,31 @@
 
 <div class="container">
   <div class="form-container">
-    <label for="start-input">Start location:</label>
-    <input id="start-input" type="text" [(ngModel)]="startLocation">
-    <br>
+    <form (ngSubmit)="submitForm()">
+      <!-- Your form elements here -->
+      <label for="start-input">Start location:</label>
+      <input id="start-input" type="text" [(ngModel)]="startLocation">
+      <br>
 
-    <label for="end-input">End location:</label>
-    <input id="end-input" type="text" [(ngModel)]="endLocation">
-    <br>
+      <label for="end-input">End location:</label>
+      <input id="end-input" type="text" [(ngModel)]="endLocation">
+      <br>
 
-    <label for="average-mpg-input">Average MPG:</label>
-    <input id="average-mpg-input" type="number" min="0" [(ngModel)]="averageMPG">
-    <br>
+      <label for="average-mpg-input">Average MPG:</label>
+      <input id="average-mpg-input" type="number" min="0" [(ngModel)]="averageMPG">
+      <br>
 
-    <label for="tank-capacity-input">Tank Capacity (Gallons):</label>
-    <input id="tank-capacity-input" type="number" min="0" [(ngModel)]="tankCapacity">
-    <br>
+      <label for="tank-capacity-input">Tank Capacity (Gallons):</label>
+      <input id="tank-capacity-input" type="number" min="0" [(ngModel)]="tankCapacity">
+      <br>
 
-    <button (click)="submitForm()">Submit</button>
+
+
+      <button type="submit">Submit</button>
+    </form>
+
+
+
 
     <div id="gas-usage-info"></div>
     <div id="direction-steps" class="queue"></div>
