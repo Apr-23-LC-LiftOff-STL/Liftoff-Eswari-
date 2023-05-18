@@ -13,16 +13,10 @@ import { AppRoutingModule } from './app-routing.module';
 @NgModule({
   declarations: [
     AppComponent,
-    HomeComponent,
-    HeaderComponent,
-    WeatherComponent,
-    AboutusandfaqComponent
+    HomeComponent
   ],
   imports: [
-    BrowserModule,
-    FormsModule,
-    HttpClientModule,
-    AppRoutingModule,
+    BrowserModule
   ],
   providers: [WeatherService],
   bootstrap: [AppComponent],
