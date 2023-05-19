@@ -1,7 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import { Loader } from '@googlemaps/js-api-loader';
 import { HttpClient } from '@angular/common/http';
-import { environment } from '../environments/environment';
+import { ViewChild } from '@angular/core';
+import { ElementRef } from '@angular/core';
+import { environment } from 'src/environments/environment';
 
 @Component({
   selector: 'app-home',
@@ -19,7 +21,7 @@ export class HomeComponent implements OnInit {
       return;
     }
 
-    const apiKey = environment.weatherApiKey
+    const apiKey = environment.weatherApiKey;
     const weatherUrl = `https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lng}&appid=${apiKey}&units=imperial`;
     const forecastUrl = `https://api.openweathermap.org/data/2.5/forecast?lat=${lat}&lon=${lng}&appid=${apiKey}&units=imperial`;
 
@@ -58,6 +60,9 @@ export class HomeComponent implements OnInit {
   map: google.maps.Map | null = null;
   directionsService: google.maps.DirectionsService | null = null;
   directionsRenderer: google.maps.DirectionsRenderer | null = null;
+
+  @ViewChild('mpgInput') mpgInputRef!: ElementRef<HTMLInputElement>;
+  @ViewChild('tankInput') tankInputRef!: ElementRef<HTMLInputElement>;
 
   ngOnInit(): void {
     const loader = new Loader({
@@ -116,14 +121,20 @@ export class HomeComponent implements OnInit {
       }
     });
 
+    setTimeout(() => {
+      const mpgInput = this.mpgInputRef.nativeElement;
+      const tankInput = this.tankInputRef.nativeElement;
+
     mpgInput.addEventListener("change", () => {
-      this.averageMPG = Number(mpgInput.value);
-      console.log("Average MPG:", this.averageMPG);
-    });
+        this.averageMPG = Number(mpgInput.value);
+        console.log("Average MPG:", this.averageMPG);
+      });
+    
 
     tankInput.addEventListener("change", () => {
       this.tankCapacity = Number(tankInput.value);
       console.log("Tank Capacity:", this.tankCapacity);
+      });
     });
   }
 

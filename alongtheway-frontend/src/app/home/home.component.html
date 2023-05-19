@@ -15,11 +15,11 @@
     <br>
 
     <label for="average-mpg-input">Average MPG:</label>
-    <input id="average-mpg-input" type="number" min="0" [(ngModel)]="averageMPG">
+    <input #mpgInput id="average-mpg-input" type="number" min="0" [(ngModel)]="averageMPG">
     <br>
 
     <label for="tank-capacity-input">Tank Capacity (Gallons):</label>
-    <input id="tank-capacity-input" type="number" min="0" [(ngModel)]="tankCapacity">
+    <input #tankInput id="tank-capacity-input" type="number" min="0" [(ngModel)]="tankCapacity">
     <br>
 
     <button (click)="submitForm()">Submit</button>
