@@ -1,31 +1,37 @@
 <header> 
   <h1>About Us</h1> 
 </header>
-    <ul>
-    Our website project is a road trip planner that allows for convenient 
-  planning compared to having to use Google Maps manually. It will allow you 
+<div class="container">
+    <p>
+  Our website project is a road trip planner that allows for convenient 
+  planning compared to having to use Google Maps manually.<br> It will allow you 
   to select your hobbies and use them to find points of interest both along 
-  your route as well as at your destination. It will also help you calculate 
+  your route as well as at your destination. <br>It will also help you calculate 
   fuel costs and strategically choose the best places to get gas to save 
   money.
-    </ul> 
+    </p> 
   
     <p>We are here for you. </p>
     <p>If you have any questions please contact us at groupEswari@email.com. </p>
-  
-  <h1>FAQ</h1> 
+  </div>
+  <h1 class="header">FAQ</h1> 
   <!-- css displays each dropdown menu under the previous one -->
-    <select name="question1" ng-model="question1Select">
-      <option value="">Do I need an account to save trips?</option>
-      <option value="yes">Yes.</option>
-    </select>
     
-    <select name="question2" ng-model="question2Select">
-      <option value="">Where do I create an account?</option>
-      <option value="there">There.</option>
-    </select>
-    
-    <select name="question3" ng-model="question3Select">
-      <option value="">Where can I find my saved trip?</option>
-      <option value="profile">Your saved trip will be in your profile page.</option>
-    </select>
+<div class="container">
+  <details>
+    <summary>Do I need an account to save trips?</summary>
+    <p>Yes, you do need an account to save trips. This helps ensure your trips are securely saved and can be accessed from multiple devices.</p>
+  </details>
+  
+  <details>
+    <summary>Where do I create an account?</summary>
+    <p>You can create an account by clicking on the 'Sign Up' button on the top right of our homepage.</p>
+  </details>
+  
+  <details>
+    <summary>Where can I find my saved trip?</summary>
+    <p>Your saved trips can be found in your profile page. Click on your username on the top right, and select 'My Trips' from the dropdown menu.</p>
+  </details>
+  
+</div>
+

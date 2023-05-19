@@ -2,3 +2,81 @@ select {
     display: block;
     margin-top: 10px;
   }
+
+/* General styling */
+/* body {
+  font-family: 'Arial', sans-serif;
+  color: #333;
+  background-color: #f2f2f2;
+  margin: 0;
+  padding: 0;
+} */
+
+details {
+  opacity: 80%;
+  display: flex;
+  justify-content: center;
+  background-color: #ddd;
+  padding: 10px;
+  margin-bottom: 10px;
+  border-radius: 5px;
+  width: 50%;
+  cursor: pointer;
+  margin-left: auto;
+  margin-right: auto;
+  color: #333;
+}
+
+summary {
+  font-weight: bold;
+  margin-bottom: 10px;
+}
+
+details[open] {
+  background-color: #f2f2f2;
+}
+/* General styling */
+body {
+  font-family: 'Arial', sans-serif;
+  color: #333;
+  background-color: #f2f2f2;
+  margin: 0;
+  padding: 0;
+}
+
+.container {
+  margin: auto;
+  padding: 20px;
+  background-color: #07487D;
+  box-shadow: 0 0 10px 0 rgba(0,0,0,0.1);
+  text-align: center;
+  color: rgb(155, 231, 206);
+}
+
+header {
+  background-image: linear-gradient(rgb(15, 14, 14),#4e3b2a, rgb(15, 14, 14));
+  color: white;
+  text-align: center;
+  padding: 20px 0;
+}
+
+.header {
+  background-image: linear-gradient(rgb(15, 14, 14),#4e3b2a, rgb(15, 14, 14));
+  color: white;
+  text-align: center;
+  padding: 20px 0;
+}
+
+h1 {
+  font-size: 2em;
+  margin: 0;
+}
+
+.container p {
+  line-height: 1.6; /* This gives some breathing room between lines of text */
+  margin-bottom: 20px; /* This gives some space between paragraphs */
+}
+
+.container p:last-child {
+  margin-bottom: 0; /* Remove extra space at the end of the container */
+}
