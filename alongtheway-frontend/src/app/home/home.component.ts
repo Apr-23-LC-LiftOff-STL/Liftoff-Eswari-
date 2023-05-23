@@ -12,6 +12,8 @@ import { environment } from 'src/environments/environment.prod';
 })
 export class HomeComponent implements OnInit {
 
+  placesData: any = {};  // Initialized to an empty object
+
   environment = environment;
 
   constructor(private http: HttpClient) { }
@@ -60,6 +62,7 @@ export class HomeComponent implements OnInit {
   map: google.maps.Map | null = null;
   directionsService: google.maps.DirectionsService | null = null;
   directionsRenderer: google.maps.DirectionsRenderer | null = null;
+  interest: string = "";
 
   @ViewChild('mpgInput') mpgInputRef!: ElementRef<HTMLInputElement>;
   @ViewChild('tankInput') tankInputRef!: ElementRef<HTMLInputElement>;
@@ -139,18 +142,36 @@ export class HomeComponent implements OnInit {
   }
 
   submitForm(): void {
+    if (!this.interest) {
+      console.error("Interest not set");
+      return;
+    }
+    
     this.calculateRoute();
   }
+
+  
+
+  handlePlacesData(placesData: any) {
+    if (placesData.status === 'OK') {
+      this.placesData = placesData;
+   } else {
+    console.error("Places API request failed:", placesData.status);
+  }
+}
+
 
 
   calculateRoute(): void {
     this.averageMPG = +this.averageMPG;
     this.tankCapacity = +this.tankCapacity;
+    const apiKey = environment.mapApiKey;
 
 
     console.log("Calculating route...");
     console.log("Start location:", this.startLocation);
     console.log("End location:", this.endLocation);
+    console.log("Interest:", this.interest);
     console.log("Average MPG:", this.averageMPG);
     console.log("Tank Capacity:", this.tankCapacity);
 
@@ -161,6 +182,11 @@ export class HomeComponent implements OnInit {
 
     if (!this.startLocation || !this.endLocation) {
       console.error("Start or end location not set");
+      return;
+    }
+
+    if (!this.interest) {
+      console.error("Interest not set");
       return;
     }
 
@@ -179,6 +205,39 @@ export class HomeComponent implements OnInit {
         if (status === google.maps.DirectionsStatus.OK) {
           console.log("Route calculated successfully");
           this.directionsRenderer?.setDirections(result);
+
+          // calculate the midpoint of the route
+          const midLat = (result!.routes[0].bounds.getNorthEast().lat() + result!.routes[0].bounds.getSouthWest().lat()) / 2;
+          const midLng = (result!.routes[0].bounds.getNorthEast().lng() + result!.routes[0].bounds.getSouthWest().lng()) / 2;
+          
+          console.log('Midpoint:', midLat, midLng);
+          
+          new google.maps.Marker({
+            position: {lat: midLat, lng: midLng},
+            map: this.map,
+            title: 'Midpoint'
+          });
+          
+        
+
+        // make the Google Places API request using the PlacesService
+        const placesService = new google.maps.places.PlacesService(this.map as google.maps.Map);
+        placesService.nearbySearch({
+              location: {lat: midLat, lng: midLng},
+              radius: 10000,
+              type: this.interest
+        }, (results, status) => {
+      if (status === google.maps.places.PlacesServiceStatus.OK) {
+        this.handlePlacesData({results: results, status: status});
+      } else {
+        console.error("Places API request failed:", status);
+      }
+    });
+        // handle the placesData
+        // this.http.get(placesUrl).subscribe((placesData: any) => {
+        //   this.handlePlacesData(placesData);
+        // });
+        
 
           //Get destination time for weather forecast
           let destinationTime;
@@ -216,8 +275,7 @@ export class HomeComponent implements OnInit {
         } else {
           console.error("Directions request failed:", status);
         }
-      }
-    );
+      });
   }
 
   showSteps(steps: any[]): void {
@@ -232,4 +290,6 @@ export class HomeComponent implements OnInit {
       });
     }
   }
+
+  
 }

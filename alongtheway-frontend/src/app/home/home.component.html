@@ -22,14 +22,33 @@
     <input #tankInput id="tank-capacity-input" type="number" min="0" [(ngModel)]="tankCapacity">
     <br>
 
+    <label for="interest-input">Interest:</label>
+    <select id="interest-input" [(ngModel)]="interest">
+      <option value="restaurant">Restaurant</option>
+      <option value="museum">Museum</option>
+      <option value="park">Park</option>
+  <!-- more options... -->
+</select>
+<br>
+
+
     <button (click)="submitForm()">Submit</button>
 
 
-    <div id="gas-usage-info"></div>
-    <div id="direction-steps" class="queue"></div>
+    <div id="places-container" class="places-container">
+      <h3>Places of Interest</h3>
+      <ul id="places-list">
+        <li *ngFor="let place of placesData.results">{{ place.name }}, {{ place.vicinity }}</li>
+      </ul>
+    </div>
+    
+    
+    <!-- Outdated, used alternative -->
+    <!-- <div id="direction-steps" class="queue"></div> -->
   </div>
 
   <div id="map" class="map-container"></div>
 </div>
+
 
 <script [src]="environment.mapUrl"></script>
