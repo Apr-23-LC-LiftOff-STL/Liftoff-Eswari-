@@ -3,7 +3,7 @@ import { Loader } from '@googlemaps/js-api-loader';
 import { HttpClient } from '@angular/common/http';
 import { ViewChild } from '@angular/core';
 import { ElementRef } from '@angular/core';
-import { environment } from 'src/environments/environment';
+import { environment } from '../environments/environments';
 
 @Component({
   selector: 'app-home',
