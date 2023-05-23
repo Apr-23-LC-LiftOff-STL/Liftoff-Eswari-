@@ -19,6 +19,9 @@ export class ProfilepageComponent implements OnInit {
   carList: Car[] = [];
   editedCarIndex: number | null = null;
   editedCar: any = {};
+
+  sortByColumn: keyof Car | undefined; // Variable to store the column name to sort
+  sortDirection: number = 1; // Variable to store the sorting direction (1 for ascending, -1 for descending)
   
   constructor() { }
 
@@ -65,4 +68,27 @@ export class ProfilepageComponent implements OnInit {
   clearInputs(carForm: NgForm) {
     carForm.resetForm();
   }
+
+  // Method to handle sorting
+  sortTable(columnName: keyof Car) {
+    if (this.sortByColumn === columnName) {
+      // If the same column is clicked again, reverse the sort direction
+      this.sortDirection *= -1;
+    } else {
+      // If a different column is clicked, set the new column and default to ascending order
+      this.sortByColumn = columnName;
+      this.sortDirection = 1;
+    }
+
+ // Perform the sorting
+ this.carList.sort((a, b) => {
+  if (a[columnName] < b[columnName]) {
+    return -1 * this.sortDirection;
+  } else if (a[columnName] > b[columnName]) {
+    return 1 * this.sortDirection;
+  } else {
+    return 0;
+  }
+});
+}
 }
