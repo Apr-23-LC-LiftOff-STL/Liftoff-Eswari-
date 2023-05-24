@@ -8,10 +8,23 @@
     <img id="start-weather-icon" class="weather-icon"><label id="start-weather-temp" class="weather-temp"></label>
     <br>
 
+    <button href="#" (click)="addStop()">Add stop to your trip</button>
+    <div id="stopInputs">
+      <div *ngFor="let stop of stops; index as i">
+        <input id="stop-input-{{i}}" type="text" [(ngModel)]="stop.location">
+        <button (click)="removeStop(i)">Remove</button>
+      </div>
+    </div>
+
+
     <label for="end-input">End location:</label>
     <input id="end-input" type="text" [(ngModel)]="endLocation">
     <img id="end-weather-icon" class="weather-icon"><label id="end-weather-temp" class="weather-temp"></label>
     <br>
+
+
+
+
 
     <label for="average-mpg-input">Average MPG:</label>
     <input #mpgInput id="average-mpg-input" type="number" min="0" [(ngModel)]="averageMPG">
@@ -21,14 +34,33 @@
     <input #tankInput id="tank-capacity-input" type="number" min="0" [(ngModel)]="tankCapacity">
     <br>
 
+    <label for="interest-input">Interest:</label>
+    <select id="interest-input" [(ngModel)]="interest">
+      <option value="restaurant">Restaurant</option>
+      <option value="museum">Museum</option>
+      <option value="park">Park</option>
+      <!-- more options... -->
+    </select>
+    <br>
+
+
     <button (click)="submitForm()">Submit</button>
 
 
-    <div id="gas-usage-info"></div>
-    <div id="direction-steps" class="queue"></div>
+    <div id="places-container" class="places-container">
+      <h3>Places of Interest</h3>
+      <ul id="places-list">
+        <li *ngFor="let place of placesData.results">{{ place.name }}, {{ place.vicinity }}</li>
+      </ul>
+    </div>
+
+
+    <!-- Outdated, used alternative -->
+    <!-- <div id="direction-steps" class="queue"></div> -->
   </div>
 
   <div id="map" class="map-container"></div>
 </div>
+
 
 <script [src]="environment.mapUrl"></script>

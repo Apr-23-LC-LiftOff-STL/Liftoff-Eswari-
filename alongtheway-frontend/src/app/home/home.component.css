@@ -32,6 +32,27 @@ font-size: 18px;
   /* Adjust this as needed */
 }
 
+.places-container {
+  /* width: 300px; */
+  flex: 1;
+  height: 60vh;
+  overflow-y: auto;
+  /* position: fixed; */
+  /* right: 0; */
+  /* top: 0; */
+  padding: 10px;
+  background-color: #f9f9f9;
+  box-shadow: 0 0 10px rgba(0,0,0,0.3);
+  /* border: 1px solid black; */
+}
+
+.places-container h3 {
+  margin-top: 0;
+}
+
+.places-container ul {
+  padding-left: 20px;
+}
 
 
 /* .full {
