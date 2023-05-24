@@ -1,4 +1,3 @@
-
 <app-weather></app-weather>
 
 
@@ -10,12 +9,12 @@
     <br>
 
     <button href="#" (click)="addStop()">Add stop to your trip</button>
-      <div id="stopInputs">
-        <div *ngFor="let stop of stops; index as i">
-        <input #stopInput type="text" [(ngModel)]="stop.location">
-    <button (click)="removeStop(i)">Remove</button>
-  </div>
-</div>
+    <div id="stopInputs">
+      <div *ngFor="let stop of stops; index as i">
+        <input id="stop-input-{{i}}" type="text" [(ngModel)]="stop.location">
+        <button (click)="removeStop(i)">Remove</button>
+      </div>
+    </div>
 
 
     <label for="end-input">End location:</label>
@@ -23,7 +22,7 @@
     <img id="end-weather-icon" class="weather-icon"><label id="end-weather-temp" class="weather-temp"></label>
     <br>
 
-    
+
 
 
 
@@ -40,9 +39,9 @@
       <option value="restaurant">Restaurant</option>
       <option value="museum">Museum</option>
       <option value="park">Park</option>
-  <!-- more options... -->
-</select>
-<br>
+      <!-- more options... -->
+    </select>
+    <br>
 
 
     <button (click)="submitForm()">Submit</button>
@@ -54,8 +53,8 @@
         <li *ngFor="let place of placesData.results">{{ place.name }}, {{ place.vicinity }}</li>
       </ul>
     </div>
-    
-    
+
+
     <!-- Outdated, used alternative -->
     <!-- <div id="direction-steps" class="queue"></div> -->
   </div>
