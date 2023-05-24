@@ -3,7 +3,7 @@ import { Loader } from '@googlemaps/js-api-loader';
 import { HttpClient } from '@angular/common/http';
 import { ViewChild } from '@angular/core';
 import { ElementRef } from '@angular/core';
-import { environment } from 'src/environments/environment.prod';
+import { environment } from 'src/environments/environment';
 
 @Component({
   selector: 'app-home',
@@ -125,15 +125,15 @@ export class HomeComponent implements OnInit {
       const mpgInput = this.mpgInputRef.nativeElement;
       const tankInput = this.tankInputRef.nativeElement;
 
-    mpgInput.addEventListener("change", () => {
+      mpgInput.addEventListener("change", () => {
         this.averageMPG = Number(mpgInput.value);
         console.log("Average MPG:", this.averageMPG);
       });
-    
 
-    tankInput.addEventListener("change", () => {
-      this.tankCapacity = Number(tankInput.value);
-      console.log("Tank Capacity:", this.tankCapacity);
+
+      tankInput.addEventListener("change", () => {
+        this.tankCapacity = Number(tankInput.value);
+        console.log("Tank Capacity:", this.tankCapacity);
       });
     });
   }
