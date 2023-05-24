@@ -13,6 +13,7 @@ import { environment } from 'src/environments/environment.prod';
 export class HomeComponent implements OnInit {
 
   placesData: any = {};  // Initialized to an empty object
+  stops: {location: string}[] = [];
 
   environment = environment;
 
@@ -88,17 +89,40 @@ export class HomeComponent implements OnInit {
       } else {
         console.error("Could not find map element");
       }
+      for (let i = 0; i < this.stops.length; i++) {
+        this.initStopAutocomplete(i);
+      }
     });
   }
+
+  initStopAutocomplete(index: number): void {
+    const stopInput = document.getElementById(`stop-input-${index}`) as HTMLInputElement;
+    const stopAutocomplete = new google.maps.places.Autocomplete(stopInput);
+  
+    stopAutocomplete.addListener("place_changed", () => {
+      const place = stopAutocomplete.getPlace();
+      if (place && place.geometry && place.geometry.location) {
+        this.map?.setCenter(place.geometry.location);
+        this.map?.setZoom(14);
+        this.stops[index].location = place.formatted_address ?? "";
+        console.log(`Stop location ${index}:`, this.stops[index].location);
+  
+        this.getWeather(`stop${index}`, place.geometry.location.lat(), place.geometry.location.lng());
+      }
+    });
+  }
+  
 
   initAutocomplete(): void {
     const startInput = document.getElementById("start-input") as HTMLInputElement;
     const endInput = document.getElementById("end-input") as HTMLInputElement;
+    // const stopInput = document.getElementById("stop-input-{{i}}") as HTMLInputElement;
     const mpgInput = document.getElementById("mpg-input") as HTMLInputElement;
     const tankInput = document.getElementById("tank-input") as HTMLInputElement;
 
     const startAutocomplete = new google.maps.places.Autocomplete(startInput);
     const endAutocomplete = new google.maps.places.Autocomplete(endInput);
+    // const stopAutocomplete = new google.maps.places.Autocomplete(stopInput);
 
     startAutocomplete.addListener("place_changed", () => {
       const place = startAutocomplete.getPlace();
@@ -199,6 +223,7 @@ export class HomeComponent implements OnInit {
       {
         origin: this.startLocation,
         destination: this.endLocation,
+        waypoints: this.stops.map(stop => ({ location: stop.location, stopover: true })),
         travelMode: google.maps.TravelMode.DRIVING
       },
       (result, status) => {
@@ -207,32 +232,34 @@ export class HomeComponent implements OnInit {
           this.directionsRenderer?.setDirections(result);
 
           // calculate the midpoint of the route
-          const midLat = (result!.routes[0].bounds.getNorthEast().lat() + result!.routes[0].bounds.getSouthWest().lat()) / 2;
-          const midLng = (result!.routes[0].bounds.getNorthEast().lng() + result!.routes[0].bounds.getSouthWest().lng()) / 2;
+          // const midLat = (result!.routes[0].bounds.getNorthEast().lat() + result!.routes[0].bounds.getSouthWest().lat()) / 2;
+          // const midLng = (result!.routes[0].bounds.getNorthEast().lng() + result!.routes[0].bounds.getSouthWest().lng()) / 2;
           
-          console.log('Midpoint:', midLat, midLng);
+          // console.log('Midpoint:', midLat, midLng);
           
-          new google.maps.Marker({
-            position: {lat: midLat, lng: midLng},
-            map: this.map,
-            title: 'Midpoint'
-          });
+          // new google.maps.Marker({
+          //   position: {lat: midLat, lng: midLng},
+          //   map: this.map,
+          //   title: 'Midpoint'
+          // });
           
         
 
         // make the Google Places API request using the PlacesService
-        const placesService = new google.maps.places.PlacesService(this.map as google.maps.Map);
-        placesService.nearbySearch({
-              location: {lat: midLat, lng: midLng},
-              radius: 10000,
-              type: this.interest
-        }, (results, status) => {
-      if (status === google.maps.places.PlacesServiceStatus.OK) {
-        this.handlePlacesData({results: results, status: status});
-      } else {
-        console.error("Places API request failed:", status);
-      }
-    });
+        
+    //     const placesService = new google.maps.places.PlacesService(this.map as google.maps.Map);
+    //     placesService.nearbySearch({
+    //           location: {lat: midLat, lng: midLng},
+    //           radius: 10000,
+    //           type: this.interest
+    //     }, (results, status) => {
+    //   if (status === google.maps.places.PlacesServiceStatus.OK) {
+    //     this.handlePlacesData({results: results, status: status});
+    //   } else {
+    //     console.error("Places API request failed:", status);
+    //   }
+    // });
+
         // handle the placesData
         // this.http.get(placesUrl).subscribe((placesData: any) => {
         //   this.handlePlacesData(placesData);
@@ -276,6 +303,18 @@ export class HomeComponent implements OnInit {
           console.error("Directions request failed:", status);
         }
       });
+  }
+
+  addStop() {
+    const index = this.stops.length;
+    this.stops.push({location: ''});
+    setTimeout(() => this.initStopAutocomplete(index));
+  }
+  
+
+  removeStop(index: number) {
+    this.stops.splice(index, 1);
+    // After this line, Angular will automatically remove the corresponding inputs
   }
 
   showSteps(steps: any[]): void {
