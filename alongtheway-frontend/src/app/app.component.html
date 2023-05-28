@@ -21,7 +21,7 @@
       <div class="row">
         <label class="alignleft" for="searchfor">SEARCH FOR:</label>
         <select name="searchfor" id="searchfor" class="alignright">
-          <option value="default"></option>
+          <option disabled selected value="">Restauraunts</option>
           <option value="amusementparks">Amusement Parks</option>
           <option value="aquariums">Aquariums</option>
           <option value="casinos">Casinos</option>
@@ -38,6 +38,7 @@
       <div class="row">
         <label class="alignleft" for="distance">DISTANCE FROM ROUTE:</label>
         <select name="distance" id="distance" class="alignright">
+          <option disabled selected value="">10 Miles</option> // temporary
           <option value="5">5 Miles</option>
           <option value="10">10 Miles</option>
           <option value="20">20 Miles</option>
@@ -50,7 +51,6 @@
         </div>
       <div class="searchresults">
         <h4 style="text-align:center;margin-bottom:0">SEARCH RESULTS:</h4>
-        <h3>Places Near Waypoints:</h3>
         <ul>
           <li *ngFor="let place of places">{{ place.name }}</li>
         </ul>
