@@ -1,4 +1,5 @@
 import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
 import * as polyline from 'google-polyline';
 declare const google: any;
 let waypoints: number[][] = [];
@@ -16,6 +17,7 @@ export class AppComponent implements OnInit {
   directionsRenderer: any;
   PolygonBound: any;
   service!: google.maps.places.PlacesService;
+  places: any[] = [];
 
   ngOnInit(): void {
     window.addEventListener('load', () => {
@@ -85,6 +87,8 @@ export class AppComponent implements OnInit {
 
           this.service = new google.maps.places.PlacesService(this.map);
 
+          this.searchPlacesNearWaypoints(); // Call the function to search for places near waypoints
+
         } else {
           window.alert('Directions request failed due to ' + status);
         }
@@ -129,5 +133,43 @@ export class AppComponent implements OnInit {
     const lat_lower = latitude + (Lat_down * 180) / pi;
 
     return [lat_upper, lat_lower];
+  }
+
+  searchPlacesNearWaypoints(): void {
+    const radiusMiles = 10; // Set the radius for searching places in miles
+
+    waypoints.forEach((waypoint: number[]) => {
+      const lat = waypoint[0];
+      const lng = waypoint[1];
+
+      const location = new google.maps.LatLng(lat, lng);
+
+      const request = {
+        location: location,
+        radius: radiusMiles * 1609.34, // Convert miles to meters
+        type: 'restaurant' // Set the type of place you want to search for
+      };
+
+      this.service.nearbySearch(request, (results: any, status: any) => {
+        if (status === google.maps.places.PlacesServiceStatus.OK) {
+          // Process the search results here
+          this.updatePlacesList(results); // Update the places list with the search results
+
+          // Add markers for each place
+          results.forEach((place: any) => {
+            const placeLocation = place.geometry.location;
+            const marker = new google.maps.Marker({
+              position: placeLocation,
+              map: this.map,
+              title: place.name
+            });
+          });
+        }
+      });
+    });
+  }
+
+  updatePlacesList(results: any[]): void {
+    this.places = results;
   }
 }
