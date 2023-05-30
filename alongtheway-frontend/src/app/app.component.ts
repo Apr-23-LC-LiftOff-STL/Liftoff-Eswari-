@@ -19,7 +19,9 @@ export class AppComponent implements OnInit {
   service!: google.maps.places.PlacesService;
   places: any[] = [];
   openInfoWindow: google.maps.InfoWindow | null = null; // Declare the openInfoWindow property
-  markers: google.maps.Marker[] = []; // Declare the markers array
+  markers: google.maps.Marker[] = []; // Array to store the markers
+
+  constructor(private http: HttpClient) {}
 
   ngOnInit(): void {
     window.addEventListener('load', () => {
@@ -68,11 +70,7 @@ export class AppComponent implements OnInit {
 
           this.service = new google.maps.places.PlacesService(this.map);
 
-          // Clear all markers from the map
-          this.clearMarkers();
-
           this.searchPlacesAlongRoute(); // Call the function to search for places near waypoints
-
         } else {
           window.alert('Directions request failed due to ' + status);
         }
@@ -87,6 +85,14 @@ export class AppComponent implements OnInit {
     const route = this.directionsRenderer.getDirections().routes[0];
     const overviewPath = route.overview_path;
 
+    // Clear all markers from the map
+    this.clearMarkers();
+
+    // Clear the places list
+    this.places = [];
+
+    const promises: Promise<any>[] = [];
+
     overviewPath.forEach((point: google.maps.LatLng) => {
       const location = point;
 
@@ -96,46 +102,63 @@ export class AppComponent implements OnInit {
         type: 'restaurant' // Set the type of place you want to search for
       };
 
-      this.service.nearbySearch(request, (results: any[], status: any) => {
-        if (status === google.maps.places.PlacesServiceStatus.OK) {
-          // Filter results based on minimum rating
-          const filteredResults = results.filter(place => place.rating >= minimumRating);
+      const promise = new Promise((resolve, reject) => {
+        this.service.nearbySearch(request, (results: any[], status: any) => {
+          if (status === google.maps.places.PlacesServiceStatus.OK) {
+            // Filter results based on minimum rating
+            const filteredResults = results.filter(place => place.rating >= minimumRating);
 
-          // Process the search results here
-          this.updatePlacesList(filteredResults); // Update the places list with the filtered results
+            // Process the search results here
+            this.updatePlacesList(filteredResults); // Update the places list with the filtered results
 
-          // Add markers for each place
-          filteredResults.forEach((place: any) => {
-            const placeLocation = place.geometry.location;
-            const marker = new google.maps.Marker({
-              position: placeLocation,
-              map: this.map,
-              title: place.name
+            // Add markers for each place
+            filteredResults.forEach((place: any) => {
+              const placeLocation = place.geometry.location;
+              const marker = new google.maps.Marker({
+                position: placeLocation,
+                map: this.map,
+                title: place.name
+              });
+
+              // Create an info window for the marker
+              const infoWindow = new google.maps.InfoWindow({
+                content: `<strong>${place.name}</strong><br>${place.vicinity}`
+              });
+
+              // Add a click event listener to the marker
+              marker.addListener('click', () => {
+                // Close the previously open info window
+                if (this.openInfoWindow) {
+                  this.openInfoWindow.close();
+                }
+
+                // Open the new info window
+                infoWindow.open(this.map, marker);
+                this.openInfoWindow = infoWindow; // Update the currently open info window
+              });
+
+              // Store the marker in the markers array
+              this.markers.push(marker);
             });
 
-            // Create an info window for the marker
-            const infoWindow = new google.maps.InfoWindow({
-              content: `<strong>${place.name}</strong><br>${place.vicinity}`
-            });
-
-            // Add a click event listener to the marker
-            marker.addListener('click', () => {
-              // Close the previously open info window
-              if (this.openInfoWindow) {
-                this.openInfoWindow.close();
-              }
-
-              // Open the new info window
-              infoWindow.open(this.map, marker);
-              this.openInfoWindow = infoWindow; // Update the currently open info window
-            });
-
-            // Add the marker to the markers array
-            this.markers.push(marker);
-          });
-        }
+            resolve(null); // Resolve with null argument
+          } else {
+            reject();
+          }
+        });
       });
+
+      promises.push(promise);
     });
+
+    // Wait for all promises to resolve
+    Promise.all(promises)
+      .then(() => {
+        console.log('Places search completed.');
+      })
+      .catch(() => {
+        console.error('Error occurred while searching for places.');
+      });
   }
 
   updatePlacesList(results: any[]): void {
@@ -143,10 +166,10 @@ export class AppComponent implements OnInit {
   }
 
   clearMarkers(): void {
-    // Loop through all the markers and set their map property to null
-    for (let i = 0; i < this.markers.length; i++) {
-      this.markers[i].setMap(null);
-    }
+    // Remove markers from the map
+    this.markers.forEach((marker: google.maps.Marker) => {
+      marker.setMap(null);
+    });
 
     // Clear the markers array
     this.markers = [];
