@@ -82,9 +82,6 @@ export class AppComponent implements OnInit {
     const radiusMiles = 2; // Set the radius for searching places in miles
     const minimumRating = 4; // Minimum rating to include in the results
 
-    const route = this.directionsRenderer.getDirections().routes[0];
-    const overviewPath = route.overview_path;
-
     // Clear all markers from the map
     this.clearMarkers();
 
@@ -93,8 +90,8 @@ export class AppComponent implements OnInit {
 
     const promises: Promise<any>[] = [];
 
-    overviewPath.forEach((point: google.maps.LatLng) => {
-      const location = point;
+    waypoints.forEach((waypoint: number[]) => {
+      const location = { lat: waypoint[0], lng: waypoint[1] };
 
       const request = {
         location: location,
