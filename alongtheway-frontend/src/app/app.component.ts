@@ -79,7 +79,7 @@ export class AppComponent implements OnInit {
   }
 
   searchPlacesAlongRoute(): void {
-    const radiusMiles = 10; // Set the radius for searching places in miles
+    const radiusMiles = 2; // Set the radius for searching places in miles
     const minimumRating = 4; // Minimum rating to include in the results
 
     const route = this.directionsRenderer.getDirections().routes[0];
