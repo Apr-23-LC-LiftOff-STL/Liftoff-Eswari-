@@ -5,33 +5,11 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="45948366-ff35-4736-aa10-691547868c8f" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/alongtheway-angular/.browserslistrc" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/alongtheway-angular/.editorconfig" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/alongtheway-angular/.gitignore" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/alongtheway-angular/README.md" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/alongtheway-angular/angular.json" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/alongtheway-angular/karma.conf.js" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/alongtheway-angular/package-lock.json" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/alongtheway-angular/package.json" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/alongtheway-angular/src/app/app.component.css" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/alongtheway-angular/src/app/app.component.html" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/alongtheway-angular/src/app/app.component.spec.ts" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/alongtheway-angular/src/app/app.component.ts" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/alongtheway-angular/src/app/app.module.ts" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/alongtheway-angular/src/assets/.gitkeep" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/alongtheway-angular/src/environments/environment.prod.ts" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/alongtheway-angular/src/environments/environment.ts" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/alongtheway-angular/src/favicon.ico" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/alongtheway-angular/src/index.html" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/alongtheway-angular/src/main.ts" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/alongtheway-angular/src/polyfills.ts" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/alongtheway-angular/src/styles.css" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/alongtheway-angular/src/test.ts" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/alongtheway-angular/tsconfig.app.json" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/alongtheway-angular/tsconfig.json" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/alongtheway-angular/tsconfig.spec.json" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/alongtheway-backend/alongtheway-backend/.gradle/buildOutputCleanup/buildOutputCleanup.lock" beforeDir="false" afterPath="$PROJECT_DIR$/alongtheway-backend/alongtheway-backend/.gradle/buildOutputCleanup/buildOutputCleanup.lock" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/alongtheway-backend/alongtheway-backend/.gradle/buildOutputCleanup/cache.properties" beforeDir="false" afterPath="$PROJECT_DIR$/alongtheway-backend/alongtheway-backend/.gradle/buildOutputCleanup/cache.properties" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/alongtheway-backend/alongtheway-backend/.gradle/buildOutputCleanup/outputFiles.bin" beforeDir="false" afterPath="$PROJECT_DIR$/alongtheway-backend/alongtheway-backend/.gradle/buildOutputCleanup/outputFiles.bin" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/alongtheway-backend/alongtheway-backend/.gradle/file-system.probe" beforeDir="false" afterPath="$PROJECT_DIR$/alongtheway-backend/alongtheway-backend/.gradle/file-system.probe" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -65,6 +43,39 @@
     &quot;last_opened_file_path&quot;: &quot;C:/Users/Jonathan/Documents/LaunchCode 101/Java Practice/java-web-dev-exercises/src/org/launchcode/java/projects/Project 4&quot;
   }
 }</component>
+  <component name="RunManager" selected="Application.AlongthewayBackendApplication">
+    <configuration name="AlongthewayBackendApplication" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
+      <option name="ALTERNATIVE_JRE_PATH" value="corretto-17" />
+      <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="true" />
+      <option name="MAIN_CLASS_NAME" value="com.alongtheway.alongthewaybackend.AlongthewayBackendApplication" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="com.alongtheway.alongthewaybackend.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="App" type="Application" factoryName="Application" nameIsGenerated="true">
+      <option name="MAIN_CLASS_NAME" value="alongtheway.backend.App" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="alongtheway.backend.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <recent_temporary>
+      <list>
+        <item itemvalue="Application.AlongthewayBackendApplication" />
+      </list>
+    </recent_temporary>
+  </component>
   <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
   <component name="TaskManager">
     <task active="true" id="Default" summary="Default task">
