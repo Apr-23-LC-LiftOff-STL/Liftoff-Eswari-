@@ -1,0 +1,31 @@
+<p>login works!</p>
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+    <form (ngSubmit)="submitLoginForm()" #loginForm="ngForm">
+        <label class="input-label">Login:</label>
+        <div class="input-box">
+            <label for="loginUsername">Username:</label>
+            <input type="text" id="loginUsername" name="loginUsername" [(ngModel)]="loginData.username" required>
+            <div *ngIf="loginForm.controls.username.errors?.required">Username is required</div>
+            <div *ngIf="loginForm.controls.username.errors?.minlength">Username should be atleast 3 char</div>
+            <div *ngIf="loginForm.controls.username.errors?.maxlength">Username exceeds 20 char</div>
+            <label for="loginPassword">Password:</label>
+            <div *ngIf="loginForm.controls.username.errors?.required">Username is required</div>
+            <div *ngIf="loginForm.controls.username.errors?.minlength">Username should be atleast 3 char</div>
+            <div *ngIf="loginForm.controls.username.errors?.maxlength">Username exceeds 20 char</div>
+            <input type="password" id="loginPassword" name="loginPassword" [(ngModel)]="loginData.password" required>
+            <button type="submit">Login</button>
+        </div>
+    </form>
+</body>
+
+</html>
