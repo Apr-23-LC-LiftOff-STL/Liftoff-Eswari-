@@ -21,7 +21,7 @@ export class AppComponent implements OnInit {
   openInfoWindow: google.maps.InfoWindow | null = null; // Declare the openInfoWindow property
   markers: google.maps.Marker[] = []; // Array to store the markers
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient) { }
 
   ngOnInit(): void {
     window.addEventListener('load', () => {
@@ -104,8 +104,8 @@ export class AppComponent implements OnInit {
       };
 
       const promise = new Promise<google.maps.places.PlaceResult[]>((resolve, reject) => {
-        this.service.nearbySearch(request, (results: google.maps.places.PlaceResult[], status: google.maps.places.PlacesServiceStatus) => {
-          if (status === google.maps.places.PlacesServiceStatus.OK) {
+        this.service.nearbySearch(request, (results: google.maps.places.PlaceResult[] | null, status: google.maps.places.PlacesServiceStatus, pagination: google.maps.places.PlaceSearchPagination | null) => {
+          if (status === google.maps.places.PlacesServiceStatus.OK && results !== null) {
             // Filter results based on minimum rating
             const filteredResults = results.filter((place: google.maps.places.PlaceResult) =>
               place.rating && place.rating >= minimumRating && place.user_ratings_total && place.user_ratings_total > 500
