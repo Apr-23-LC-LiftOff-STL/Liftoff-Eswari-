@@ -15,7 +15,6 @@ export class AppComponent implements OnInit {
   originAutocomplete: any;
   destinationAutocomplete: any;
   directionsRenderer: any;
-  PolygonBound: any;
   service!: google.maps.places.PlacesService;
   places: any[] = [];
   openInfoWindow: google.maps.InfoWindow | null = null; // Declare the openInfoWindow property
@@ -79,8 +78,9 @@ export class AppComponent implements OnInit {
   }
 
   searchPlacesAlongRoute(): void {
-    const radiusMiles = 2; // Set the radius for searching places in miles
+    const radiusMiles = 1; // Set the radius for searching places in miles
     const minimumRating = 4; // Minimum rating to include in the results
+    const maxResults = 20; // Maximum number of results to display
 
     // Clear all markers from the map
     this.clearMarkers();
@@ -88,7 +88,7 @@ export class AppComponent implements OnInit {
     // Clear the places list
     this.places = [];
 
-    const promises: Promise<any>[] = [];
+    const promises: Promise<google.maps.places.PlaceResult[]>[] = [];
 
     waypoints.forEach((waypoint: number[]) => {
       const location = { lat: waypoint[0], lng: waypoint[1] };
@@ -99,48 +99,15 @@ export class AppComponent implements OnInit {
         type: 'restaurant' // Set the type of place you want to search for
       };
 
-      const promise = new Promise((resolve, reject) => {
-        this.service.nearbySearch(request, (results: any[], status: any) => {
+      const promise = new Promise<google.maps.places.PlaceResult[]>((resolve, reject) => {
+        this.service.nearbySearch(request, (results: google.maps.places.PlaceResult[], status: google.maps.places.PlacesServiceStatus) => {
           if (status === google.maps.places.PlacesServiceStatus.OK) {
             // Filter results based on minimum rating
-            const filteredResults = results.filter(place => place.rating >= minimumRating);
+            const filteredResults = results.filter((place: google.maps.places.PlaceResult) => place.rating && place.rating >= minimumRating);
 
-            // Process the search results here
-            this.updatePlacesList(filteredResults); // Update the places list with the filtered results
-
-            // Add markers for each place
-            filteredResults.forEach((place: any) => {
-              const placeLocation = place.geometry.location;
-              const marker = new google.maps.Marker({
-                position: placeLocation,
-                map: this.map,
-                title: place.name
-              });
-
-              // Create an info window for the marker
-              const infoWindow = new google.maps.InfoWindow({
-                content: `<strong>${place.name}</strong><br>${place.vicinity}`
-              });
-
-              // Add a click event listener to the marker
-              marker.addListener('click', () => {
-                // Close the previously open info window
-                if (this.openInfoWindow) {
-                  this.openInfoWindow.close();
-                }
-
-                // Open the new info window
-                infoWindow.open(this.map, marker);
-                this.openInfoWindow = infoWindow; // Update the currently open info window
-              });
-
-              // Store the marker in the markers array
-              this.markers.push(marker);
-            });
-
-            resolve(null); // Resolve with null argument
+            resolve(filteredResults); // Resolve with filtered results
           } else {
-            reject();
+            resolve([]); // Resolve with an empty array if no results
           }
         });
       });
@@ -150,7 +117,52 @@ export class AppComponent implements OnInit {
 
     // Wait for all promises to resolve
     Promise.all(promises)
-      .then(() => {
+      .then((resultsArray: google.maps.places.PlaceResult[][]) => {
+        // Concatenate all the filtered results from each request
+        const combinedResults = resultsArray.reduce((accumulator, currentArray) => accumulator.concat(currentArray), []);
+
+        // Remove duplicate results based on place ID
+        const uniqueResults = this.removeDuplicateResults(combinedResults);
+
+        // Sort the unique results by rating in descending order
+        uniqueResults.sort((a: google.maps.places.PlaceResult, b: google.maps.places.PlaceResult) => (b.rating ?? 0) - (a.rating ?? 0));
+
+        // Get the top-rated results up to the maximum limit
+        const topResults = uniqueResults.slice(0, maxResults);
+
+        // Process the search results here
+        this.updatePlacesList(topResults); // Update the places list with the filtered results
+
+        // Add markers for each place
+        topResults.forEach((place: google.maps.places.PlaceResult) => {
+          const placeLocation = place.geometry!.location;
+          const marker = new google.maps.Marker({
+            position: placeLocation,
+            map: this.map,
+            title: place.name
+          });
+
+          // Create an info window for the marker
+          const infoWindow = new google.maps.InfoWindow({
+            content: `<strong>${place.name}</strong><br>${place.vicinity}`
+          });
+
+          // Add a click event listener to the marker
+          marker.addListener('click', () => {
+            // Close the previously open info window
+            if (this.openInfoWindow) {
+              this.openInfoWindow.close();
+            }
+
+            // Open the new info window
+            infoWindow.open(this.map, marker);
+            this.openInfoWindow = infoWindow; // Update the currently open info window
+          });
+
+          // Store the marker in the markers array
+          this.markers.push(marker);
+        });
+
         console.log('Places search completed.');
       })
       .catch(() => {
@@ -158,8 +170,26 @@ export class AppComponent implements OnInit {
       });
   }
 
+  removeDuplicateResults(results: google.maps.places.PlaceResult[]): google.maps.places.PlaceResult[] {
+    const uniqueResults: google.maps.places.PlaceResult[] = [];
+    const placeIds: string[] = [];
+
+    results.forEach((result: google.maps.places.PlaceResult) => {
+      const placeId = result.place_id;
+      if (placeId && !placeIds.includes(placeId)) {
+        uniqueResults.push(result);
+        placeIds.push(placeId);
+      }
+    });
+
+    return uniqueResults;
+  }
+
+
+
+
   updatePlacesList(results: any[]): void {
-    this.places = results;
+    this.places = [...results];
   }
 
   clearMarkers(): void {
