@@ -1,6 +1,7 @@
 {
   "dependencies": {
     "@angular/cli": "^16.0.2",
-    "@angular/core": "^16.0.2"
+    "@angular/core": "^16.0.2",
+    "@googlemaps/js-api-loader": "^1.15.2"
   }
 }

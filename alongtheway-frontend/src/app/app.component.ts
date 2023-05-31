@@ -13,7 +13,7 @@ import { Loader } from '@googlemaps/js-api-loader';
 })
 export class AppComponent implements OnInit {
 
- constructor() { }
+  constructor() { }
 
   ngOnInit(): void {
   }
