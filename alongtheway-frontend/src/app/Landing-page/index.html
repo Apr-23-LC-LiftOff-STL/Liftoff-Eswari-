@@ -38,11 +38,36 @@
             </div>
 
             <div class="footer-container">
-                <label class="input-label">Create a Route:</label>
-                <div class="input-box"></div>
-            </div>
-    </section>
+                <form (ngSubmit)="submitSignUpForm()" #signupForm="ngForm">
+                    <label class="input-label">Sign Up:</label>
+                    <div class="input-box">
+                        <label for="username">Username:</label>
+                        <input type="text" id="username" name="username" [(ngModel)]="signupData.username" required>
+                        <br>
+                        <label for="email">Email:</label>
+                        <input type="email" id="email" name="email" [(ngModel)]="signupData.email" required><br>
+                        <label for="password">Password:</label>
+                        <input type="password" id="password" name="password" [(ngModel)]="signupData.password"
+                            required><br>
+                        <button type="submit">Sign Up</button>
+                    </div>
+                </form>
 
+                <form (ngSubmit)="submitLoginForm()" #loginForm="ngForm">
+                    <label class="input-label">Login:</label>
+                    <div class="input-box">
+                        <label for="loginUsername">Username:</label>
+                        <input type="text" id="loginUsername" name="loginUsername" [(ngModel)]="loginData.username"
+                            required><br>
+                        <label for="loginPassword">Password:</label>
+                        <input type="password" id="loginPassword" name="loginPassword" [(ngModel)]="loginData.password"
+                            required><br>
+                        <button type="submit">Login</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </section>
 
 </body>
 

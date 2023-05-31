@@ -10,6 +10,8 @@ import { HttpClientModule } from '@angular/common/http';
 import { AboutusandfaqComponent } from './aboutusandfaq/aboutusandfaq.component';
 import { AppRoutingModule } from './app-routing.module';
 import { ProfilepageComponent } from './profilepage/profilepage.component';
+import { SignupComponent } from './signup/signup.component';
+import { loginComponent } from './login/login.component';
 
 @NgModule({
   declarations: [
@@ -18,7 +20,9 @@ import { ProfilepageComponent } from './profilepage/profilepage.component';
     HeaderComponent,
     WeatherComponent,
     AboutusandfaqComponent,
-    ProfilepageComponent
+    ProfilepageComponent,
+    SignupComponent,
+    loginComponent
   ],
   imports: [
     BrowserModule,

@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+    <form (ngSubmit)="submitSignupForm()" #signupForm="ngForm" novalidate>
+        <label class="input-label">Sign Up:</label>
+        <div class="input-box">
+            <label for="username">Username:</label>
+            <input type="text" id="username" name="username" [(ngModel)]="signupData.username" required minlength="3"
+                maxlength="20">
+            <div *ngIf="signupForm.controls.username.errors?.required">Username is required</div>
+            <div *ngIf="signupForm.controls.username.errors?.minlength">Username should be atleast 3 char</div>
+            <div *ngIf="signupForm.controls.username.errors?.maxlength">Username exceeds 20 char</div>
+        </div>
+
+
+        <label for="password">Password:</label>
+        <input type="password" id="password" name="password" [(ngModel)]="signupData.password" required>
+        <div
+            *ngIf="signupForm.controls.password.invalid && signupForm.controls.password.dirty || signupForm.controls.password.touched">
+            password is required</div>
+        <div *ngIf="signupForm.controls.password.errors?.required">password is required</div>
+        <div *ngIf="signupForm.controls.password.errors?.minlength">Username is required</div>
+
+        <button type="submit" [disabled]="" signupForm.invalid>Sign Up</button>
+
+    </form>
+</body>
+
+</html>
