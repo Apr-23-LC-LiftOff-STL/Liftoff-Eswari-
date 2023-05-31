@@ -11,6 +11,7 @@ let waypoints: number[][] = [];
 })
 export class AppComponent implements OnInit {
   map: any;
+  loading: boolean = false; // Add loading flag property
   @ViewChild('mapElement') mapElement!: ElementRef;
   originAutocomplete: any;
   destinationAutocomplete: any;
@@ -56,6 +57,8 @@ export class AppComponent implements OnInit {
     this.directionsRenderer = new google.maps.DirectionsRenderer();
     this.directionsRenderer.setMap(this.map);
 
+    this.loading = true; // Enable loading flag
+
     directionsService.route(
       {
         origin: origin,
@@ -72,6 +75,7 @@ export class AppComponent implements OnInit {
           this.searchPlacesAlongRoute(); // Call the function to search for places near waypoints
         } else {
           window.alert('Directions request failed due to ' + status);
+          this.loading = false; // Disable loading flag in case of failure
         }
       }
     );
@@ -103,7 +107,9 @@ export class AppComponent implements OnInit {
         this.service.nearbySearch(request, (results: google.maps.places.PlaceResult[], status: google.maps.places.PlacesServiceStatus) => {
           if (status === google.maps.places.PlacesServiceStatus.OK) {
             // Filter results based on minimum rating
-            const filteredResults = results.filter((place: google.maps.places.PlaceResult) => place.rating && place.rating >= minimumRating);
+            const filteredResults = results.filter((place: google.maps.places.PlaceResult) =>
+              place.rating && place.rating >= minimumRating && place.user_ratings_total && place.user_ratings_total > 100
+            );
 
             resolve(filteredResults); // Resolve with filtered results
           } else {
@@ -164,9 +170,11 @@ export class AppComponent implements OnInit {
         });
 
         console.log('Places search completed.');
+        this.loading = false; // Disable loading flag after search completion
       })
       .catch(() => {
         console.error('Error occurred while searching for places.');
+        this.loading = false; // Disable loading flag in case of error
       });
   }
 
@@ -184,9 +192,6 @@ export class AppComponent implements OnInit {
 
     return uniqueResults;
   }
-
-
-
 
   updatePlacesList(results: any[]): void {
     this.places = [...results];
