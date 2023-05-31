@@ -108,7 +108,7 @@ export class AppComponent implements OnInit {
           if (status === google.maps.places.PlacesServiceStatus.OK) {
             // Filter results based on minimum rating
             const filteredResults = results.filter((place: google.maps.places.PlaceResult) =>
-              place.rating && place.rating >= minimumRating && place.user_ratings_total && place.user_ratings_total > 100
+              place.rating && place.rating >= minimumRating && place.user_ratings_total && place.user_ratings_total > 500
             );
 
             resolve(filteredResults); // Resolve with filtered results
@@ -206,4 +206,6 @@ export class AppComponent implements OnInit {
     // Clear the markers array
     this.markers = [];
   }
+
+
 }
