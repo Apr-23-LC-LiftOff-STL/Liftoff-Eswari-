@@ -17,7 +17,9 @@
     "target": "ESNext",
     "module": "es2020",
     "esModuleInterop": true,
-    "types": ["node"],
+    "typeRoots": [
+      "node_modules/@types"
+    ],
     "lib": [
       "ESNext",
       "DOM"
