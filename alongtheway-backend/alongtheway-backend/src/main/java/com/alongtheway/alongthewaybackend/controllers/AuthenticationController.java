@@ -1,5 +1,5 @@
 package com.alongtheway.alongthewaybackend.controllers;
-
+import org.springframework.web.bind.annotation.CrossOrigin;
 import com.alongtheway.alongthewaybackend.models.User;
 import com.alongtheway.alongthewaybackend.models.data.UserRepository;
 import com.alongtheway.alongthewaybackend.models.dto.LoginForm;
@@ -12,12 +12,17 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
 import java.util.Optional;
+import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.ResponseEntity;
+import org.springframework.http.HttpStatus;
 
+@CrossOrigin(origins = "http://localhost:4200")
+@RequestMapping("/signup")
+@RestController
 @Controller
 public class AuthenticationController {
 
@@ -52,41 +57,37 @@ public class AuthenticationController {
         return "signup";
     }
 
-    @PostMapping("/signup")
-    public String processSignupForm(@ModelAttribute @Valid SignupForm signupForm,
-                                          Errors errors, HttpServletRequest request,
-                                          Model model) {
-        //rejects validation errors
+        @PostMapping
+        public ResponseEntity<?> processSignupForm(@ModelAttribute @Valid SignupForm signupForm, Errors errors, HttpServletRequest request){
+
         if (errors.hasErrors()) {
-            model.addAttribute("title", "Sign Up");
-            return "signup";
+            //return the validation errors as a json response
+            return ResponseEntity.badRequest().body(errors.getAllErrors());
         }
 
 
         //rejects username if it matches an existing username
         User existingUser = userRepository.findByUsername(signupForm.getUsername());
         if (existingUser != null) {
-            errors.rejectValue("username", "username.alreadyexists", "A user with that username already exists");
-            model.addAttribute("title", "Sign Up");
-            return "signup";
+            //return error as Json
+            return ResponseEntity.status(HttpStatus.CONFLICT).body("A user with that username already exists");
         }
 
         //rejects passwords if both fields do not match
         String password = signupForm.getPassword();
         String verifyPassword = signupForm.getVerifyPassword();
         if (!password.equals(verifyPassword)) {
-            errors.rejectValue("password", "passwords.mismatch", "Passwords do not match");
-            model.addAttribute("title", "Sign Up");
-            return "signup";
+            //return as json response error
+            return ResponseEntity.badRequest().body("Passwords  do not match");
         }
 
         //assigns new user
         User newUser = new User(signupForm.getUsername(), signupForm.getPassword());
-        userRepository.save(new User(signupForm.getUsername(), signupForm.getPassword()));
+        userRepository.save(newUser);
         setUserInSession(request.getSession(), newUser);
 
 
-        return "redirect:/login";
+        return ResponseEntity.ok("sign-up successful");
     }
 
     @GetMapping("/login")

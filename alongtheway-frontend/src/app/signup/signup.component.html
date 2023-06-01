@@ -16,20 +16,24 @@
             <input type="text" id="username" name="username" [(ngModel)]="signupData.username" required minlength="3"
                 maxlength="20">
             <div *ngIf="signupForm.controls.username.errors?.required">Username is required</div>
-            <div *ngIf="signupForm.controls.username.errors?.minlength">Username should be atleast 3 char</div>
-            <div *ngIf="signupForm.controls.username.errors?.maxlength">Username exceeds 20 char</div>
+            <div *ngIf="signupForm.controls.username?.errors?.minlength">Username should be at least 3 characters</div>
+            <div *ngIf="signupForm.controls.username?.errors?.maxlength">Username should not exceed 20 characters</div>
+
+
         </div>
 
 
         <label for="password">Password:</label>
         <input type="password" id="password" name="password" [(ngModel)]="signupData.password" required>
         <div
-            *ngIf="signupForm.controls.password.invalid && signupForm.controls.password.dirty || signupForm.controls.password.touched">
-            password is required</div>
+            *ngIf="signupForm.controls.password?.invalid && (signupForm.controls.password?.dirty || signupForm.controls.password?.touched)">
+            Password is required
+        </div>
+
         <div *ngIf="signupForm.controls.password.errors?.required">password is required</div>
         <div *ngIf="signupForm.controls.password.errors?.minlength">Username is required</div>
 
-        <button type="submit" [disabled]="" signupForm.invalid>Sign Up</button>
+        <button type="submit" [disabled]="signupForm.invalid" signupForm.invalid>Sign Up</button>
 
     </form>
 </body>

@@ -10,9 +10,9 @@ import { FormsModule } from '@angular/forms';
 
 export class loginComponent implements OnInit {
 
-  loginData: { username: string, email: string, password: string } = {
+  loginData: { username: string, password: string } = {
     username: '',
-    email: '',
+
     password: ''
   };
   constructor() { }
@@ -21,6 +21,6 @@ export class loginComponent implements OnInit {
   }
 
   submitLoginForm(): void {
-    console.log('submitted:', this.loginData.username, this.loginData.email, this.loginData.password);
+    console.log('submitted:', this.loginData.username, this.loginData.password);
   }
 }
