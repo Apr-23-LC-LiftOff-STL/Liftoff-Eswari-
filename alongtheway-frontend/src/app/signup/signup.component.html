@@ -16,24 +16,31 @@
             <input type="text" id="username" name="username" [(ngModel)]="signupData.username" required minlength="3"
                 maxlength="20">
             <div *ngIf="signupForm.controls.username.errors?.required">Username is required</div>
-            <div *ngIf="signupForm.controls.username?.errors?.minlength">Username should be at least 3 characters</div>
-            <div *ngIf="signupForm.controls.username?.errors?.maxlength">Username should not exceed 20 characters</div>
-
-
+            <div *ngIf="signupForm.controls.username.errors?.minlength">Username should be at least 3 characters</div>
+            <div *ngIf="signupForm.controls.username.errors?.maxlength">Username should not exceed 20 characters</div>
         </div>
-
 
         <label for="password">Password:</label>
         <input type="password" id="password" name="password" [(ngModel)]="signupData.password" required>
         <div
-            *ngIf="signupForm.controls.password?.invalid && (signupForm.controls.password?.dirty || signupForm.controls.password?.touched)">
+            *ngIf="signupForm.controls.password.invalid && (signupForm.controls.password.dirty || signupForm.controls.password.touched)">
             Password is required
         </div>
+        <div *ngIf="signupForm.controls.password.errors?.required">Password is required</div>
+        <div *ngIf="signupForm.controls.password.errors?.minlength">Password should be at least 6 characters</div>
 
-        <div *ngIf="signupForm.controls.password.errors?.required">password is required</div>
-        <div *ngIf="signupForm.controls.password.errors?.minlength">Username is required</div>
+        <label for="verifyPassword">Verify Password:</label>
+        <input type="password" id="verifyPassword" name="verifyPassword" [(ngModel)]="signupData.verifyPassword"
+            required>
+        <div
+            *ngIf="signupForm.controls.verifyPassword.invalid && (signupForm.controls.verifyPassword.dirty || signupForm.controls.verifyPassword.touched)">
+            Verify Password is required
+        </div>
+        <div *ngIf="signupForm.controls.verifyPassword.errors?.required">Verify Password is required</div>
+        <div *ngIf="signupData.password !== signupData.verifyPassword">Passwords do not match</div>
 
-        <button type="submit" [disabled]="signupForm.invalid" signupForm.invalid>Sign Up</button>
+        <button type="submit" [disabled]="signupForm.invalid || signupData.password !== signupData.verifyPassword">Sign
+            Up</button>
 
     </form>
 </body>

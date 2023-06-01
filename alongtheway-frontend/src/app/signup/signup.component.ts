@@ -1,12 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { ApiService } from '../api.service';
-import { Router } from '@angular/router';
-
-interface SignupData {
-  username: string;
-  password: string;
-}
-
+import { HttpHeaders } from '@angular/common/http';
 
 @Component({
   selector: 'app-signup',
@@ -14,18 +8,27 @@ interface SignupData {
   styleUrls: ['./signup.component.css'],
 })
 export class SignupComponent implements OnInit {
-  signupData: SignupData = {
+  signupData = {
     username: '',
-    password: ''
+    password: '',
+    verifyPassword: '',
   };
 
-  constructor(private apiService: ApiService, private router: Router) { }
+  constructor(private apiService: ApiService) { }
 
   ngOnInit(): void {
   }
 
   submitSignupForm(): void {
-    this.apiService.signup(this.signupData)
+    const url = 'http://localhost:8080/signup';
+    const payload = {
+      username: this.signupData.username,
+      password: this.signupData.password,
+      verifyPassword: this.signupData.verifyPassword
+    };
+    const headers = new HttpHeaders().set('Content-Type', 'application/json');
+
+    this.apiService.signup(payload, headers)
       .subscribe(
         response => {
           console.log('Sign-up successful:', response);
@@ -33,8 +36,17 @@ export class SignupComponent implements OnInit {
         },
         error => {
           console.error('Sign-up failed:', error);
+          if (error.error instanceof ErrorEvent) {
+            // Client-side error occurred
+            console.error('Client-side error:', error.error.message);
+          } else {
+            // Server-side error occurred
+            console.error('Server-side error:', error.status, error.error);
+          }
         }
       );
-    console.log('submitted:', this.signupData.username, this.signupData.password);
+
+
+    console.log('submitted:', this.signupData.username, this.signupData.password, this.signupData.verifyPassword);
   }
-}  
+}

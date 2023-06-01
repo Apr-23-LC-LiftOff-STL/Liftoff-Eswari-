@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 
 @Injectable({
   providedIn: 'root'
@@ -8,9 +8,9 @@ export class ApiService {
 
   constructor(private http: HttpClient) { }
 
-  signup(signupData: { username: string, password: string }) {
+  signup(signupData: { username: string, password: string }, headers: HttpHeaders) {
     const url = 'http://localhost:8080/signup';
-    return this.http.post(url, signupData);
+    return this.http.post(url, signupData, { headers });
   }
 
   login(username: string, password: string) {
