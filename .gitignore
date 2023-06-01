@@ -1,3 +1,5 @@
 
 alongtheway-frontend/src/environments/environment.ts
 alongtheway-frontend/src/environments/environment.prod.ts
+alongtheway-frontend/src/environments/environments.ts
+alongtheway-frontend/src/environments/environments.prod.ts
