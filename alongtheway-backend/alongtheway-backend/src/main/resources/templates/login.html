@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="https://www.thymeleaf.org/">
+<head>
+    <meta charset="UTF-8"/>
+    <title th:text="${title}" />
+    <link rel="shortcut icon" href="#">
+</head>
+<body>
+
+<form method="post">
+    <div class="form-group">
+        <label th:for="username">Username
+            <input th:field="${loginForm.username}">
+        </label>
+        <p class="error" th:errors="${loginForm.username}"></p>
+    </div>
+    <br>
+    <div class="form-group">
+        <label>Password
+            <input th:field="${loginForm.password}" type="password">
+        </label>
+        <p class="error" th:errors="${loginForm.password}"></p>
+    </div>
+    <br>
+
+    <input type="submit" value="Log In" />
+</form>
+<br>
+
+<p><a href="/logout">Log Out</a></p>
+<p><a href="/signup">Sign Up</a></p>
+
+</body>
+</html>
