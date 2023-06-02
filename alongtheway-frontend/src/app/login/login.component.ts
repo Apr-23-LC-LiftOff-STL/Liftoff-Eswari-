@@ -21,18 +21,20 @@ export class loginComponent implements OnInit {
   }
 
   submitLoginForm(): void {
-    this.http.post('http://localhost:4200/login', this.loginData).subscribe(
+    this.http.post('http://localhost:8080/auth/login', this.loginData, { responseType: 'text' }).subscribe(
       (response) => {
-        // Handle successful response
-        console.log(response);
+    // Handle successful response
+      console.log(response);
 
-        // Redirect the user to /home
-        this.router.navigate(['/home']);
-      },
+    // Redirect the user to /home
+    this.router.navigate(['/home']);
+    },
       (error) => {
-        // Handle error response
+    // Handle error response
         console.log(error);
-      }
-    );
+    }
+  );
+
+
   }
 }

@@ -7,7 +7,14 @@
   </div>
   <nav>
     <ul>
-      <li><a href="/saved-trips">Saved Trips</a></li>
+      <!-- Only show these options if the user is logged in -->
+      <li *ngIf="isLoggedIn"><a href="/saved-trips">Saved Trips</a></li>
+      <li *ngIf="isLoggedIn"><a (click)="logout()">Logout</a></li>
+
+      <!-- Only show these options if the user is not logged in -->
+      <li *ngIf="!isLoggedIn"><a routerLink="/login">Login</a></li>
+      <li *ngIf="!isLoggedIn"><a routerLink="/signup">Sign Up</a></li>
+      
       <li><a routerLink="/about">About Us/FAQ</a></li>
     </ul>
   </nav>

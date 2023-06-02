@@ -1,5 +1,5 @@
-import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { Injectable } from '@angular/core';
 
 @Injectable({
   providedIn: 'root'
@@ -14,7 +14,7 @@ export class ApiService {
   }
 
   login(username: string, password: string) {
-    const url = '<localhost:8080/login>'; // Replace with your actual backend endpoint
+    const url = 'http://localhost:8080/login';
     const data = { username, password };
     return this.http.post(url, data);
   }
