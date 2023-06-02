@@ -1,9 +1,7 @@
-import { Component, OnInit } from '@angular/core';
-import { Loader } from '@googlemaps/js-api-loader';
 import { HttpClient } from '@angular/common/http';
-import { ViewChild } from '@angular/core';
-import { ElementRef } from '@angular/core';
-import { environment } from 'src/environments/environment';
+import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
+import { Loader } from '@googlemaps/js-api-loader';
+import { environment } from 'src/environments/environments';
 
 @Component({
   selector: 'app-home',
@@ -70,7 +68,7 @@ export class HomeComponent implements OnInit {
 
   ngOnInit(): void {
     const loader = new Loader({
-      apiKey: environment.mapApiKey,
+      apiKey: environment.apiKey,
       libraries: ['places']
     });
 
@@ -174,7 +172,7 @@ export class HomeComponent implements OnInit {
   calculateRoute(): void {
     this.averageMPG = +this.averageMPG;
     this.tankCapacity = +this.tankCapacity;
-    const apiKey = environment.mapApiKey;
+    const apiKey = environment.apiKey;
 
 
     console.log("Calculating route...");
