@@ -4,41 +4,34 @@ import { Router } from '@angular/router';
 import { AuthService } from '../services/auth.service';
 
 @Component({
-  selector: 'app-signup',
+  selector: 'app-login',
   templateUrl: './login.component.html',
   styleUrls: ['./login.component.css']
 })
-
-export class loginComponent implements OnInit {
-
+export class LoginComponent implements OnInit {
   loginData: { username: string, password: string } = {
     username: '',
     password: ''
   };
 
-  constructor(private http: HttpClient, private router: Router, private authService: AuthService) { }
+  constructor(private http: HttpClient, private router: Router, public authService: AuthService) { }
 
   ngOnInit(): void {
   }
 
   submitLoginForm(): void {
-    this.http.post('http://localhost:8080/auth/login', this.loginData, { responseType: 'text' }).subscribe(
-      (response) => {
-    // Handle successful response
-      console.log(response);
+    const { username, password } = this.loginData;
+    this.authService.login(username, password).subscribe(
+      response => {
+        // Handle the successful login response
+        console.log('Login successful:', response);
+        this.router.navigate(['/home']); // Replace '/home' with the desired route path
 
-      // Set isLoggedIn to true
-      this.authService.login();
-
-    // Redirect the user to /home
-    this.router.navigate(['/home']);
-    },
-      (error) => {
-    // Handle error response
-        console.log(error);
-    }
-  );
-
-
+      },
+      error => {
+        // Handle the login error
+        console.error('Login failed:', error);
+      }
+    );
   }
 }

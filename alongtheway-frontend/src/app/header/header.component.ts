@@ -7,17 +7,17 @@ import { AuthService } from '../services/auth.service';
   styleUrls: ['./header.component.css']
 })
 export class HeaderComponent implements OnInit {
-  isLoggedIn: boolean = false;
+  username: string | null = null;
 
-  constructor(private authService: AuthService) { }
+  constructor(public authService: AuthService) { }
 
   ngOnInit(): void {
-    this.authService.isLoggedIn.subscribe((loggedIn) => {
-      this.isLoggedIn = loggedIn;
+    this.authService.getUsername.subscribe(username => {
+      this.username = username;
     });
   }
 
-  logout() {
+  logout(): void {
     this.authService.logout();
   }
 }

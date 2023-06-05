@@ -14,7 +14,7 @@ export class ApiService {
   }
 
   login(username: string, password: string) {
-    const url = 'http://localhost:8080/login';
+    const url = 'http://localhost:8080/auth/login';
     const data = { username, password };
     return this.http.post(url, data);
   }

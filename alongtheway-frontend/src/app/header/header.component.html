@@ -7,15 +7,19 @@
   </div>
   <nav>
     <ul>
-      <!-- Only show these options if the user is logged in -->
-      <li *ngIf="isLoggedIn"><a href="/saved-trips">Saved Trips</a></li>
-      <li *ngIf="isLoggedIn"><a (click)="logout()">Logout</a></li>
-
-      <!-- Only show these options if the user is not logged in -->
-      <li *ngIf="!isLoggedIn"><a routerLink="/login">Login</a></li>
-      <li *ngIf="!isLoggedIn"><a routerLink="/signup">Sign Up</a></li>
-      
+      <li *ngIf="(authService.isLoggedIn | async) as isLoggedIn">
+        <a href="/saved-trips" *ngIf="isLoggedIn">Saved Trips</a>
+        <a href="/profile" *ngIf="isLoggedIn">My Profile</a>
+        <a (click)="logout()" *ngIf="isLoggedIn">Logout</a>
+      </li>
+      <li *ngIf="!(authService.isLoggedIn | async)">
+        <a routerLink="/login">Login</a>
+      </li>
+      <li *ngIf="!(authService.isLoggedIn | async)">
+        <a routerLink="/signup">Sign Up</a>
+      </li>
       <li><a routerLink="/about">About Us/FAQ</a></li>
     </ul>
+    <span *ngIf="authService.isLoggedIn | async">Hi {{ username }}!</span>
   </nav>
 </header>
