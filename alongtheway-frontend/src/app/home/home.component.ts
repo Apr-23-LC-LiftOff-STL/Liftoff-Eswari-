@@ -76,8 +76,8 @@ export class HomeComponent implements OnInit {
       const mapElement = document.getElementById("map");
       if (mapElement) {
         this.map = new google.maps.Map(mapElement, {
-          center: { lat: 51.233334, lng: 6.78333 },
-          zoom: 6
+          center: { lat: 39.828175, lng: -98.5795 },
+          zoom: 4
         });
         this.directionsService = new google.maps.DirectionsService();
         this.directionsRenderer = new google.maps.DirectionsRenderer({

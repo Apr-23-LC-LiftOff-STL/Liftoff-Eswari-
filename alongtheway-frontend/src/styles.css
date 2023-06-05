@@ -4,5 +4,20 @@
 } */
 
 html {
-  background-color: #77CECF;
+  background-color: #e3e4eb;
 }
+
+@font-face {
+  font-family: 'Futura Medium';
+  src: url('../assets/fonts/futura-medium.ttf') format('truetype'); /* Adjust the path to the font file if needed */
+  font-weight: normal;
+  font-style: normal;
+}
+
+body {
+  font-family: 'Futura Medium', sans-serif;
+}
+
+
+
+

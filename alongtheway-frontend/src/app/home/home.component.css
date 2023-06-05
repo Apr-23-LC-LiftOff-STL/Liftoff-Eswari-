@@ -1,6 +1,5 @@
 .container {
   display: flex;
-  background-image: linear-gradient(#07487D, #77CECF);
 }
 
 .form-container {
@@ -61,5 +60,5 @@ font-size: 18px;
     height: 48vh;
     margin: 0;
     padding: 0;
-    
+
 } */
