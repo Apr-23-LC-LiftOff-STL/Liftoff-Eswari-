@@ -43,10 +43,10 @@ export class HomeComponent implements OnInit {
             }
           }
 
-          let iconElement = document.getElementById(`${point}-weather-icon`) as HTMLElement;
+          let iconElement = document.getElementById(`weather-icon-${point}`) as HTMLElement;
           iconElement.setAttribute("src", "https://openweathermap.org/img/wn/" + weatherIcon + "@2x.png");
 
-          let tempElement = document.getElementById(`${point}-weather-temp`) as HTMLElement;
+          let tempElement = document.getElementById(`weather-temp-${point}`) as HTMLElement;
           tempElement.textContent = Math.round(weatherTemp) + "°F";
         }
       });
@@ -115,7 +115,7 @@ export class HomeComponent implements OnInit {
         this.startLocation = place.formatted_address ?? "";
         console.log("Start location:", this.startLocation);
 
-        this.getWeather("start", place.geometry.location.lat(), place.geometry.location.lng());
+        this.getWeather("start-input", place.geometry.location.lat(), place.geometry.location.lng());
       }
     });
 
@@ -127,7 +127,7 @@ export class HomeComponent implements OnInit {
         this.endLocation = place.formatted_address ?? "";
         console.log("End location:", this.endLocation);
 
-        this.getWeather("end", place.geometry.location.lat(), place.geometry.location.lng());
+        this.getWeather("end-input", place.geometry.location.lat(), place.geometry.location.lng());
       }
     });
 
@@ -259,7 +259,7 @@ export class HomeComponent implements OnInit {
             destinationTime = Date.now() / 1000 + duration;
           }
 
-          this.getWeather("end", lat, lng, destinationTime);
+          this.getWeather("end-input", lat, lng, destinationTime);
 
           // Get the direction steps
           const steps = result?.routes[0]?.legs[0]?.steps;
@@ -312,7 +312,7 @@ export class HomeComponent implements OnInit {
         this.stops[index].location = place.formatted_address ?? "";
         console.log(`Stop location ${index}:`, this.stops[index].location);
 
-        this.getWeather(`stop${index}`, place.geometry.location.lat(), place.geometry.location.lng());
+        this.getWeather(`stop-input-${index}`, place.geometry.location.lat(), place.geometry.location.lng());
       }
     });
   }

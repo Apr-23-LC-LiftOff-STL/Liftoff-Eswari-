@@ -5,13 +5,14 @@
   <div class="form-container">
     <label for="start-input">Start location:</label>
     <input id="start-input" type="text" [(ngModel)]="startLocation">
-    <img id="start-weather-icon" class="weather-icon"><label id="start-weather-temp" class="weather-temp"></label>
+    <img id="weather-icon-start-input" class="weather-icon"><label id="weather-temp-start-input" class="weather-temp"></label>
     <br>
 
     <button href="#" (click)="addStop()">Add stop to your trip</button>
     <div id="stopInputs">
       <div *ngFor="let stop of stops; index as i">
         <input id="stop-input-{{i}}" type="text" [(ngModel)]="stop.location">
+        <img id="weather-icon-stop-input-{{i}}" class="weather-icon"><label id="weather-temp-stop-input-{{i}}" class="weather-temp"></label>
         <button (click)="removeStop(i)">Remove</button>
       </div>
     </div>
@@ -19,7 +20,7 @@
 
     <label for="end-input">End location:</label>
     <input id="end-input" type="text" [(ngModel)]="endLocation">
-    <img id="end-weather-icon" class="weather-icon"><label id="end-weather-temp" class="weather-temp"></label>
+    <img id="weather-icon-end-input" class="weather-icon"><label id="weather-temp-end-input" class="weather-temp"></label>
     <br>
 
 
