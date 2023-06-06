@@ -3,7 +3,7 @@
 
 <div class="container">
   <div class="form-container">
-    <label for="start-input">Start location:</label>
+    <label for="start-input">Start location: </label>
     <input id="start-input" type="text" [(ngModel)]="startLocation">
     <img id="start-weather-icon" class="weather-icon"><label id="start-weather-temp" class="weather-temp"></label>
     <br>
@@ -17,7 +17,7 @@
     </div>
 
 
-    <label for="end-input">End location:</label>
+    <label for="end-input">End location: </label>
     <input id="end-input" type="text" [(ngModel)]="endLocation">
     <img id="end-weather-icon" class="weather-icon"><label id="end-weather-temp" class="weather-temp"></label>
     <br>
@@ -26,15 +26,15 @@
 
 
 
-    <label for="average-mpg-input">Average MPG:</label>
+    <label for="average-mpg-input">Average MPG: </label>
     <input #mpgInput id="average-mpg-input" type="number" min="0" [(ngModel)]="averageMPG">
     <br>
 
-    <label for="tank-capacity-input">Tank Capacity (Gallons):</label>
+    <label for="tank-capacity-input">Tank Capacity (Gallons): </label>
     <input #tankInput id="tank-capacity-input" type="number" min="0" [(ngModel)]="tankCapacity">
     <br>
 
-    <label for="interest-input">Interest:</label>
+    <label for="interest-input">Interest: </label>
     <select id="interest-input" [(ngModel)]="interest">
       <option value="restaurant">Restaurant</option>
       <option value="museum">Museum</option>
