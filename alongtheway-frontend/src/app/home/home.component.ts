@@ -93,9 +93,6 @@ export class HomeComponent implements OnInit {
     });
   }
 
-
-
-
   initAutocomplete(): void {
     const startInput = document.getElementById("start-input") as HTMLInputElement;
     const endInput = document.getElementById("end-input") as HTMLInputElement;
@@ -157,8 +154,6 @@ export class HomeComponent implements OnInit {
     this.calculateRoute();
   }
 
-
-
   handlePlacesData(placesData: any) {
     if (placesData.status === 'OK') {
       this.placesData = placesData;
@@ -166,8 +161,6 @@ export class HomeComponent implements OnInit {
       console.error("Places API request failed:", placesData.status);
     }
   }
-
-
 
   calculateRoute(): void {
     this.averageMPG = +this.averageMPG;
@@ -293,7 +286,6 @@ export class HomeComponent implements OnInit {
     this.stops.push({ location: '' });
     setTimeout(() => this.initStopAutocomplete(index));
   }
-
 
   removeStop(index: number) {
     this.stops.splice(index, 1);
