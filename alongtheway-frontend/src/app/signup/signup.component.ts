@@ -20,7 +20,7 @@ export class SignupComponent implements OnInit {
   }
 
   submitSignupForm(): void {
-    const url = 'http://localhost:8080/signup';
+    //   const url = 'http://localhost:8080/signup';
     const payload = {
       username: this.signupData.username,
       password: this.signupData.password,
