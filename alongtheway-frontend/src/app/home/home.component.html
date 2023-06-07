@@ -12,8 +12,8 @@
     <div id="stopInputs">
       <div *ngFor="let stop of stops; index as i">
         <div class="flex-container">
-          <input id="stop-input-{{i}}" type="text" [(ngModel)]="stop.location" class="flex-input">
           <button (click)="removeStop(i)">Remove</button>
+          <input id="stop-input-{{i}}" type="text" [(ngModel)]="stop.location" class="flex-input">
         </div>
       </div>
     </div>

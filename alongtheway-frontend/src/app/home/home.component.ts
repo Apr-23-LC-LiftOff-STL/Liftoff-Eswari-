@@ -2,6 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { Loader } from '@googlemaps/js-api-loader';
 import { environment } from 'src/environments/environments';
+import * as routeBoxer from 'src/assets/javascript/RouteBoxer.js';
 
 @Component({
   selector: 'app-home',
@@ -321,6 +322,5 @@ export class HomeComponent implements OnInit {
       });
     }
   }
-
 
 }
