@@ -2,7 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { Loader } from '@googlemaps/js-api-loader';
 import { environment } from 'src/environments/environments';
-import * as routeBoxer from 'src/assets/javascript/RouteBoxer.js';
+import RouteBoxer from 'src/assets/javascript/RouteBoxer.js';
 
 @Component({
   selector: 'app-home',
@@ -13,6 +13,9 @@ export class HomeComponent implements OnInit {
 
   placesData: any = {};  // Initialized to an empty object
   stops: { location: string }[] = [];
+  boxpolys: google.maps.Rectangle[] = [];
+  boxes: google.maps.LatLngBounds[] = [];//routeBoxer.box(path, range);
+  path: google.maps.LatLng[] = [];
 
   environment = environment;
 
@@ -208,7 +211,23 @@ export class HomeComponent implements OnInit {
           console.log("Route calculated successfully");
           this.directionsRenderer?.setDirections(result);
 
-          // calculate the midpoint of the route
+          if (result && result.routes && result.routes.length > 0) {
+            const polyline: google.maps.Polyline = new google.maps.Polyline({
+              path: result.routes[0]?.overview_path || [],
+            });
+
+            this.path = polyline.getPath().getArray();
+          } else {
+            console.error("Directions request failed:", status);
+            // Handle the case when result is null or there are no routes
+          }
+
+          let routeBoxer = new RouteBoxer();
+          this.boxes = routeBoxer.box(this.path, 10);
+          console.log('Boxes:', this.boxes);
+          this.drawBoxes(this.boxes);
+
+          // calculate the midpoint of the route + old places code
           // const midLat = (result!.routes[0].bounds.getNorthEast().lat() + result!.routes[0].bounds.getSouthWest().lat()) / 2;
           // const midLng = (result!.routes[0].bounds.getNorthEast().lng() + result!.routes[0].bounds.getSouthWest().lng()) / 2;
 
@@ -241,7 +260,6 @@ export class HomeComponent implements OnInit {
           // this.http.get(placesUrl).subscribe((placesData: any) => {
           //   this.handlePlacesData(placesData);
           // });
-
 
           //Get destination time for weather forecast
           let destinationTime;
@@ -322,5 +340,28 @@ export class HomeComponent implements OnInit {
       });
     }
   }
+
+  drawBoxes(boxes: google.maps.LatLngBounds[]): void {
+    this.boxpolys = new Array(boxes.length);
+    for (let i = 0; i < boxes.length; i++) {
+      this.boxpolys[i] = new google.maps.Rectangle({
+        bounds: boxes[i],
+        fillOpacity: 0,
+        strokeOpacity: 1.0,
+        strokeColor: '#000000',
+        strokeWeight: 1,
+        map: this.map as google.maps.Map
+      });
+    }
+  }
+
+//   clearBoxes(): void {
+//         if (this.boxpolys != null) {
+//           for (let i = 0; i < this.boxpolys.length; i++) {
+//             this.boxpolys[i].setMap(null);
+//           }
+//         }
+//         this.boxpolys = [];
+//   }
 
 }

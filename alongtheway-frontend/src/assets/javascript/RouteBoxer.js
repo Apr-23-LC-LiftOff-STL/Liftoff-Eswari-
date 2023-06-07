@@ -580,3 +580,5 @@ Number.prototype.toDeg = function () {
 Number.prototype.toBrng = function () {
   return (this.toDeg() + 360) % 360;
 };
+
+module.exports = RouteBoxer;
