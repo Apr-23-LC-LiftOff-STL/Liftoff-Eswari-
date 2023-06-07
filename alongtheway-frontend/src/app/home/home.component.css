@@ -4,21 +4,44 @@
 
 .form-container {
   flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.flex-container {
+  display: flex;
+  align-items: center;
+  margin-bottom: 2px;
+  white-space: nowrap;
+}
+
+.flex-label {
+  margin-right: 10px;
+}
+
+.flex-input {
+  margin-left: auto;
+  margin-right: 7px;
 }
 
 .weather-icon {
-height:40px;
-margin-bottom: -15px;
+  height: 40px;
+  margin-bottom: -15px;
 }
 
 .weather-temp {
-font-size: 18px;
+  font-size: 18px;
+}
+
+.add-stop-button {
+  margin-left: auto;
+  margin-right: 24px;
+  margin-bottom: 3px;
 }
 
 .queue {
   flex: 1;
   border: 1px solid black;
-  /* position: relative; */
   background-color: #fff;
   height: 60vh;
   padding: 10px;
@@ -28,23 +51,17 @@ font-size: 18px;
 .map-container {
   flex: 2;
   height: 88vh;
-  /* Adjust this as needed */
 }
 
 .places-container {
-  /* width: 300px; */
   flex: 1;
   height: 60vh;
   overflow-y: auto;
-  /* position: fixed; */
-  /* right: 0; */
-  /* top: 0; */
   padding: 10px;
   background-color: #f9f9f9;
-  box-shadow: 0 0 10px rgba(0,0,0,0.3);
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
   margin-top: 8px;
   margin-right: 8px;
-  /* border: 1px solid black; */
 }
 
 .places-container h3 {
@@ -55,12 +72,12 @@ font-size: 18px;
   padding-left: 20px;
 }
 
+.button-container {
+  display: flex;
+  justify-content: center;
+  margin-top: 10px; /* Adjust the top margin as needed */
+}
 
-/* .full {
-    flex: 2;
-    width: 48vw;
-    height: 48vh;
-    margin: 0;
-    padding: 0;
-
-} */
+.submit-button {
+  /* Adjust other button styles as needed */
+}

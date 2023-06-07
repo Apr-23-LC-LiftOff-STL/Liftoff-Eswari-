@@ -24,7 +24,8 @@
             "tsConfig": "tsconfig.app.json",
             "assets": [
               "src/favicon.ico",
-              "src/assets"
+              "src/assets",
+              "src/assets/javascript/RouteBoxer.js"
             ],
             "styles": [
               "src/styles.css"
