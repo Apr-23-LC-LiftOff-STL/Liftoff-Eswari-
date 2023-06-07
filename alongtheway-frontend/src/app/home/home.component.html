@@ -1,51 +1,58 @@
 <app-weather></app-weather>
 
-
 <div class="container">
   <div class="form-container">
-    <label for="start-input">Start location:</label>
-    <input id="start-input" type="text" [(ngModel)]="startLocation">
-    <img id="start-weather-icon" class="weather-icon"><label id="start-weather-temp" class="weather-temp"></label>
-    <br>
-
-    <button href="#" (click)="addStop()">Add stop to your trip</button>
-    <div id="stopInputs">
-      <div *ngFor="let stop of stops; index as i">
-        <input id="stop-input-{{i}}" type="text" [(ngModel)]="stop.location">
-        <button (click)="removeStop(i)">Remove</button>
+    <div class="flex-container margin-between">
+      <label for="start-input" class="flex-label">Start Location:</label>
+      <div class="weather-group">
+        <img id="start-weather-icon" class="weather-icon">
+        <label id="start-weather-temp" class="weather-temp"></label>
       </div>
+      <input id="start-input" type="text" [(ngModel)]="startLocation" class="flex-input">
     </div>
 
+    <div id="stopInputs">
+      <div *ngFor="let stop of stops; index as i">
+        <div class="flex-container">
+          <button (click)="removeStop(i)" class="remove-button">Remove</button>
+          <input id="stop-input-{{i}}" type="text" [(ngModel)]="stop.location" class="flex-input">
+        </div>
+      </div>
+    </div>
+    <button href="#" class="add-stop-button" (click)="addStop()">Add stop to your trip</button>
 
-    <label for="end-input">End location:</label>
-    <input id="end-input" type="text" [(ngModel)]="endLocation">
-    <img id="end-weather-icon" class="weather-icon"><label id="end-weather-temp" class="weather-temp"></label>
-    <br>
+    <div class="flex-container margin-between">
+      <label for="end-input" class="flex-label">End Location:</label>
+      <div class="weather-group">
+        <img id="end-weather-icon" class="weather-icon">
+        <label id="end-weather-temp" class="weather-temp"></label>
+      </div>
+      <input id="end-input" type="text" [(ngModel)]="endLocation" class="flex-input">
+    </div>
 
+    <div class="flex-container margin-between">
+      <label for="average-mpg-input" class="flex-label">Average MPG:</label>
+      <input #mpgInput id="average-mpg-input" type="number" min="0" [(ngModel)]="averageMPG" class="flex-input">
+    </div>
 
+    <div class="flex-container margin-between">
+      <label for="tank-capacity-input" class="flex-label">Tank Capacity (Gallons):</label>
+      <input #tankInput id="tank-capacity-input" type="number" min="0" [(ngModel)]="tankCapacity" class="flex-input">
+    </div>
 
+    <div class="flex-container">
+      <label for="interest-input" class="flex-label">Place Types to Search:</label>
+      <select id="interest-input" [(ngModel)]="interest" class="flex-input">
+        <option value="restaurant">Restaurant</option>
+        <option value="museum">Museum</option>
+        <option value="park">Park</option>
+        <!-- more options... -->
+      </select>
+    </div>
 
-
-    <label for="average-mpg-input">Average MPG:</label>
-    <input #mpgInput id="average-mpg-input" type="number" min="0" [(ngModel)]="averageMPG">
-    <br>
-
-    <label for="tank-capacity-input">Tank Capacity (Gallons):</label>
-    <input #tankInput id="tank-capacity-input" type="number" min="0" [(ngModel)]="tankCapacity">
-    <br>
-
-    <label for="interest-input">Interest:</label>
-    <select id="interest-input" [(ngModel)]="interest">
-      <option value="restaurant">Restaurant</option>
-      <option value="museum">Museum</option>
-      <option value="park">Park</option>
-      <!-- more options... -->
-    </select>
-    <br>
-
-
-    <button (click)="submitForm()">Submit</button>
-
+    <div class="button-container">
+      <button class="submit-button" (click)="submitForm()">Submit</button>
+    </div>
 
     <div id="places-container" class="places-container">
       <h3>Places of Interest</h3>
@@ -53,14 +60,7 @@
         <li *ngFor="let place of placesData.results">{{ place.name }}, {{ place.vicinity }}</li>
       </ul>
     </div>
-
-
-    <!-- Outdated, used alternative -->
-    <!-- <div id="direction-steps" class="queue"></div> -->
   </div>
 
   <div id="map" class="map-container"></div>
 </div>
-
-
-<script [src]="environment.mapUrl"></script>
