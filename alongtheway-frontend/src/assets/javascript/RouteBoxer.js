@@ -128,37 +128,40 @@ RouteBoxer.prototype.buildGrid_ = function (vertices, range) {
   // Find the center of the bounding box of the path
   var routeBoundsCenter = routeBounds.getCenter();
 
-  // Starting from the center define grid lines outwards vertically until they
-  //  extend beyond the edge of the bounding box by more than one cell
+  // Define the factor to increase the range/grid size
+  var factor = 1.5; // Adjust this value to increase the grid size
+
+  // Starting from the center, define grid lines outwards vertically until they
+  // extend beyond the edge of the bounding box by more than one cell
   this.latGrid_.push(routeBoundsCenter.lat());
 
   // Add lines from the center out to the north
   this.latGrid_.push(routeBoundsCenter.rhumbDestinationPoint(0, range).lat());
   for (i = 2; this.latGrid_[i - 2] < routeBounds.getNorthEast().lat(); i++) {
-    this.latGrid_.push(routeBoundsCenter.rhumbDestinationPoint(0, range * i).lat());
+    this.latGrid_.push(routeBoundsCenter.rhumbDestinationPoint(0, range * i * factor).lat());
   }
 
   // Add lines from the center out to the south
   for (i = 1; this.latGrid_[1] > routeBounds.getSouthWest().lat(); i++) {
-    this.latGrid_.unshift(routeBoundsCenter.rhumbDestinationPoint(180, range * i).lat());
+    this.latGrid_.unshift(routeBoundsCenter.rhumbDestinationPoint(180, range * i * factor).lat());
   }
 
-  // Starting from the center define grid lines outwards horizontally until they
-  //  extend beyond the edge of the bounding box by more than one cell
+  // Starting from the center, define grid lines outwards horizontally until they
+  // extend beyond the edge of the bounding box by more than one cell
   this.lngGrid_.push(routeBoundsCenter.lng());
 
   // Add lines from the center out to the east
   this.lngGrid_.push(routeBoundsCenter.rhumbDestinationPoint(90, range).lng());
   for (i = 2; this.lngGrid_[i - 2] < routeBounds.getNorthEast().lng(); i++) {
-    this.lngGrid_.push(routeBoundsCenter.rhumbDestinationPoint(90, range * i).lng());
+    this.lngGrid_.push(routeBoundsCenter.rhumbDestinationPoint(90, range * i * factor).lng());
   }
 
   // Add lines from the center out to the west
   for (i = 1; this.lngGrid_[1] > routeBounds.getSouthWest().lng(); i++) {
-    this.lngGrid_.unshift(routeBoundsCenter.rhumbDestinationPoint(270, range * i).lng());
+    this.lngGrid_.unshift(routeBoundsCenter.rhumbDestinationPoint(270, range * i * factor).lng());
   }
 
-  // Create a two dimensional array representing this grid
+  // Create a two-dimensional array representing this grid
   this.grid_ = new Array(this.lngGrid_.length);
   for (i = 0; i < this.grid_.length; i++) {
     this.grid_[i] = new Array(this.latGrid_.length);

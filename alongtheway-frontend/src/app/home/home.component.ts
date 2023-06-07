@@ -207,6 +207,9 @@ export class HomeComponent implements OnInit {
         travelMode: google.maps.TravelMode.DRIVING
       },
       (result, status) => {
+
+        this.clearBoxes();
+
         if (status === google.maps.DirectionsStatus.OK) {
           console.log("Route calculated successfully");
           this.directionsRenderer?.setDirections(result);
@@ -223,7 +226,7 @@ export class HomeComponent implements OnInit {
           }
 
           let routeBoxer = new RouteBoxer();
-          this.boxes = routeBoxer.box(this.path, 10);
+          this.boxes = routeBoxer.box(this.path, 15);
           console.log('Boxes:', this.boxes);
           this.drawBoxes(this.boxes);
 
@@ -355,13 +358,13 @@ export class HomeComponent implements OnInit {
     }
   }
 
-//   clearBoxes(): void {
-//         if (this.boxpolys != null) {
-//           for (let i = 0; i < this.boxpolys.length; i++) {
-//             this.boxpolys[i].setMap(null);
-//           }
-//         }
-//         this.boxpolys = [];
-//   }
+  clearBoxes(): void {
+        if (this.boxpolys != null) {
+          for (let i = 0; i < this.boxpolys.length; i++) {
+            this.boxpolys[i].setMap(null);
+          }
+        }
+        this.boxpolys = [];
+  }
 
 }
