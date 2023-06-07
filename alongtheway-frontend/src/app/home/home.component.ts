@@ -226,7 +226,7 @@ export class HomeComponent implements OnInit {
           }
 
           let routeBoxer = new RouteBoxer();
-          this.boxes = routeBoxer.box(this.path, 20);
+          this.boxes = routeBoxer.box(this.path, 10);
           console.log('Boxes:', this.boxes);
           this.drawBoxes(this.boxes);
 
