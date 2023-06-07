@@ -19,9 +19,9 @@
         <a routerLink="/signup">Sign Up</a>
       </li>
       <li><a routerLink="/about">About Us/FAQ</a></li> -->
-      <li><a href="/" class="nav-button">HOME</a></li>
+      <li><a href="/home" class="nav-button">HOME</a></li>
       <li><a routerLink="/about" class="nav-button">ABOUT US / FAQ</a></li>
-      <li><a href="/savedtrips" class="nav-button">MY SAVED TRIPS</a></li>
+      <li><a href="/profile" class="nav-button">MY SAVED TRIPS</a></li>
       <li><a href="/profile" class="nav-button">SIGN UP / LOG IN</a></li>
     </ul>
     <span *ngIf="authService.isLoggedIn | async">Hi {{ username }}!</span>
