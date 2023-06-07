@@ -42,23 +42,27 @@
 }
 
 .weather-group {
-  margin-left: auto; /* Update this value */
-  margin-right: 1px; /* Update this value */
-  margin-bottom: 5px;
+  margin-left: auto;
+  margin-right: 1px;
+  display: flex;
+  align-items: center;
 }
 
 .weather-icon {
-  height: 35px;
-  margin-bottom: -18px;
+  height: 22px;
+  margin-right: auto;
+  display: block;
+  margin: auto;
 }
 
 .weather-temp {
-  font-size: 14px;
+  font-size: 12px;
 }
 
 .add-stop-button {
   margin-left: auto;
   margin-right: 24px;
+  margin-bottom: 2px;
 }
 
 .queue {
