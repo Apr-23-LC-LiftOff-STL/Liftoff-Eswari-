@@ -6,6 +6,7 @@
   flex: 1;
   display: flex;
   flex-direction: column;
+  justify-content: space-between;
 }
 
 .flex-container {
@@ -13,30 +14,60 @@
   align-items: center;
   margin-bottom: 2px;
   white-space: nowrap;
+  justify-content: space-between;
+}
+
+.flex-container.margin-between {
+  margin-bottom: 3px;
+}
+
+.flex-container .flex-label {
+  margin-right: 10px;
+  flex-shrink: 0;
+}
+
+.flex-container .flex-input {
+  margin-left: 7px;
+  margin-right: 7px;
+}
+
+.flex-container .remove-button {
+  margin-left: auto;
 }
 
 .flex-label {
   margin-right: 10px;
+  flex-shrink: 0;
+  font-size: 15px;
 }
 
 .flex-input {
-  margin-left: auto;
+  margin-left: 7px;
   margin-right: 7px;
 }
 
+.weather-group {
+  margin-left: auto;
+  margin-right: 1px;
+  display: flex;
+  align-items: center;
+}
+
 .weather-icon {
-  height: 40px;
-  margin-bottom: -15px;
+  height: 22px;
+  margin-right: auto;
+  display: block;
+  margin: auto;
 }
 
 .weather-temp {
-  font-size: 18px;
+  font-size: 12px;
 }
 
 .add-stop-button {
   margin-left: auto;
   margin-right: 24px;
-  margin-bottom: 3px;
+  margin-bottom: 2px;
 }
 
 .queue {
@@ -62,10 +93,17 @@
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
   margin-top: 8px;
   margin-right: 8px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
 }
 
 .places-container h3 {
   margin-top: 0;
+  font-weight: normal;
+  font-size: 14px;
+  text-decoration-line: underline;
 }
 
 .places-container ul {
@@ -75,7 +113,7 @@
 .button-container {
   display: flex;
   justify-content: center;
-  margin-top: 10px; /* Adjust the top margin as needed */
+  margin-top: 10px;
 }
 
 .submit-button {
