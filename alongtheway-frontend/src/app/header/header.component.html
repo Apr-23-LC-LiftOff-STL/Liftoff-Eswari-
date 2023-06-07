@@ -7,10 +7,25 @@
   </div>
   <nav>
     <ul>
+      <!-- <li *ngIf="(authService.isLoggedIn | async) as isLoggedIn">
+        <a href="/saved-trips" *ngIf="isLoggedIn">Saved Trips</a>
+        <a href="/profile" *ngIf="isLoggedIn">My Profile</a>
+        <a (click)="logout()" *ngIf="isLoggedIn">Logout</a>
+      </li>
+      <li *ngIf="!(authService.isLoggedIn | async)">
+        <a routerLink="/login">Login</a>
+      </li>
+      <li *ngIf="!(authService.isLoggedIn | async)">
+        <a routerLink="/signup">Sign Up</a>
+      </li>
+      <li><a routerLink="/about">About Us/FAQ</a></li> -->
       <li><a href="/" class="nav-button">HOME</a></li>
       <li><a routerLink="/about" class="nav-button">ABOUT US / FAQ</a></li>
       <li><a href="/savedtrips" class="nav-button">MY SAVED TRIPS</a></li>
       <li><a href="/profile" class="nav-button">SIGN UP / LOG IN</a></li>
     </ul>
+    <span *ngIf="authService.isLoggedIn | async">Hi {{ username }}!</span>
   </nav>
 </header>
+
+
