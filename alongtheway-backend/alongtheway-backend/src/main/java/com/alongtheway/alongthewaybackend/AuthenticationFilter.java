@@ -4,7 +4,7 @@ import com.alongtheway.alongthewaybackend.controllers.AuthenticationController;
 import com.alongtheway.alongthewaybackend.models.User;
 import com.alongtheway.alongthewaybackend.models.data.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
+import org.springframework.web.servlet.HandlerInterceptor;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -13,7 +13,7 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
 
-public class  AuthenticationFilter extends HandlerInterceptorAdapter {
+public class AuthenticationFilter implements HandlerInterceptor {
 
     @Autowired
     UserRepository userRepository;

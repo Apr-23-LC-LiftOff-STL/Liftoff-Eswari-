@@ -13,15 +13,16 @@ repositories {
 }
 
 dependencies {
-	implementation("com.fasterxml.jackson.core:jackson-databind:2.13.0")
-	implementation("javax.validation:validation-api:2.0.1.Final")
+	implementation ("com.fasterxml.jackson.core:jackson-databind:2.15.1")
+	implementation ("javax.validation:validation-api:2.0.1.Final")
 	implementation ("org.mongodb:mongodb-driver-sync")
-	implementation("org.springframework.boot:spring-boot-starter-data-mongodb")
-	implementation("org.springframework.boot:spring-boot-starter-web")
+	implementation ("org.springframework.boot:spring-boot-starter-data-mongodb")
+	implementation ("org.springframework.boot:spring-boot-starter-web")
 	implementation ("org.springframework.security:spring-security-crypto")
 	implementation ("org.springframework.boot:spring-boot-starter-validation")
-	developmentOnly("org.springframework.boot:spring-boot-devtools")
-	testImplementation("org.springframework.boot:spring-boot-starter-test")
+	implementation("org.springframework:spring-webmvc:5.3.27")
+	developmentOnly ("org.springframework.boot:spring-boot-devtools")
+	testImplementation ("org.springframework.boot:spring-boot-starter-test")
 }
 
 tasks.withType<Test> {
