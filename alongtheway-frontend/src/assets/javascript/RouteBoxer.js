@@ -129,7 +129,7 @@ RouteBoxer.prototype.buildGrid_ = function (vertices, range) {
   var routeBoundsCenter = routeBounds.getCenter();
 
   // Define the factor to increase the range/grid size
-  var factor = 2; // Adjust this value to increase the grid size
+  var factor = 1.2; // Adjust this value to increase the grid size
 
   // Starting from the center, define grid lines outwards vertically until they
   // extend beyond the edge of the bounding box by more than one cell
