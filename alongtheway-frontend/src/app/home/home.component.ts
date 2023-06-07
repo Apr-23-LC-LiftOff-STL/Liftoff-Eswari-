@@ -150,10 +150,10 @@ export class HomeComponent implements OnInit {
   }
 
   submitForm(): void {
-    if (!this.interest) {
-      console.error("Interest not set");
-      return;
-    }
+//     if (!this.interest) {
+//       console.error("Interest not set");
+//       return;
+//     }
 
     this.calculateRoute();
   }
@@ -189,15 +189,15 @@ export class HomeComponent implements OnInit {
       return;
     }
 
-    if (!this.interest) {
-      console.error("Interest not set");
-      return;
-    }
-
-    if (!this.averageMPG || !this.tankCapacity) {
-      console.error("Average MPG or tank capacity not set");
-      return;
-    }
+//     if (!this.interest) {
+//       console.error("Interest not set");
+//       return;
+//     }
+//
+//     if (!this.averageMPG || !this.tankCapacity) {
+//       console.error("Average MPG or tank capacity not set");
+//       return;
+//     }
 
     this.directionsService?.route(
       {
@@ -226,7 +226,7 @@ export class HomeComponent implements OnInit {
           }
 
           let routeBoxer = new RouteBoxer();
-          this.boxes = routeBoxer.box(this.path, 10);
+          this.boxes = routeBoxer.box(this.path, 20);
           console.log('Boxes:', this.boxes);
           this.drawBoxes(this.boxes);
 
