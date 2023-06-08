@@ -67,7 +67,7 @@ export class HomeComponent implements OnInit {
   gallonGasPriceString: string = "3.50";
   distanceInMiles: number = 0;
   distanceInMeters: number = 0;
-  driveTime: string = "";
+  driveTime: string = "0 hrs";
   map: google.maps.Map | null = null;
   directionsService: google.maps.DirectionsService | null = null;
   directionsRenderer: google.maps.DirectionsRenderer | null = null;
