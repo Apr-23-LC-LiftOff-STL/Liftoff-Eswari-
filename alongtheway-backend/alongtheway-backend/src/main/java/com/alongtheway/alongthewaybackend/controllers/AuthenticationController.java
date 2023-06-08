@@ -1,19 +1,12 @@
 package com.alongtheway.alongthewaybackend.controllers;
 
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Optional;
-import java.util.concurrent.TimeUnit;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
 
-import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.Errors;
@@ -86,7 +79,7 @@ public class AuthenticationController {
 
     @PostMapping("/login")
     public ResponseEntity<?> processLoginForm(@Valid @RequestBody LoginForm loginForm, HttpServletRequest request,
-                                              Errors errors) {
+            Errors errors) {
         if (errors.hasErrors()) {
             // Return validation errors
             return ResponseEntity.badRequest().body(errors.getAllErrors());
@@ -99,32 +92,9 @@ public class AuthenticationController {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid username or password");
         }
 
-        // Generate JWT token
-        String token = generateToken(user.getUsername());
-
-        // Set the token in the response headers
-        HttpHeaders responseHeaders = new HttpHeaders();
-        responseHeaders.add("Authorization", "Bearer " + token);
-
-        // Set the token in the session
+        // Login successful, return OK response
         setUserInSession(request.getSession(), user);
+        return ResponseEntity.ok().body("{\"message\": \"Login successful\"}");
 
-        // Create the response body
-        Map<String, String> responseBody = new HashMap<>();
-        responseBody.put("message", "Login successful");
-
-        // Return OK response with token in headers and response body
-        return ResponseEntity.ok().headers(responseHeaders).body(responseBody);
-    }
-
-    private String generateToken(String username) {
-        long expirationTimeMillis = TimeUnit.MINUTES.toMillis(30); // Token expiration time: 30 minutes
-        Date expirationDate = new Date(System.currentTimeMillis() + expirationTimeMillis);
-
-        return Jwts.builder()
-                .setSubject(username)
-                .setExpiration(expirationDate)
-                .signWith(SignatureAlgorithm.HS256, "yourSecretKey") // Replace "yourSecretKey" with your own secret key
-                .compact();
     }
 }
