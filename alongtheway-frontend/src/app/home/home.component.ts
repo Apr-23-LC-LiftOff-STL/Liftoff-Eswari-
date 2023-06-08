@@ -67,6 +67,7 @@ export class HomeComponent implements OnInit {
   gallonGasPriceString: string = "3.50";
   distanceInMiles: number = 0;
   distanceInMeters: number = 0;
+  driveTime: string = "";
   map: google.maps.Map | null = null;
   directionsService: google.maps.DirectionsService | null = null;
   directionsRenderer: google.maps.DirectionsRenderer | null = null;
@@ -245,6 +246,12 @@ export class HomeComponent implements OnInit {
         if (status === google.maps.DirectionsStatus.OK) {
           console.log("Route calculated successfully");
           this.directionsRenderer?.setDirections(result);
+
+          if (result && result.routes && result.routes.length > 0 && result.routes[0].legs && result.routes[0].legs.length > 0) {
+            this.driveTime = result.routes[0].legs[0].duration?.text ?? 'Unknown';
+          } else {
+            console.error('Invalid directions response:', result);
+          }
 
           this.createRouteBoxes(result);
 
@@ -490,6 +497,10 @@ export class HomeComponent implements OnInit {
     let tanksNeeded = (Number(this.calculateTotalGallons()) / this.tankCapacity);
     let tanksNeededString = tanksNeeded.toFixed(1);
     return tanksNeededString;
+  }
+
+  calculateDriveTime(): string {
+      return this.driveTime;
   }
 
   searchPlacesAlongRoute(): void {
