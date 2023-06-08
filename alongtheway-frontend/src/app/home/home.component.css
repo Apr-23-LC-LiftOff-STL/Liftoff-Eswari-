@@ -2,8 +2,15 @@
   display: flex;
 }
 
+.collapsibles-container {
+    flex-basis: 40%;
+    display: flex;
+    flex-direction: column;
+    min-width: 360px; /* Adjust this value based on your content size */
+    max-width: 30%; /* Optional, to prevent it from growing too large in wider viewports */
+}
+
 .form-container {
-  flex: 1;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
@@ -80,7 +87,7 @@
 }
 
 .map-container {
-  flex: 2;
+  flex: 1;
   height: 88vh;
 }
 
@@ -119,3 +126,63 @@
 .submit-button {
   /* Adjust other button styles as needed */
 }
+
+.collapsible {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 4px;
+  justify-content: flex-start; /* Change from "space-between" to "flex-start" */
+}
+
+.collapsible-content {
+  opacity: 1; /* Fully visible when expanded */
+  max-height: 500px; /* Arbitrary max-height, it should be more than the actual content height */
+  overflow: visible; /* Hide content that exceeds max-height */
+  transition: opacity 0.3s ease, max-height 0.7s ease; /* Transition for opacity and max-height */
+  padding: /* Your padding settings */;
+}
+
+.collapsible-content.collapsed {
+  opacity: 0; /* Fully transparent when collapsed */
+  max-height: 0; /* Max height to 0 */
+  padding: 0; /* Add this line to remove padding when collapsed */
+}
+
+.collapsible:not(.collapsed) .collapsible-header {
+  font-size: 16px; /* The font-size when the collapsible is open. Adjust this value as needed */
+}
+
+.collapsible-header {
+  font-size: 14px;
+  transition: font-size 0.5s ease; /* This will make the font-size transition smoothly */
+  margin-right: 7px;
+  margin-bottom: 4px;
+  color: black;
+  background-image: linear-gradient(#c7dfff, white);
+  padding: 10px;
+  cursor: pointer;
+  text-align: center;
+  border: 1.5px solid black; /* Add border properties */
+  border-radius: 5px; /* Add border-radius for rounded corners */
+  position: relative; /* Add position relative for pseudo-element */
+  height: 12px; /* Adjust this value as needed */
+  line-height: 12px; /* Should be the same as height */
+}
+
+.arrow-icon {
+  display: inline-block;
+  width: 0;
+  height: 0;
+  border-style: solid;
+  border-width: 7px 5px 0 5px; /* Modify border-width to create a down arrow */
+  border-color: #000 transparent transparent transparent;
+  margin-left: 5px;
+  margin-bottom: 3px;
+  transform: scaleY(1); /* No flip for the open state */
+  transition: transform 0.7s ease; /* Add transition for smooth animation */
+}
+
+.collapsible.collapsed .arrow-icon {
+  transform: scaleY(-1); /* Flip along the vertical axis for the closed state */
+}
+

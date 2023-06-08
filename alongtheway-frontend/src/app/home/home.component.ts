@@ -62,10 +62,14 @@ export class HomeComponent implements OnInit {
   endLocation: string = "";
   averageMPG: number = 0;
   tankCapacity: number = 0;
+  distanceInMiles: number = 0;
+  distanceInMeters: number = 0;
   map: google.maps.Map | null = null;
   directionsService: google.maps.DirectionsService | null = null;
   directionsRenderer: google.maps.DirectionsRenderer | null = null;
   interest: string = "";
+  isCollapsibleCollapsed: boolean = false;
+  isSecondCollapsibleCollapsed: boolean = true;
 
   @ViewChild('mpgInput') mpgInputRef!: ElementRef<HTMLInputElement>;
   @ViewChild('tankInput') tankInputRef!: ElementRef<HTMLInputElement>;
@@ -214,21 +218,7 @@ export class HomeComponent implements OnInit {
           console.log("Route calculated successfully");
           this.directionsRenderer?.setDirections(result);
 
-          if (result && result.routes && result.routes.length > 0) {
-            const polyline: google.maps.Polyline = new google.maps.Polyline({
-              path: result.routes[0]?.overview_path || [],
-            });
-
-            this.path = polyline.getPath().getArray();
-          } else {
-            console.error("Directions request failed:", status);
-            // Handle the case when result is null or there are no routes
-          }
-
-          let routeBoxer = new RouteBoxer();
-          this.boxes = routeBoxer.box(this.path, 10);
-          console.log('Boxes:', this.boxes);
-          this.drawBoxes(this.boxes);
+          this.createRouteBoxes(result);
 
           // calculate the midpoint of the route + old places code
           // const midLat = (result!.routes[0].bounds.getNorthEast().lat() + result!.routes[0].bounds.getSouthWest().lat()) / 2;
@@ -344,6 +334,49 @@ export class HomeComponent implements OnInit {
     }
   }
 
+  createRouteBoxes(result: google.maps.DirectionsResult | null): void {
+    if (result === null) {
+        console.error("Directions result is null");
+        return;
+    }
+
+    if (result && result.routes && result.routes.length > 0) {
+      const polyline: google.maps.Polyline = new google.maps.Polyline({
+        path: result.routes[0]?.overview_path || [],
+      });
+
+      this.path = polyline.getPath().getArray();
+    } else {
+      console.error("Directions request failed:", status);
+      // Handle the case when result is null or there are no routes
+    }
+
+    let routeBoxer = new RouteBoxer();
+
+    this.clearBoxes();
+
+    this.distanceInMeters = result?.routes[0]?.legs[0]?.distance?.value as number;
+    console.log("Distance in meters: ", this.distanceInMeters);
+
+    if (this.distanceInMeters) {
+      this.distanceInMiles = this.distanceInMeters * 0.000621371; // Convert meters to miles
+      console.log("Distance in miles: ", this.distanceInMiles);
+
+      if ((this.distanceInMiles > 0) && (this.distanceInMiles <= 99.9)) {
+        this.boxes = routeBoxer.box(this.path, 1.5);
+      } else if ((this.distanceInMiles >= 100) && (this.distanceInMiles <= 499.9)) {
+        this.boxes = routeBoxer.box(this.path, 10);
+      } else if ((this.distanceInMiles >= 500) && (this.distanceInMiles <= 999.9)) {
+        this.boxes = routeBoxer.box(this.path, 20);
+      } else if (this.distanceInMiles >= 1000) {
+        this.boxes = routeBoxer.box(this.path, 80);
+      }
+
+      console.log('Boxes:', this.boxes);
+      this.drawBoxes(this.boxes);
+    }
+  }
+
   drawBoxes(boxes: google.maps.LatLngBounds[]): void {
     this.boxpolys = new Array(boxes.length);
     for (let i = 0; i < boxes.length; i++) {
@@ -365,6 +398,14 @@ export class HomeComponent implements OnInit {
           }
         }
         this.boxpolys = [];
+  }
+
+  toggleCollapsible(): void {
+    this.isCollapsibleCollapsed = !this.isCollapsibleCollapsed;
+  }
+
+  toggleSecondCollapsible(): void {
+    this.isSecondCollapsibleCollapsed = !this.isSecondCollapsibleCollapsed;
   }
 
 }

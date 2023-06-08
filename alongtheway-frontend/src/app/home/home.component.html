@@ -1,70 +1,85 @@
-<app-weather></app-weather>
-
 <div class="container">
-  <div class="form-container">
-    <div class="flex-container margin-between">
-      <label for="start-input" class="flex-label">Start Location:</label>
-      <div class="weather-group">
-        <img id="weather-icon-start-input" class="weather-icon">
-        <label id="weather-temp-start-input" class="weather-temp"></label>
-      </div>
-      <input id="start-input" type="text" [(ngModel)]="startLocation" class="flex-input">
-    </div>
+  <div class="collapsibles-container">
 
-    <div id="stopInputs">
-      <div *ngFor="let stop of stops; index as i">
-        <div class="flex-container">
-          <button (click)="removeStop(i)" class="remove-button">Remove</button>
-          <div class="weather-group">
-            <img id="weather-icon-stop-input-{{i}}" class="weather-icon">
-            <label id="weather-temp-stop-input-{{i}}" class="weather-temp"></label>
+    <!-- First Collapsible -->
+    <div class="collapsible" [ngClass]="{ 'collapsed': isCollapsibleCollapsed }">
+      <div class="collapsible-header" (click)="toggleCollapsible()">
+        DIRECTIONS <span class="arrow-icon"></span>
+      </div>
+      <div class="collapsible-content" [ngClass]="{ 'collapsed': isCollapsibleCollapsed }">
+        <div class="form-container">
+          <div class="flex-container margin-between">
+            <label for="start-input" class="flex-label">Start Location:</label>
+            <div class="weather-group">
+              <img id="weather-icon-start-input" class="weather-icon">
+              <label id="weather-temp-start-input" class="weather-temp"></label>
+            </div>
+            <input id="start-input" type="text" [(ngModel)]="startLocation" class="flex-input">
           </div>
-          <input id="stop-input-{{i}}" type="text" [(ngModel)]="stop.location" class="flex-input">
+
+          <div id="stopInputs">
+            <div *ngFor="let stop of stops; index as i">
+              <div class="flex-container">
+                <button (click)="removeStop(i)" class="remove-button">Remove</button>
+                <div class="weather-group">
+                  <img id="weather-icon-stop-input-{{i}}" class="weather-icon">
+                  <label id="weather-temp-stop-input-{{i}}" class="weather-temp"></label>
+                </div>
+                <input id="stop-input-{{i}}" type="text" [(ngModel)]="stop.location" class="flex-input">
+              </div>
+            </div>
+          </div>
+          <button href="#" class="add-stop-button" (click)="addStop()">Add stop to your trip</button>
+
+          <div class="flex-container margin-between">
+            <label for="end-input" class="flex-label">End Location:</label>
+            <div class="weather-group">
+              <img id="weather-icon-end-input" class="weather-icon">
+              <label id="weather-temp-end-input" class="weather-temp"></label>
+            </div>
+            <input id="end-input" type="text" [(ngModel)]="endLocation" class="flex-input">
+          </div>
+          <div class="button-container">
+            <button class="submit-button" (click)="submitForm()">Submit</button>
+          </div>
         </div>
       </div>
     </div>
-    <button href="#" class="add-stop-button" (click)="addStop()">Add stop to your trip</button>
 
-    <div class="flex-container margin-between">
-      <label for="end-input" class="flex-label">End Location:</label>
-      <div class="weather-group">
-        <img id="weather-icon-end-input" class="weather-icon">
-        <label id="weather-temp-end-input" class="weather-temp"></label>
+    <!-- Second Collapsible -->
+    <div class="collapsible" [ngClass]="{ 'collapsed': isSecondCollapsibleCollapsed }">
+      <div class="collapsible-header" (click)="toggleSecondCollapsible()">
+        ROUTE / GAS / API DATA <span class="arrow-icon"></span>
       </div>
-      <input id="end-input" type="text" [(ngModel)]="endLocation" class="flex-input">
+      <div class="collapsible-content" [ngClass]="{ 'collapsed': isSecondCollapsibleCollapsed }">
+        <div class="form-container">
+
+          <div class="flex-container margin-between">
+            <label for="average-mpg-input" class="flex-label">Average MPG:</label>
+            <input #mpgInput id="average-mpg-input" type="number" min="0" [(ngModel)]="averageMPG" class="flex-input">
+          </div>
+
+          <div class="flex-container margin-between">
+            <label for="tank-capacity-input" class="flex-label">Tank Capacity (Gallons):</label>
+            <input #tankInput id="tank-capacity-input" type="number" min="0" [(ngModel)]="tankCapacity" class="flex-input">
+          </div>
+
+          <div class="flex-container">
+            <label for="interest-input" class="flex-label">Place Types to Search:</label>
+            <select id="interest-input" [(ngModel)]="interest" class="flex-input">
+              <option value="restaurant">Restaurant</option>
+              <option value="museum">Museum</option>
+              <option value="park">Park</option>
+              <!-- more options... -->
+            </select>
+          </div>
+        </div>
+      </div>
     </div>
 
-    <div class="flex-container margin-between">
-      <label for="average-mpg-input" class="flex-label">Average MPG:</label>
-      <input #mpgInput id="average-mpg-input" type="number" min="0" [(ngModel)]="averageMPG" class="flex-input">
-    </div>
-
-    <div class="flex-container margin-between">
-      <label for="tank-capacity-input" class="flex-label">Tank Capacity (Gallons):</label>
-      <input #tankInput id="tank-capacity-input" type="number" min="0" [(ngModel)]="tankCapacity" class="flex-input">
-    </div>
-
-    <div class="flex-container">
-      <label for="interest-input" class="flex-label">Place Types to Search:</label>
-      <select id="interest-input" [(ngModel)]="interest" class="flex-input">
-        <option value="restaurant">Restaurant</option>
-        <option value="museum">Museum</option>
-        <option value="park">Park</option>
-        <!-- more options... -->
-      </select>
-    </div>
-
-    <div class="button-container">
-      <button class="submit-button" (click)="submitForm()">Submit</button>
-    </div>
-
-    <div id="places-container" class="places-container">
-      <h3>Places of Interest</h3>
-      <ul id="places-list">
-        <li *ngFor="let place of placesData.results">{{ place.name }}, {{ place.vicinity }}</li>
-      </ul>
-    </div>
   </div>
 
+  <!-- Map Container -->
   <div id="map" class="map-container"></div>
+
 </div>
