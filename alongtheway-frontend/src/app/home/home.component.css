@@ -121,12 +121,8 @@
 .button-container {
   display: flex;
   justify-content: center;
-  margin-top: 10px;
-}
-
-.submit-button {
-  margin-bottom: 3px;
-  /* Adjust other button styles as needed */
+  margin-top: 1px;
+  margin-bottom: 4px;
 }
 
 .collapsible {
@@ -171,6 +167,14 @@
   line-height: 12px; /* Should be the same as height */
 }
 
+.collapsible-title {
+  text-align: center;
+  font-size: 15px;
+  margin-top: 0px;
+  margin-bottom: 4px; /* Remove the margin */
+  padding: 0; /* Remove the padding */
+}
+
 .arrow-icon {
   display: inline-block;
   width: 0;
@@ -186,5 +190,23 @@
 
 .collapsible.collapsed .arrow-icon {
   transform: scaleY(-1); /* Flip along the vertical axis for the closed state */
+}
+
+.flex-value-box {
+  font-size: 14px;
+  margin-right: 7px;
+  padding: 2px 4px;
+  display: inline-block;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  background-color: #f2f2f2;
+}
+
+.remove-button {
+  margin-left: 0; /* Remove the left margin */
+}
+
+.input-text {
+  font-size: 14px;
 }
 

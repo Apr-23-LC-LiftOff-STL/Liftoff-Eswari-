@@ -21,10 +21,6 @@
             <div *ngFor="let stop of stops; index as i">
               <div class="flex-container">
                 <button (click)="removeStop(i)" class="remove-button">Remove</button>
-                <div class="weather-group">
-                  <img id="weather-icon-stop-input-{{i}}" class="weather-icon">
-                  <label id="weather-temp-stop-input-{{i}}" class="weather-temp"></label>
-                </div>
                 <input id="stop-input-{{i}}" type="text" [(ngModel)]="stop.location" class="flex-input">
               </div>
             </div>
@@ -53,6 +49,14 @@
       </div>
       <div class="collapsible-content" [ngClass]="{ 'collapsed': isSecondCollapsibleCollapsed }">
         <div class="form-container">
+          <h2 class="collapsible-title">Route Data</h2>
+
+          <div class="flex-container margin-between">
+            <label class="flex-label">Total Distance:</label>
+            <div class="flex-value-box">{{ distanceInMetersToMiles() }}</div>
+          </div>
+
+          <h2 class="collapsible-title">Gas Calculator</h2>
 
           <div class="flex-container margin-between">
             <label for="average-mpg-input" class="flex-label">Average MPG:</label>
@@ -62,6 +66,29 @@
           <div class="flex-container margin-between">
             <label for="tank-capacity-input" class="flex-label">Tank Capacity (Gallons):</label>
             <input #tankInput id="tank-capacity-input" type="number" min="0" [(ngModel)]="tankCapacity" class="flex-input">
+          </div>
+
+          <div class="flex-container margin-between">
+            <label for="gas-price-input" class="flex-label">Average Gas Price:</label>
+            <div class="input-with-text">
+              <span class="input-text">$</span>
+              <input #gasPriceInput id="gas-price-input" type="number" min="0" [(ngModel)]="gallonGasPriceString" class="flex-input">
+            </div>
+          </div>
+
+          <div class="flex-container margin-between">
+            <label class="flex-label">Total Gas Cost:</label>
+            <div class="flex-value-box">{{ calculateTotalGasCost() }}</div>
+          </div>
+
+          <div class="flex-container margin-between">
+            <label class="flex-label">Gallons of Gas Needed:</label>
+            <div class="flex-value-box">{{ calculateTotalGallons() }}</div>
+          </div>
+
+          <div class="flex-container margin-between">
+            <label class="flex-label">Fill Ups Needed:</label>
+            <div class="flex-value-box">{{ calculateTanksNeeded() }}</div>
           </div>
         </div>
       </div>

@@ -60,8 +60,11 @@ export class HomeComponent implements OnInit {
   title = 'alongtheway-frontend';
   startLocation: string = "";
   endLocation: string = "";
-  averageMPG: number = 0;
-  tankCapacity: number = 0;
+  averageMPG: number = 30;
+  tankCapacity: number = 10;
+  totalGallonsNeeded: number = 0;
+  gallonGasPrice: number = 3.5;
+  gallonGasPriceString: string = "3.50";
   distanceInMiles: number = 0;
   distanceInMeters: number = 0;
   map: google.maps.Map | null = null;
@@ -176,7 +179,6 @@ export class HomeComponent implements OnInit {
     this.tankCapacity = +this.tankCapacity;
     const apiKey = environment.apiKey;
 
-
     console.log("Calculating route...");
     console.log("Start location:", this.startLocation);
     console.log("End location:", this.endLocation);
@@ -233,8 +235,6 @@ export class HomeComponent implements OnInit {
           //   title: 'Midpoint'
           // });
 
-
-
           // make the Google Places API request using the PlacesService
 
           //     const placesService = new google.maps.places.PlacesService(this.map as google.maps.Map);
@@ -273,21 +273,21 @@ export class HomeComponent implements OnInit {
             this.showSteps(steps);
           }
 
-          // Calculate gas usage
-          const distanceMeters = result?.routes[0]?.legs[0]?.distance?.value;
-          if (distanceMeters) {
-            const distanceMiles = distanceMeters * 0.000621371; // Convert meters to miles
-            const tanksNeeded = distanceMiles / (this.averageMPG * this.tankCapacity);
-            console.log("Tanks of gas needed:", tanksNeeded);
-
-            // Display gas usage
-            const gasUsageInfoElement = document.getElementById("gas-usage-info");
-            if (gasUsageInfoElement) {
-              gasUsageInfoElement.textContent = `Distance: ${distanceMiles.toFixed(2)} miles. Tanks of gas needed: ${tanksNeeded.toFixed(2)}`;
-            }
-          } else {
-            console.error("Could not calculate distance");
-          }
+//           // Calculate gas usage //This is old code no longer needed
+//           const distanceMeters = result?.routes[0]?.legs[0]?.distance?.value;
+//           if (distanceMeters) {
+//             const distanceMiles = distanceMeters * 0.000621371; // Convert meters to miles
+//             const tanksNeeded = distanceMiles / (this.averageMPG * this.tankCapacity);
+//             console.log("Tanks of gas needed:", tanksNeeded);
+//
+//             // Display gas usage
+//             const gasUsageInfoElement = document.getElementById("gas-usage-info");
+//             if (gasUsageInfoElement) {
+//               gasUsageInfoElement.textContent = `Distance: ${distanceMiles.toFixed(2)} miles. Tanks of gas needed: ${tanksNeeded.toFixed(2)}`;
+//             }
+//           } else {
+//             console.error("Could not calculate distance");
+//           }
         } else {
           console.error("Directions request failed:", status);
         }
@@ -411,6 +411,41 @@ export class HomeComponent implements OnInit {
 
   toggleThirdCollapsible(): void {
     this.isThirdCollapsibleCollapsed = !this.isThirdCollapsibleCollapsed;
+  }
+
+  distanceInMetersToMiles(): string {
+    // Convert distanceInMeters to miles here
+    const distanceInMiles = this.distanceInMeters * 0.000621371;
+    return (distanceInMiles.toFixed(2) + " miles"); // Adjust decimal places as needed
+  }
+
+  calculateTotalGasCost() {
+    // Retrieve the value from the gasPrice variable
+    const distanceInMiles = this.distanceInMeters * 0.000621371;
+    const totalGallonsNeeded = (distanceInMiles / this.averageMPG);
+    const gasPriceTotal = (totalGallonsNeeded * Number(this.gallonGasPriceString));
+
+    // Format the value as currency
+    const formattedGasPrice = gasPriceTotal.toLocaleString('en-US', {
+      style: 'currency',
+      currency: 'USD',
+    });
+
+    // Return the formatted value
+    return formattedGasPrice;
+  }
+
+  calculateTotalGallons(): string {
+    const distanceInMiles = this.distanceInMeters * 0.000621371;
+    const totalGallonsNeeded = (distanceInMiles / this.averageMPG);
+    const formattedTotalGallonsNeeded: string = totalGallonsNeeded.toFixed(1);
+    return formattedTotalGallonsNeeded;
+  }
+
+  calculateTanksNeeded(): string {
+    let tanksNeeded = (Number(this.calculateTotalGallons()) / this.tankCapacity);
+    let tanksNeededString = tanksNeeded.toFixed(1);
+    return tanksNeededString;
   }
 
 }
