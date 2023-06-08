@@ -356,8 +356,21 @@ export class HomeComponent implements OnInit {
 
     this.clearBoxes();
 
-    this.distanceInMeters = result?.routes[0]?.legs[0]?.distance?.value as number;
-    console.log("Distance in meters: ", this.distanceInMeters);
+    let totalDistanceInMeters = 0;
+
+    if (result && result.routes && result.routes.length > 0) {
+      const route = result.routes[0];
+
+      if (route && route.legs && route.legs.length > 0) {
+        for (const leg of route.legs) {
+          if (leg.distance && leg.distance.value) {
+            totalDistanceInMeters += leg.distance.value;
+          }
+        }
+      }
+    }
+
+    this.distanceInMeters = totalDistanceInMeters;
 
     if (this.distanceInMeters) {
       this.distanceInMiles = this.distanceInMeters * 0.000621371; // Convert meters to miles
