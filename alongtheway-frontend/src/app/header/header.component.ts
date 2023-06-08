@@ -7,7 +7,7 @@ import { AuthService } from '../services/auth.service';
   styleUrls: ['./header.component.css']
 })
 export class HeaderComponent implements OnInit {
-  username: string | null = null;
+  username = '';
 
   constructor(public authService: AuthService) { }
 
@@ -20,12 +20,10 @@ export class HeaderComponent implements OnInit {
   logout(): void {
     this.authService.logout().subscribe(
       response => {
-        console.log('Logout successful:', response);
-        this.username = null; // Clear the username after logout
-        // Add your logic to navigate to the desired page after logout
+        // Handle logout success
       },
       error => {
-        console.error('Logout failed:', error);
+        // Handle logout error
       }
     );
   }
