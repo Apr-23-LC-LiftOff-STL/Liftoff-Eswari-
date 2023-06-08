@@ -94,6 +94,7 @@ public class AuthenticationController {
 
         // Login successful, return OK response
         setUserInSession(request.getSession(), user);
-        return ResponseEntity.ok().body("Login successful");
+        return ResponseEntity.ok().body("{\"message\": \"Login successful\"}");
+
     }
 }
