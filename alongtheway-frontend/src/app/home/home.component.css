@@ -136,7 +136,7 @@
   opacity: 1; /* Fully visible when expanded */
   max-height: 500px; /* Arbitrary max-height, it should be more than the actual content height */
   overflow: visible; /* Hide content that exceeds max-height */
-  transition: opacity 0.3s ease, max-height 0.7s ease; /* Transition for opacity and max-height */
+  transition: opacity 0.3s ease, max-height 0.5s ease; /* Transition for opacity and max-height */
   padding: /* Your padding settings */;
 }
 
@@ -147,7 +147,7 @@
 }
 
 .collapsible:not(.collapsed) .collapsible-header {
-  font-size: 16px; /* The font-size when the collapsible is open. Adjust this value as needed */
+  font-size: 15px; /* The font-size when the collapsible is open. Adjust this value as needed */
 }
 
 .collapsible-header {
