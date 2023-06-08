@@ -169,7 +169,8 @@
 
 .collapsible-title {
   text-align: center;
-  font-size: 15px;
+  font-size: 14px;
+  font-weight: bold;
   margin-top: 0px;
   margin-bottom: 4px; /* Remove the margin */
   padding: 0; /* Remove the padding */
