@@ -56,6 +56,6 @@ export class AuthService {
   private getUsernameFromToken(token: string): string {
     // Implement your logic to extract the username from the token
     // and return it here
-    return 'a';
+    return '';
   }
 }
