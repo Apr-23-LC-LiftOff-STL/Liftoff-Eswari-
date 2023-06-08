@@ -70,10 +70,15 @@ export class HomeComponent implements OnInit {
   map: google.maps.Map | null = null;
   directionsService: google.maps.DirectionsService | null = null;
   directionsRenderer: google.maps.DirectionsRenderer | null = null;
-  interest: string = "";
+  interest: string = "restaurant";
   isCollapsibleCollapsed: boolean = false;
   isSecondCollapsibleCollapsed: boolean = true;
   isThirdCollapsibleCollapsed: boolean = true;
+  loading: boolean = false; // Add loading flag property
+  service!: google.maps.places.PlacesService;
+  places: any[] = [];
+  openInfoWindow: google.maps.InfoWindow | null = null; // Declare the openInfoWindow property
+  markers: google.maps.Marker[] = []; // Array to store the markers
 
   @ViewChild('mpgInput') mpgInputRef!: ElementRef<HTMLInputElement>;
   @ViewChild('tankInput') tankInputRef!: ElementRef<HTMLInputElement>;
@@ -108,13 +113,9 @@ export class HomeComponent implements OnInit {
   initAutocomplete(): void {
     const startInput = document.getElementById("start-input") as HTMLInputElement;
     const endInput = document.getElementById("end-input") as HTMLInputElement;
-    // const stopInput = document.getElementById("stop-input-{{i}}") as HTMLInputElement;
-    const mpgInput = document.getElementById("mpg-input") as HTMLInputElement;
-    const tankInput = document.getElementById("tank-input") as HTMLInputElement;
 
     const startAutocomplete = new google.maps.places.Autocomplete(startInput);
     const endAutocomplete = new google.maps.places.Autocomplete(endInput);
-    // const stopAutocomplete = new google.maps.places.Autocomplete(stopInput);
 
     startAutocomplete.addListener("place_changed", () => {
       const place = startAutocomplete.getPlace();
@@ -140,19 +141,43 @@ export class HomeComponent implements OnInit {
       }
     });
 
-    setTimeout(() => {
-      const mpgInput = this.mpgInputRef.nativeElement;
-      const tankInput = this.tankInputRef.nativeElement;
+    const loader = new Loader({
+      apiKey: environment.apiKey,
+      libraries: ['places']
+    });
 
-      mpgInput.addEventListener("change", () => {
-        this.averageMPG = Number(mpgInput.value);
-        console.log("Average MPG:", this.averageMPG);
-      });
+    loader.load().then(() => {
+      const mapElement = document.getElementById("map");
+      if (mapElement) {
+        this.map = new google.maps.Map(mapElement, {
+          center: { lat: 39.828175, lng: -98.5795 },
+          zoom: 4
+        });
+        this.directionsService = new google.maps.DirectionsService();
+        this.directionsRenderer = new google.maps.DirectionsRenderer({
+          map: this.map
+        });
+        this.service = new google.maps.places.PlacesService(this.map); // Initialize PlacesService
+        for (let i = 0; i < this.stops.length; i++) {
+          this.initStopAutocomplete(i);
+        }
+      } else {
+        console.error("Could not find map element");
+      }
 
+      setTimeout(() => {
+        const mpgInput = this.mpgInputRef.nativeElement;
+        const tankInput = this.tankInputRef.nativeElement;
 
-      tankInput.addEventListener("change", () => {
-        this.tankCapacity = Number(tankInput.value);
-        console.log("Tank Capacity:", this.tankCapacity);
+        mpgInput.addEventListener("change", () => {
+          this.averageMPG = Number(mpgInput.value);
+          console.log("Average MPG:", this.averageMPG);
+        });
+
+        tankInput.addEventListener("change", () => {
+          this.tankCapacity = Number(tankInput.value);
+          console.log("Tank Capacity:", this.tankCapacity);
+        });
       });
     });
   }
@@ -222,6 +247,12 @@ export class HomeComponent implements OnInit {
           this.directionsRenderer?.setDirections(result);
 
           this.createRouteBoxes(result);
+
+          // THIS IS THE LINE THAT TURNS ON PLACE SEARCH
+          // DO NOT UNCOMMENT IT UNLESS YOU KNOW WHAT YOU ARE DOING
+          // IF YOU ENABLE IT YOU WILL DRAIN OUR ACCOUNT BALANCE
+          // TALK TO JONATHAN IF YOU WANT TO TEST IT
+          // this.searchPlacesAlongRoute();
 
           // calculate the midpoint of the route + old places code
           // const midLat = (result!.routes[0].bounds.getNorthEast().lat() + result!.routes[0].bounds.getSouthWest().lat()) / 2;
@@ -460,5 +491,108 @@ export class HomeComponent implements OnInit {
     let tanksNeededString = tanksNeeded.toFixed(1);
     return tanksNeededString;
   }
+
+  searchPlacesAlongRoute(): void {
+      const radiusMiles = 1; // Set the radius for searching places in miles
+      const minimumRating = 4; // Minimum rating to include in the results
+      const maxResults = 20; // Maximum number of results to display
+
+      // Clear all markers from the map
+      this.clearMarkers();
+
+      // Clear the places list
+      this.places = [];
+
+      const promises: Promise<google.maps.places.PlaceResult[]>[] = [];
+
+      this.boxes.forEach((box: google.maps.LatLngBounds) => {
+        const request = {
+          bounds: box,
+          type: 'restaurant' // Set the type of place you want to search for
+        };
+
+        const promise = new Promise<google.maps.places.PlaceResult[]>((resolve, reject) => {
+          this.service.nearbySearch(request, (results: google.maps.places.PlaceResult[] | null, status: google.maps.places.PlacesServiceStatus, pagination: google.maps.places.PlaceSearchPagination | null) => {
+            if (status === google.maps.places.PlacesServiceStatus.OK && results !== null) {
+              // Filter results based on minimum rating
+              console.log('Number of place results before filtering:', results);
+              const filteredResults = results.filter((place: google.maps.places.PlaceResult) =>
+                place.rating && place.rating >= minimumRating && place.user_ratings_total && place.user_ratings_total > 500
+              );
+
+              resolve(filteredResults); // Resolve with filtered results
+            } else {
+              resolve([]); // Resolve with an empty array if no results
+            }
+          });
+        });
+
+        promises.push(promise);
+      });
+
+      // Wait for all promises to resolve
+      Promise.all(promises)
+        .then((resultsArray: google.maps.places.PlaceResult[][]) => {
+          // Concatenate all the filtered results from each request
+          const combinedResults = resultsArray.reduce((accumulator, currentArray) => accumulator.concat(currentArray), []);
+
+          // Log the number of place results
+          console.log('Number of place results:', combinedResults.length);
+
+          // Remove duplicate results based on place ID
+          const uniqueResults = this.removeDuplicateResults(combinedResults);
+
+          // Sort the unique results by rating in descending order
+          uniqueResults.sort((a: google.maps.places.PlaceResult, b: google.maps.places.PlaceResult) => (b.rating ?? 0) - (a.rating ?? 0));
+
+          // Get the top-rated results up to the maximum limit
+          const topResults = uniqueResults.slice(0, maxResults);
+
+          // Process the search results here
+          this.updatePlacesList(topResults); // Update the places list with the filtered results
+
+          // Add markers for each place
+          topResults.forEach((place: google.maps.places.PlaceResult) => {
+            // Rest of the code...
+          });
+
+          console.log('Places search completed.');
+          this.loading = false; // Disable loading flag after search completion
+        })
+        .catch(() => {
+          console.error('Error occurred while searching for places.');
+          this.loading = false; // Disable loading flag in case of error
+        });
+    }
+
+  removeDuplicateResults(results: google.maps.places.PlaceResult[]): google.maps.places.PlaceResult[] {
+      const uniqueResults: google.maps.places.PlaceResult[] = [];
+      const placeIds: string[] = [];
+
+      results.forEach((result: google.maps.places.PlaceResult) => {
+        const placeId = result.place_id;
+        if (placeId && !placeIds.includes(placeId)) {
+          uniqueResults.push(result);
+          placeIds.push(placeId);
+        }
+      });
+
+      return uniqueResults;
+    }
+
+  updatePlacesList(results: any[]): void {
+      this.places = [...results];
+    }
+
+  clearMarkers(): void {
+      // Remove markers from the map
+      this.markers.forEach((marker: google.maps.Marker) => {
+        marker.setMap(null);
+      });
+
+      // Clear the markers array
+      this.markers = [];
+    }
+
 
 }

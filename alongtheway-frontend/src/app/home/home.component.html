@@ -45,7 +45,7 @@
     <!-- Second Collapsible -->
     <div class="collapsible" [ngClass]="{ 'collapsed': isSecondCollapsibleCollapsed }">
       <div class="collapsible-header" (click)="toggleSecondCollapsible()">
-        ROUTE / GAS / API DATA <span class="arrow-icon"></span>
+        ROUTE DATA / GAS CALCULATOR <span class="arrow-icon"></span>
       </div>
       <div class="collapsible-content" [ngClass]="{ 'collapsed': isSecondCollapsibleCollapsed }" [ngStyle]="{ 'pointer-events': isSecondCollapsibleCollapsed ? 'none' : 'auto' }">
         <div class="form-container">
@@ -104,16 +104,25 @@
           <div class="flex-container">
             <label for="interest-input" class="flex-label">Place Types to Search:</label>
             <select id="interest-input" [(ngModel)]="interest" class="flex-input">
-              <option value="restaurant">Restaurant</option>
+              <option value="restaurant">Restaurants</option>
               <option value="museum">Museum</option>
               <option value="park">Park</option>
               <!-- more options... -->
             </select>
           </div>
         </div>
+
+        <div class="searchresults">
+          <h4 style="text-align:center;margin-bottom:0">SEARCH RESULTS:</h4>
+          <ul>
+            <li *ngFor="let place of places; let i = index">
+              #{{ i + 1 }} - {{ place.name }} (Rating: {{ place.rating }} - Reviews: {{ place.user_ratings_total }})
+            </li>
+            <li *ngIf="loading">Loading... <span class="loading"></span></li>
+          </ul>
+        </div>
       </div>
     </div>
-
   </div>
 
   <!-- Map Container -->
