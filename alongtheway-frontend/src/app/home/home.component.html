@@ -6,7 +6,7 @@
       <div class="collapsible-header" (click)="toggleCollapsible()">
         DIRECTIONS <span class="arrow-icon"></span>
       </div>
-      <div class="collapsible-content" [ngClass]="{ 'collapsed': isCollapsibleCollapsed }">
+      <div class="collapsible-content" [ngClass]="{ 'collapsed': isCollapsibleCollapsed }" [ngStyle]="{ 'pointer-events': isCollapsibleCollapsed ? 'none' : 'auto' }">
         <div class="form-container">
           <div class="flex-container margin-between">
             <label for="start-input" class="flex-label">Start Location:</label>
@@ -47,7 +47,7 @@
       <div class="collapsible-header" (click)="toggleSecondCollapsible()">
         ROUTE / GAS / API DATA <span class="arrow-icon"></span>
       </div>
-      <div class="collapsible-content" [ngClass]="{ 'collapsed': isSecondCollapsibleCollapsed }">
+      <div class="collapsible-content" [ngClass]="{ 'collapsed': isSecondCollapsibleCollapsed }" [ngStyle]="{ 'pointer-events': isSecondCollapsibleCollapsed ? 'none' : 'auto' }">
         <div class="form-container">
           <h2 class="collapsible-title">Route Data</h2>
 
@@ -99,7 +99,7 @@
       <div class="collapsible-header" (click)="toggleThirdCollapsible()">
         PLACES SEARCH <span class="arrow-icon"></span>
       </div>
-      <div class="collapsible-content" [ngClass]="{ 'collapsed': isThirdCollapsibleCollapsed }">
+      <div class="collapsible-content" [ngClass]="{ 'collapsed': isThirdCollapsibleCollapsed }" [ngStyle]="{ 'pointer-events': isThirdCollapsibleCollapsed ? 'none' : 'auto' }">
         <div class="form-container">
           <div class="flex-container">
             <label for="interest-input" class="flex-label">Place Types to Search:</label>
