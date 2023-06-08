@@ -7,19 +7,18 @@
   </div>
   <nav>
     <ul>
+      <li>
+        <ng-container *ngIf="authService.isLoggedIn | async; let isLoggedIn">
+          <ng-container *ngIf="isLoggedIn">
+            <span>Hi, {{ username }}! </span>
+            <button (click)="logout()">Logout</button>
+          </ng-container>
+        </ng-container>
+      </li>
       <li><a href="/home" class="nav-button">HOME</a></li>
       <li><a routerLink="/about" class="nav-button">ABOUT US / FAQ</a></li>
       <li><a href="/profile" class="nav-button">MY SAVED TRIPS</a></li>
-      <li><a href="/login" class="nav-button">SIGN UP / LOG IN</a></li>
+      <li *ngIf="!(authService.isLoggedIn | async)"><a href="/login" class="nav-button">SIGN UP / LOG IN</a></li>
     </ul>
-    <ng-container *ngIf="authService.isLoggedIn | async; let isLoggedIn">
-      <ng-container *ngIf="isLoggedIn; else loginSection">
-        <span>Hi, {{ username }}!</span>
-        <button (click)="logout()">Logout</button>
-      </ng-container>
-    </ng-container>
-    <ng-template #loginSection>
-      <a routerLink="/login">Login</a>
-    </ng-template>
   </nav>
 </header>
