@@ -421,7 +421,7 @@ export class HomeComponent implements OnInit {
       } else if ((this.distanceInMiles >= 500) && (this.distanceInMiles <= 999.9)) {
         this.boxes = routeBoxer.box(this.path, 20);
       } else if (this.distanceInMiles >= 1000) {
-        this.boxes = routeBoxer.box(this.path, 80);
+        this.boxes = routeBoxer.box(this.path, 50);
       }
 
       console.log('Boxes:', this.boxes);
