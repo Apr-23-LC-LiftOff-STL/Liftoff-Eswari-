@@ -1,25 +1,48 @@
+import { HttpClient } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
-
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { Router } from '@angular/router';
+import { AuthService } from '../services/auth.service';
 
 @Component({
-  selector: 'app-signup',
+  selector: 'app-login',
   templateUrl: './login.component.html',
   styleUrls: ['./login.component.css']
 })
-
-export class loginComponent implements OnInit {
-
+export class LoginComponent implements OnInit {
+  loginForm!: FormGroup;
   loginData: { username: string, password: string } = {
     username: '',
-
     password: ''
   };
-  constructor() { }
+
+  constructor(
+    private http: HttpClient,
+    private router: Router,
+    public authService: AuthService,
+    private formBuilder: FormBuilder
+  ) { }
 
   ngOnInit(): void {
+    this.loginForm = this.formBuilder.group({
+      username: ['', [Validators.required, Validators.minLength(3), Validators.maxLength(20)]],
+      password: ['', [Validators.required, Validators.minLength(6)]]
+    });
   }
 
   submitLoginForm(): void {
-    console.log('submitted:', this.loginData.username, this.loginData.password);
+    const { username, password } = this.loginData;
+    this.authService.login(username, password).subscribe(
+      response => {
+        // Handle the successful login response
+        console.log('Login successful:', response);
+        this.router.navigate(['/home']); // Replace '/home' with the desired route path
+
+      },
+      error => {
+        // Handle the login error
+        console.error('Login failed:', error);
+      }
+    );
   }
 }

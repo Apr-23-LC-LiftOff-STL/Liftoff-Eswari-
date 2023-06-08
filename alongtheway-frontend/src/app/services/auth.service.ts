@@ -24,7 +24,7 @@ export class AuthService {
   }
 
   login(username: string, password: string): Observable<any> {
-    const url = 'http://localhost:8080/auth/login';
+    const url = 'http://localhost:8080/login';
     const loginData = {
       username: username,
       password: password

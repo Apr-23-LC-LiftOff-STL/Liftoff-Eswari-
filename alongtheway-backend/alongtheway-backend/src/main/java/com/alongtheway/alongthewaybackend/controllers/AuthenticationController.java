@@ -1,28 +1,27 @@
 package com.alongtheway.alongthewaybackend.controllers;
 
-import org.springframework.web.bind.annotation.CrossOrigin;
-import com.alongtheway.alongthewaybackend.models.User;
-import com.alongtheway.alongthewaybackend.models.data.UserRepository;
-import com.alongtheway.alongthewaybackend.models.dto.LoginForm;
-import com.alongtheway.alongthewaybackend.models.dto.SignupForm;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.validation.Errors;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import java.util.Optional;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
 
-import java.util.Optional;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.validation.Errors;
+import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RestController;
+
+import com.alongtheway.alongthewaybackend.models.User;
+import com.alongtheway.alongthewaybackend.models.data.UserRepository;
+import com.alongtheway.alongthewaybackend.models.dto.LoginForm;
+import com.alongtheway.alongthewaybackend.models.dto.SignupForm;
 
 @RestController
 @CrossOrigin(origins = "http://localhost:4200")
-@RequestMapping("/signup")
 public class AuthenticationController {
 
     @Autowired
@@ -49,7 +48,7 @@ public class AuthenticationController {
         session.setAttribute(userSessionKey, user.getId());
     }
 
-    @PostMapping
+    @PostMapping("/signup")
     public ResponseEntity<?> processSignupForm(@RequestBody SignupForm signupForm, Errors errors) {
         if (errors.hasErrors()) {
             // Return the validation errors as a JSON response
