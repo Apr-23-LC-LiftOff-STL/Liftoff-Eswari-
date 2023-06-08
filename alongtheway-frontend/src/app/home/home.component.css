@@ -19,7 +19,7 @@
 .flex-container {
   display: flex;
   align-items: center;
-  margin-bottom: 2px;
+  margin-bottom: 4px;
   white-space: nowrap;
   justify-content: space-between;
 }
@@ -45,10 +45,11 @@
 .flex-label {
   margin-right: 10px;
   flex-shrink: 0;
-  font-size: 15px;
+  font-size: 14px;
 }
 
 .flex-input {
+  font-size: 14px;
   margin-left: 7px;
   margin-right: 7px;
 }
@@ -124,13 +125,14 @@
 }
 
 .submit-button {
+  margin-bottom: 3px;
   /* Adjust other button styles as needed */
 }
 
 .collapsible {
+  margin-bottom: 1px;
   display: flex;
   flex-direction: column;
-  margin-bottom: 4px;
   justify-content: flex-start; /* Change from "space-between" to "flex-start" */
 }
 

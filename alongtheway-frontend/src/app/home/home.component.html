@@ -63,7 +63,17 @@
             <label for="tank-capacity-input" class="flex-label">Tank Capacity (Gallons):</label>
             <input #tankInput id="tank-capacity-input" type="number" min="0" [(ngModel)]="tankCapacity" class="flex-input">
           </div>
+        </div>
+      </div>
+    </div>
 
+    <!-- Third Collapsible -->
+    <div class="collapsible" [ngClass]="{ 'collapsed': isThirdCollapsibleCollapsed }">
+      <div class="collapsible-header" (click)="toggleThirdCollapsible()">
+        PLACES SEARCH <span class="arrow-icon"></span>
+      </div>
+      <div class="collapsible-content" [ngClass]="{ 'collapsed': isThirdCollapsibleCollapsed }">
+        <div class="form-container">
           <div class="flex-container">
             <label for="interest-input" class="flex-label">Place Types to Search:</label>
             <select id="interest-input" [(ngModel)]="interest" class="flex-input">

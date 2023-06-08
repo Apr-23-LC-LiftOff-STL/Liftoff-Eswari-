@@ -70,6 +70,7 @@ export class HomeComponent implements OnInit {
   interest: string = "";
   isCollapsibleCollapsed: boolean = false;
   isSecondCollapsibleCollapsed: boolean = true;
+  isThirdCollapsibleCollapsed: boolean = true;
 
   @ViewChild('mpgInput') mpgInputRef!: ElementRef<HTMLInputElement>;
   @ViewChild('tankInput') tankInputRef!: ElementRef<HTMLInputElement>;
@@ -406,6 +407,10 @@ export class HomeComponent implements OnInit {
 
   toggleSecondCollapsible(): void {
     this.isSecondCollapsibleCollapsed = !this.isSecondCollapsibleCollapsed;
+  }
+
+  toggleThirdCollapsible(): void {
+    this.isThirdCollapsibleCollapsed = !this.isThirdCollapsibleCollapsed;
   }
 
 }
