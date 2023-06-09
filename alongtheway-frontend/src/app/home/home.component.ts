@@ -82,6 +82,7 @@ export class HomeComponent implements OnInit {
   markers: google.maps.Marker[] = []; // Array to store the markers
   placeMarkers: google.maps.Marker[] = []; // Array to store the markers
   circles: google.maps.Circle[] = [];
+  showSearchResults: boolean = false;
 
   @ViewChild('mpgInput') mpgInputRef!: ElementRef<HTMLInputElement>;
   @ViewChild('tankInput') tankInputRef!: ElementRef<HTMLInputElement>;
@@ -209,6 +210,7 @@ export class HomeComponent implements OnInit {
     this.tankCapacity = +this.tankCapacity;
     const apiKey = environment.apiKey;
 
+    this.showSearchResults = false;
     this.places = [];
     this.interest = "";
 
@@ -664,6 +666,7 @@ export class HomeComponent implements OnInit {
 
   searchPlacesAlongRoute(): void {
       const minimumRating = 1; // Minimum rating to include in the results
+      this.showSearchResults = true;
 
       if (this.interest == "") {
         return;
@@ -813,7 +816,7 @@ export class HomeComponent implements OnInit {
       return R * c;
   }
 
-getAddressComponent(addressComponents: any[]): string {
+  getAddressComponent(addressComponents: any[]): string {
   if (addressComponents && addressComponents.length > 0) {
     const administrativeArea = addressComponents.find(component => component.types.includes('administrative_area_level_1'));
     return administrativeArea ? administrativeArea.short_name : '';

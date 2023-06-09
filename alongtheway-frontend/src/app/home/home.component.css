@@ -117,6 +117,7 @@
 .places-container ul {
   max-height: 100px; /* Adjust the max-height value as needed */
   overflow-y: scroll;
+  padding-top: 0px;
 }
 
 .button-container {
@@ -245,13 +246,15 @@
 }
 
 .searchresults .list-items {
-    height: 55vh; /* 100% of the viewport height minus 90px for other elements */
+    height: 50vh; /* 100% of the viewport height minus 90px for other elements */
     overflow-y: auto;
     padding-left: 1px;
     padding-right: 4px;
+    margin-top: 0;
 }
 
 .list-button {
     margin-left: 10px; /* Space between content and button */
     margin-right: 8px;
 }
+
