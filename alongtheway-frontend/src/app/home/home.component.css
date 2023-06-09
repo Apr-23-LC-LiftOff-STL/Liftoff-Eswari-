@@ -165,6 +165,7 @@
   position: relative; /* Add position relative for pseudo-element */
   height: 12px; /* Adjust this value as needed */
   line-height: 12px; /* Should be the same as height */
+  user-select: none;
 }
 
 .collapsible-title {

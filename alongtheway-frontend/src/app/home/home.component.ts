@@ -80,6 +80,8 @@ export class HomeComponent implements OnInit {
   places: any[] = [];
   openInfoWindow: google.maps.InfoWindow | null = null; // Declare the openInfoWindow property
   markers: google.maps.Marker[] = []; // Array to store the markers
+  placeMarkers: google.maps.Marker[] = []; // Array to store the markers
+  circles: google.maps.Circle[] = [];
 
   @ViewChild('mpgInput') mpgInputRef!: ElementRef<HTMLInputElement>;
   @ViewChild('tankInput') tankInputRef!: ElementRef<HTMLInputElement>;
@@ -247,19 +249,126 @@ export class HomeComponent implements OnInit {
           console.log("Route calculated successfully");
           this.directionsRenderer?.setDirections(result);
 
+          // Code for grabbing drive time
           if (result && result.routes && result.routes.length > 0 && result.routes[0].legs && result.routes[0].legs.length > 0) {
             this.driveTime = result.routes[0].legs[0].duration?.text ?? 'Unknown';
           } else {
             console.error('Invalid directions response:', result);
           }
 
-          this.createRouteBoxes(result);
+          let totalDistanceInMeters = 0;
+
+          if (result && result.routes && result.routes.length > 0) {
+            const route = result.routes[0];
+
+            if (route && route.legs && route.legs.length > 0) {
+              for (const leg of route.legs) {
+                if (leg.distance && leg.distance.value) {
+                  totalDistanceInMeters += leg.distance.value;
+                }
+              }
+            }
+          }
+
+          this.distanceInMeters = totalDistanceInMeters;
+          this.distanceInMiles = this.distanceInMeters * 0.000621371;
+
+          if (result && result.routes && result.routes.length > 0) {
+              const tempRoute = result.routes[0].overview_path;
+
+              this.clearPlaceMarkers();
+
+              // Clear circles from the map
+              for (let circle of this.circles) {
+                  circle.setMap(null);
+              }
+              this.circles = []; // Reset the circles array
+
+              let lastMarkerPosition = null;
+              let milesBetweenMarkers = 0;
+              let circleRadius = 0;
+
+              if (this.distanceInMiles <= 250) {
+                milesBetweenMarkers = 12; //converted to meters
+                circleRadius = 8 * 1609.34;
+              } else {
+                milesBetweenMarkers = 40;
+                circleRadius = 31 * 1609.34;
+              }
+
+              // Loop through each waypoint
+              for (let i = 0; i < tempRoute.length; i++) {
+                  let currentPosition = tempRoute[i];
+
+                  // If this is the first iteration, always add marker and circle
+                  if (i === 0) {
+                      let marker = new google.maps.Marker({
+                          position: currentPosition,
+                          title: 'Waypoint ' + (i + 1)
+                      });
+                      this.markers.push(marker);
+                      lastMarkerPosition = currentPosition;
+
+                      // Create and store circle
+                      let circle = new google.maps.Circle({
+                          center: currentPosition,
+                          radius: circleRadius
+                      });
+                      this.circles.push(circle);
+                      continue; // Continue to the next iteration
+                  }
+
+                  // If this is the last iteration, always add marker and circle
+                  if (i === tempRoute.length - 1) {
+                      let marker = new google.maps.Marker({
+                          position: currentPosition,
+                          title: 'Waypoint ' + (i + 1)
+                      });
+                      this.markers.push(marker);
+
+                      // Create and store circle
+                      let circle = new google.maps.Circle({
+                          center: currentPosition,
+                          radius: circleRadius
+                      });
+                      this.circles.push(circle);
+                      break; // End the loop
+                  }
+
+                  // For other waypoints, check if the distance is greater than set amount of miles before adding marker and circle
+                  if (lastMarkerPosition && this.calculateDistanceInMiles(lastMarkerPosition, currentPosition) >= milesBetweenMarkers) {
+                      let marker = new google.maps.Marker({
+                          position: currentPosition,
+                          title: 'Waypoint ' + (i + 1)
+                      });
+                      this.markers.push(marker);
+
+                      // Update lastMarkerPosition to current position
+                      lastMarkerPosition = currentPosition;
+
+                      // Create and store circle
+                      let circle = new google.maps.Circle({
+                          center: currentPosition,
+                          radius: circleRadius
+                      });
+                      this.circles.push(circle);
+                  }
+              }
+
+              console.log("Number of Place API Requests: " + this.circles.length)
+
+          } else {
+              // Handle the case where result is null or doesn't have the expected structure
+              console.error('Invalid result:', result);
+          }
+
+          //this.createRouteBoxes(result);
 
           // THIS IS THE LINE THAT TURNS ON PLACE SEARCH
           // DO NOT UNCOMMENT IT UNLESS YOU KNOW WHAT YOU ARE DOING
           // IF YOU ENABLE IT YOU WILL DRAIN OUR ACCOUNT BALANCE
           // TALK TO JONATHAN IF YOU WANT TO TEST IT
-          // this.searchPlacesAlongRoute();
+          //this.searchPlacesAlongRoute();
 
           // calculate the midpoint of the route + old places code
           // const midLat = (result!.routes[0].bounds.getNorthEast().lat() + result!.routes[0].bounds.getSouthWest().lat()) / 2;
@@ -421,7 +530,7 @@ export class HomeComponent implements OnInit {
       } else if ((this.distanceInMiles >= 500) && (this.distanceInMiles <= 999.9)) {
         this.boxes = routeBoxer.box(this.path, 20);
       } else if (this.distanceInMiles >= 1000) {
-        this.boxes = routeBoxer.box(this.path, 50);
+        this.boxes = routeBoxer.box(this.path, 2);
       }
 
       console.log('Boxes:', this.boxes);
@@ -430,17 +539,62 @@ export class HomeComponent implements OnInit {
   }
 
   drawBoxes(boxes: google.maps.LatLngBounds[]): void {
-    this.boxpolys = new Array(boxes.length);
-    for (let i = 0; i < boxes.length; i++) {
-      this.boxpolys[i] = new google.maps.Rectangle({
-        bounds: boxes[i],
-        fillOpacity: 0,
-        strokeOpacity: 1.0,
-        strokeColor: '#000000',
-        strokeWeight: 1,
-        map: this.map as google.maps.Map
-      });
-    }
+//       this.boxpolys = new Array(boxes.length);
+//       this.circles = []; // Initialize circles array
+//
+//       for (let i = 0; i < boxes.length; i++) {
+//         this.boxpolys[i] = new google.maps.Rectangle({
+//           bounds: boxes[i],
+//           fillOpacity: 0,
+//           strokeOpacity: 1.0,
+//           strokeColor: '#000000',
+//           strokeWeight: 1,
+//           map: this.map as google.maps.Map
+//         });
+//
+//         const bounds = boxes[i];
+//         const center = bounds.getCenter();
+//
+//         const circle = new google.maps.Circle({
+//           center: center,
+//           radius: 49999,
+//           fillColor: '#0000FF',
+//           fillOpacity: 0.5,
+//           strokeColor: '#000000',
+//           strokeOpacity: 1.0,
+//           strokeWeight: 1,
+//         });
+//
+//         this.circles.push(circle);
+//       }
+//
+//       // Create a temporary array
+//       let temporaryArray = [];
+//
+//       // Store the first element of the original array
+//       if (this.circles.length > 0) {
+//         temporaryArray.push(this.circles[0]);
+//       }
+//
+//       // Store every 5th element of the original array
+//       for (let i = 14; i < this.circles.length; i += 15) {
+//         temporaryArray.push(this.circles[i]);
+//       }
+//
+//       // Store the last element of the original array
+//       if (this.circles.length > 0) {
+//         temporaryArray.push(this.circles[this.circles.length - 1]);
+//       }
+//
+//       // Set 'this.circles' equal to the temporary array
+//       this.circles = temporaryArray;
+//
+//       // Draw the filtered circles on the map
+//       for (const circle of this.circles) {
+//         circle.setMap(this.map as google.maps.Map);
+//       }
+
+
   }
 
   clearBoxes(): void {
@@ -509,37 +663,43 @@ export class HomeComponent implements OnInit {
       const maxResults = 20; // Maximum number of results to display
 
       // Clear all markers from the map
-      this.clearMarkers();
+      this.clearPlaceMarkers();
 
       // Clear the places list
       this.places = [];
 
       const promises: Promise<google.maps.places.PlaceResult[]>[] = [];
 
-      this.boxes.forEach((box: google.maps.LatLngBounds) => {
-        const request = {
-          bounds: box,
-          type: 'restaurant' // Set the type of place you want to search for
-        };
+            this.circles.forEach((circle: google.maps.Circle) => {
+              const center = circle.getCenter(); // Get the center of the circle
+              const radius = circle.getRadius(); // Get the radius of the circle in meters
 
-        const promise = new Promise<google.maps.places.PlaceResult[]>((resolve, reject) => {
-          this.service.nearbySearch(request, (results: google.maps.places.PlaceResult[] | null, status: google.maps.places.PlacesServiceStatus, pagination: google.maps.places.PlaceSearchPagination | null) => {
-            if (status === google.maps.places.PlacesServiceStatus.OK && results !== null) {
-              // Filter results based on minimum rating
-              console.log('Number of place results before filtering:', results);
-              const filteredResults = results.filter((place: google.maps.places.PlaceResult) =>
-                place.rating && place.rating >= minimumRating && place.user_ratings_total && place.user_ratings_total > 500
-              );
+              if (center) {
+                const request = {
+                  location: center,
+                  radius: radius,
+                  type: 'restaurant' // Set the type of place you want to search for
+                };
 
-              resolve(filteredResults); // Resolve with filtered results
-            } else {
-              resolve([]); // Resolve with an empty array if no results
-            }
-          });
-        });
+                const promise = new Promise<google.maps.places.PlaceResult[]>((resolve, reject) => {
+                  this.service.nearbySearch(request, (results: google.maps.places.PlaceResult[] | null, status: google.maps.places.PlacesServiceStatus, pagination: google.maps.places.PlaceSearchPagination | null) => {
+                    if (status === google.maps.places.PlacesServiceStatus.OK && results !== null) {
+                      // Filter results based on minimum rating
+                      console.log('Number of place results before filtering:', results);
+                      const filteredResults = results.filter((place: google.maps.places.PlaceResult) =>
+                        place.rating && place.rating >= minimumRating && place.user_ratings_total && place.user_ratings_total > 500
+                      );
 
-        promises.push(promise);
-      });
+                      resolve(filteredResults); // Resolve with filtered results
+                    } else {
+                      resolve([]); // Resolve with an empty array if no results
+                    }
+                  });
+                });
+
+                promises.push(promise);
+              }
+            }); // Missing closing curly brace added here
 
       // Wait for all promises to resolve
       Promise.all(promises)
@@ -563,9 +723,34 @@ export class HomeComponent implements OnInit {
           this.updatePlacesList(topResults); // Update the places list with the filtered results
 
           // Add markers for each place
-          topResults.forEach((place: google.maps.places.PlaceResult) => {
-            // Rest of the code...
-          });
+                  topResults.forEach((place: google.maps.places.PlaceResult) => {
+                    const placeLocation = place.geometry!.location;
+                    const marker = new google.maps.Marker({
+                      position: placeLocation,
+                      map: this.map,
+                      title: place.name
+                    });
+
+                    // Create an info window for the marker
+                    const infoWindow = new google.maps.InfoWindow({
+                      content: `<strong>${place.name}</strong><br>${place.vicinity}`
+                    });
+
+                    // Add a click event listener to the marker
+                    marker.addListener('click', () => {
+                      // Close the previously open info window
+                      if (this.openInfoWindow) {
+                        this.openInfoWindow.close();
+                      }
+
+                      // Open the new info window
+                      infoWindow.open(this.map, marker);
+                      this.openInfoWindow = infoWindow; // Update the currently open info window
+                    });
+
+                    // Store the marker in the markers array
+                    this.markers.push(marker);
+                  });
 
           console.log('Places search completed.');
           this.loading = false; // Disable loading flag after search completion
@@ -595,15 +780,25 @@ export class HomeComponent implements OnInit {
       this.places = [...results];
     }
 
-  clearMarkers(): void {
+  clearPlaceMarkers(): void {
       // Remove markers from the map
-      this.markers.forEach((marker: google.maps.Marker) => {
+      this.placeMarkers.forEach((marker: google.maps.Marker) => {
         marker.setMap(null);
       });
 
       // Clear the markers array
-      this.markers = [];
+      this.placeMarkers = [];
     }
 
+  calculateDistanceInMiles(position1: google.maps.LatLng, position2: google.maps.LatLng): number {
+      const R = 3958.8; // Radius of the Earth in miles
+      const dLat = (position2.lat() - position1.lat()) * Math.PI / 180;
+      const dLon = (position2.lng() - position1.lng()) * Math.PI / 180;
+      const a = Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+          Math.cos(position1.lat() * Math.PI / 180) * Math.cos(position2.lat() * Math.PI / 180) *
+          Math.sin(dLon / 2) * Math.sin(dLon / 2);
+      const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+      return R * c;
+  }
 
 }
