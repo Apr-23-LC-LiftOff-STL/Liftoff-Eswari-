@@ -31,18 +31,21 @@ export class LoginComponent implements OnInit {
   }
 
   submitLoginForm(): void {
-    const { username, password } = this.loginData;
+    const { username, password } = this.loginForm.value;
+  
     this.authService.login(username, password).subscribe(
       response => {
         // Handle the successful login response
         console.log('Login successful:', response);
-        this.router.navigate(['/home']); // Replace '/home' with the desired route path
-
+        this.router.navigate(['/home']);
       },
       error => {
         // Handle the login error
         console.error('Login failed:', error);
+        console.log('Error body:', error.error); // Log the response body for further investigation
       }
     );
   }
+  
+  
 }

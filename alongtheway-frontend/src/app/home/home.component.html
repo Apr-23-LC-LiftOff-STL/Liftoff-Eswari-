@@ -21,6 +21,10 @@
             <div *ngFor="let stop of stops; index as i">
               <div class="flex-container">
                 <button (click)="removeStop(i)" class="remove-button">Remove</button>
+                <div class="weather-group">
+                  <img id="weather-icon-stop-input-{{i}}" class="weather-icon">
+                  <label id="weather-temp-stop-input-{{i}}" class="weather-temp"></label>
+                </div>
                 <input id="stop-input-{{i}}" type="text" [(ngModel)]="stop.location" class="flex-input">
               </div>
             </div>
