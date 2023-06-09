@@ -82,6 +82,7 @@
 
 .logo-container {
     text-align: center;
+    padding-bottom: 100px;
 }
 
 .logo {
@@ -132,18 +133,6 @@
 .input-label {
     font-size: 1.2rem;
     font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
-}
-
-.input-box {
-    width: 300px;
-    /* Adjust the width as needed */
-    height: 40px;
-    border-radius: 20px;
-    border: 1px solid #ccc;
-    outline: none;
-    padding: 10px;
-    background-color: transparent;
-    margin-bottom: 90px;
 }
 
 @keyframes cursor-blink {
