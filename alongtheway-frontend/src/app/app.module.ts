@@ -12,6 +12,7 @@ import { ProfilepageComponent } from './profilepage/profilepage.component';
 import { SignupComponent } from './signup/signup.component';
 import { WeatherComponent } from './weather/weather.component';
 import { WeatherService } from './weather/weather.service';
+import { UserComponent } from './user/user.component';
 
 @NgModule({
   declarations: [
@@ -22,7 +23,8 @@ import { WeatherService } from './weather/weather.service';
     AboutusandfaqComponent,
     ProfilepageComponent,
     SignupComponent,
-    LoginComponent
+    LoginComponent,
+    UserComponent
   ],
   imports: [
     BrowserModule,

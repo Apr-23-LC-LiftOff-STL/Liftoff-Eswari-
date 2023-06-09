@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
-import { NgForm } from '@angular/forms';
-
+import { User } from '../user/user.model';
+import { UserService } from '../user/user.service';
 
 interface Car {
   year: number;
@@ -15,54 +15,82 @@ interface Car {
   styleUrls: ['./profilepage.component.css']
 })
 export class ProfilepageComponent implements OnInit {
-  
-  carList: Car[] = [];
+  user: User = {
+    id: '',
+    username: '',
+    mpg: 0,
+    tankCapacity: 0
+  };
+
+  updatedUser: User = {
+    id: '',
+    username: '',
+    mpg: 0,
+    tankCapacity: 0
+  };
+
   editedCarIndex: number | null = null;
-  editedCar: any = {};
-  
-  constructor() { }
+  carList: Car[] = [];
+
+  constructor(private userService: UserService) {}
 
   ngOnInit(): void {
+    this.getUserData();
   }
 
-  saveCar(formData: any): void {
-    let newCar: Car = formData;
-    this.carList.push(newCar);
+  getUserData(): void {
+    // Get the userId from the user object or from any other source
+    const userId = this.user.id;
+  
+    // Make a request to fetch the user data
+    this.userService.getUser(userId).subscribe(
+      (user: User) => {
+        this.user = user;
+        // Make a copy of the user object for editing
+        this.updatedUser = Object.assign({}, user);
+      },
+      (error: any) => {
+        console.error('Error fetching user data:', error);
+      }
+    );
+  }
+  
+
+  saveUserCarInfo(): void {
+    this.userService.updateUserCarInfo(this.user.id, this.updatedUser).subscribe(
+      (user: User) => {
+        this.user = user;
+        console.log('User car information updated:', user);
+      },
+      (error: any) => {
+        console.error('Error updating user car information:', error);
+      }
+    );
   }
 
-  editCar(index: number) {
-    this.editedCar = { ...this.carList[index] };
+  editCar(index: number): void {
     this.editedCarIndex = index;
   }
 
-  saveEditedCar(editedCar: any) {
-    this.carList[this.editedCarIndex as number] = editedCar;
+  saveChanges(index: number): void {
     this.editedCarIndex = null;
-    this.editedCar = {};
+    // Update the car at the specified index in the carList
+    this.carList[index] = Object.assign({}, this.carList[index]);
   }
 
-  cancelEdit() {
-    if (this.editedCarIndex !== null) {
-      this.carList[this.editedCarIndex] = { ...this.editedCar };
-      this.editedCarIndex = null;
-      this.editedCar = {};
-    }
-  }
   removeCar(index: number): void {
     this.carList.splice(index, 1);
   }
 
-  saveChanges(index: number) {
+  cancelEdit(): void {
     this.editedCarIndex = null;
   }
 
-  sortCarList(): void {
-    this.carList.sort((a: Car, b: Car) => a.year - b.year);
+  saveCar(car: Car): void {
+    this.carList.push(car);
   }
 
-  showMyVehicles: boolean = true;
-
-  clearInputs(carForm: NgForm) {
-    carForm.resetForm();
+  clearInputs(form: any): void {
+    form.resetForm();
   }
 }

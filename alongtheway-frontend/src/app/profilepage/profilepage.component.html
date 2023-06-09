@@ -1,75 +1,10 @@
-<h1>My Profile</h1>
-<h2>My Info</h2>
-<img src="assets/ABCD.jpg" alt="Image description"> <!--We need a database to hold pictures-->
-
-<h2>My Saved Trips</h2>
-  <p>
-    <!--Need to develop this. Possibly getting the info from 
-        the HomePage, user search and save trips would display here?-->
-      Trip name 
-  </p>
-
-   <div *ngIf="showMyVehicles">
-
-<h2>My Saved Vehicles</h2>
-    <table>
-      <thead>
-        <tr>
-          <th>#</th>
-          <th>Year</th>
-          <th>Make</th>
-          <th>Model</th>
-          <th>MPG</th>
-          <th></th>
-          <th></th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr *ngFor="let car of carList; let i = index">
-          <td>{{ i + 1 }}</td>
-          <td>
-            <input *ngIf="editedCarIndex === i" type="number" [(ngModel)]="car.year">
-            <span *ngIf="editedCarIndex !== i">{{ car.year }}</span>
-          </td>
-          <td>
-            <input *ngIf="editedCarIndex === i" type="text" [(ngModel)]="car.make">
-            <span *ngIf="editedCarIndex !== i">{{ car.make }}</span>
-          </td>
-          <td>
-            <input *ngIf="editedCarIndex === i" type="text" [(ngModel)]="car.model">
-            <span *ngIf="editedCarIndex !== i">{{ car.model }}</span>
-          </td>
-          <td>
-            <input *ngIf="editedCarIndex === i" type="number" [(ngModel)]="car.mpg">
-            <span *ngIf="editedCarIndex !== i">{{ car.mpg }}</span>
-          </td>
-          <td>
-            <button *ngIf="editedCarIndex !== i" (click)="editCar(i)">Edit</button>
-            <button *ngIf="editedCarIndex === i" (click)="saveChanges(i)">Save</button>
-          </td>
-          <td><button (click)="removeCar(i)">Remove</button></td>
-          <button *ngIf="editedCarIndex === i" type="button" (click)="cancelEdit()">Cancel</button>
-        </tr>
-      </tbody>
-    </table>
-  </div> 
-  
-<h3>Add Vehicle</h3>
-  <form #carForm="ngForm" (ngSubmit)="saveCar(carForm.value); clearInputs(carForm)">
-    <label for="year">Year:</label>
-    <input type="number" id="year" name="year" ngModel required>
-  
-    <label for="make">Make:</label>
-    <input type="text" id="make" name="make" ngModel required>
-  
-    <label for="model">Model:</label>
-    <input type="text" id="model" name="model" ngModel required>
-  
-    <label for="mpg">MPG:</label>
-    <input type="number" id="mpg" name="mpg" ngModel required>
-  
-    <button type="submit">Add Car</button>
-  </form>
-<!-- 
-  +connect with database
--->
+<h2>Car Information</h2>
+<div class="form-group">
+  <label for="mpg-input">Average MPG:</label>
+  <input id="mpg-input" type="number" [(ngModel)]="updatedUser.mpg" name="averageMPG" required>
+</div>
+<div class="form-group">
+  <label for="tank-capacity-input">Tank Capacity:</label>
+  <input id="tank-capacity-input" type="number" [(ngModel)]="updatedUser.tankCapacity" name="tankCapacity" required>
+</div>
+<button (click)="saveUserCarInfo()">Save</button>
