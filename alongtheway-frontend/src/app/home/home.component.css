@@ -115,7 +115,8 @@
 }
 
 .places-container ul {
-  padding-left: 20px;
+  max-height: 100px; /* Adjust the max-height value as needed */
+  overflow-y: scroll;
 }
 
 .button-container {
@@ -212,3 +213,45 @@
   font-size: 14px;
 }
 
+/* Loading Flag */
+.loading {
+  display: inline-block;
+  width: 20px;
+  height: 20px;
+  border: 4px solid #f3f3f3;
+  border-top: 4px solid #3498db;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+.searchresults .list-items li {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 2px;
+  font-size: 14px;
+  border: 1px solid black;
+  padding: 2px;
+  background: #e4ecf7;
+}
+
+.searchresults .list-items {
+    height: 55vh; /* 100% of the viewport height minus 90px for other elements */
+    overflow-y: auto;
+    padding-left: 1px;
+    padding-right: 4px;
+}
+
+.list-button {
+    margin-left: 10px; /* Space between content and button */
+    margin-right: 8px;
+}
