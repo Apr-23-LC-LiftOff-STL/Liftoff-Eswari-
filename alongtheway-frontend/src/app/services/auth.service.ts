@@ -1,9 +1,9 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
+import jwt_decode from 'jwt-decode';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { tap } from 'rxjs/operators';
-import jwt_decode from 'jwt-decode';
 
 @Injectable({
   providedIn: 'root'
@@ -11,6 +11,7 @@ import jwt_decode from 'jwt-decode';
 export class AuthService {
   private isLoggedIn$ = new BehaviorSubject<boolean>(false);
   private username$ = new BehaviorSubject<string>('');
+  private userId$ = new BehaviorSubject<string>('');
 
   get isLoggedIn(): Observable<boolean> {
     return this.isLoggedIn$.asObservable();
@@ -18,6 +19,10 @@ export class AuthService {
 
   get getUsername(): Observable<string> {
     return this.username$.asObservable();
+  }
+
+  get getUserId(): Observable<string> {
+    return this.userId$.asObservable();
   }
 
   constructor(private http: HttpClient, private router: Router) {
@@ -36,6 +41,7 @@ export class AuthService {
         localStorage.setItem('token', token);
         this.isLoggedIn$.next(true);
         this.username$.next(this.getUsernameFromToken(token));
+        this.userId$.next(this.getUserIdFromToken(token));
         this.router.navigate(['/home']);
       })
     );
@@ -45,17 +51,24 @@ export class AuthService {
     localStorage.removeItem('token');
     this.isLoggedIn$.next(false);
     this.username$.next('');
-    return this.http.post<any>('/auth/logout', {});
+    this.userId$.next('');
+    return this.http.post<any>('/logout', {});
   }
 
   private initializeAuthState(): void {
     const token = localStorage.getItem('token');
     this.isLoggedIn$.next(!!token);
     this.username$.next(token ? this.getUsernameFromToken(token) : '');
+    this.userId$.next(token ? this.getUserIdFromToken(token) : '');
   }
 
   private getUsernameFromToken(token: string): string {
     const decodedToken: any = jwt_decode(token);
     return decodedToken.username || '';
+  }
+
+  private getUserIdFromToken(token: string): string {
+    const decodedToken: any = jwt_decode(token);
+    return decodedToken.userId || '';
   }
 }

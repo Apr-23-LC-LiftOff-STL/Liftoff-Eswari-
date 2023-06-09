@@ -1,4 +1,6 @@
 import { Component, OnInit } from '@angular/core';
+import { Router } from '@angular/router';
+import { AuthService } from '../services/auth.service';
 import { User } from '../user/user.model';
 import { UserService } from '../user/user.service';
 
@@ -32,28 +34,34 @@ export class ProfilepageComponent implements OnInit {
   editedCarIndex: number | null = null;
   carList: Car[] = [];
 
-  constructor(private userService: UserService) {}
+  constructor(
+    private userService: UserService,
+    private authService: AuthService,
+    private router: Router
+  ) {}
 
   ngOnInit(): void {
-    this.getUserData();
+    this.authService.getUserId.subscribe((userId: string) => {
+      this.getUserData(userId);
+    });
   }
-
-  getUserData(): void {
-    // Get the userId from the user object or from any other source
-    const userId = this.user.id;
   
-    // Make a request to fetch the user data
-    this.userService.getUser(userId).subscribe(
-      (user: User) => {
-        this.user = user;
-        // Make a copy of the user object for editing
-        this.updatedUser = Object.assign({}, user);
-      },
-      (error: any) => {
-        console.error('Error fetching user data:', error);
-      }
-    );
+
+  getUserData(userId: string): void {
+    this.authService.getUserId.subscribe((userId: string) => {
+      this.userService.getUser(userId).subscribe({
+        next: (user: User) => {
+          this.user = user;
+          this.updatedUser = { ...user }; // Make a copy of the user object for editing
+        },
+        error: (error: any) => {
+          console.error('Error fetching user data:', error);
+        }
+      });
+    });
   }
+  
+  
   
 
   saveUserCarInfo(): void {
@@ -61,6 +69,7 @@ export class ProfilepageComponent implements OnInit {
       (user: User) => {
         this.user = user;
         console.log('User car information updated:', user);
+        this.router.navigate(['/profile']); // Navigate to the profile page
       },
       (error: any) => {
         console.error('Error updating user car information:', error);
@@ -75,7 +84,7 @@ export class ProfilepageComponent implements OnInit {
   saveChanges(index: number): void {
     this.editedCarIndex = null;
     // Update the car at the specified index in the carList
-    this.carList[index] = Object.assign({}, this.carList[index]);
+    this.carList[index] = { ...this.carList[index] };
   }
 
   removeCar(index: number): void {

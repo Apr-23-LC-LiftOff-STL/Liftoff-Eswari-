@@ -7,7 +7,7 @@ import { UpdateUser, User } from './user.model';
   providedIn: 'root'
 })
 export class UserService {
-  private apiUrl = 'http://localhost:8080/api/users';
+  private apiUrl = 'http://localhost:8080/profile';
 
 
   constructor(private http: HttpClient) {}

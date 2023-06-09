@@ -8,3 +8,8 @@
   <input id="tank-capacity-input" type="number" [(ngModel)]="updatedUser.tankCapacity" name="tankCapacity" required>
 </div>
 <button (click)="saveUserCarInfo()">Save</button>
+
+<!-- Display the saved car information -->
+<h3>Saved Car Information</h3>
+<p>Average MPG: {{ user.mpg }}</p>
+<p>Tank Capacity: {{ user.tankCapacity }}</p>
