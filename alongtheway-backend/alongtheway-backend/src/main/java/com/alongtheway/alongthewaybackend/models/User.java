@@ -25,6 +25,12 @@ public class User {
     @Field
     private String Id;
 
+    @Field
+    private Integer mpg;
+
+    @Field
+    private Integer tankCapacity;
+
     private static final BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
 
 
@@ -34,6 +40,8 @@ public class User {
         super();
         this.username = username;
         this.pwhash = encoder.encode(password);
+        this.mpg = 0;
+        this.tankCapacity = 0;
     }
 
     public Boolean isMatchingPassword(String password) {
@@ -42,6 +50,22 @@ public class User {
     public String getUsername() { return username; }
 
     public String getId() { return Id; }
+
+    public Integer getMpg() {
+        return mpg;
+    }
+
+    public void setMpg(Integer mpg) {
+        this.mpg = mpg;
+    }
+
+    public Integer getTankCapacity() {
+        return tankCapacity;
+    }
+
+    public void setTankCapacity(Integer tankCapacity) {
+        this.tankCapacity = tankCapacity;
+    }
 
     @Override
     public boolean equals(Object o) {
