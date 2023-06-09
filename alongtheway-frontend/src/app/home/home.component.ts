@@ -92,6 +92,8 @@ export class HomeComponent implements OnInit {
       libraries: ['places']
     });
 
+     this.interest = "";
+
     loader.load().then(() => {
       const mapElement = document.getElementById("map");
       if (mapElement) {
@@ -208,6 +210,7 @@ export class HomeComponent implements OnInit {
     const apiKey = environment.apiKey;
 
     this.places = [];
+    this.interest = "";
 
     console.log("Calculating route...");
     console.log("Start location:", this.startLocation);
