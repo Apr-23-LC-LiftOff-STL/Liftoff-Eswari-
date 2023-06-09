@@ -17,7 +17,7 @@
       </li>
       <li><a href="/home" class="nav-button">HOME</a></li>
       <li><a routerLink="/about" class="nav-button">ABOUT US / FAQ</a></li>
-      <li><a href="/profile" class="nav-button">MY SAVED TRIPS</a></li>
+      <li><a href="/profile" class="nav-button">MY PROFILE</a></li>
       <li *ngIf="!(authService.isLoggedIn | async)"><a href="/login" class="nav-button">SIGN UP / LOG IN</a></li>
     </ul>
   </nav>
