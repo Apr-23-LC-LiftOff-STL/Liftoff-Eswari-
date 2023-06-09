@@ -7,7 +7,7 @@ import { AuthService } from '../services/auth.service';
   styleUrls: ['./header.component.css']
 })
 export class HeaderComponent implements OnInit {
-  username: string | null = null;
+  username = '';
 
   constructor(public authService: AuthService) { }
 
@@ -18,6 +18,13 @@ export class HeaderComponent implements OnInit {
   }
 
   logout(): void {
-    this.authService.logout();
+    this.authService.logout().subscribe(
+      response => {
+        // Handle logout success
+      },
+      error => {
+        // Handle logout error
+      }
+    );
   }
 }
