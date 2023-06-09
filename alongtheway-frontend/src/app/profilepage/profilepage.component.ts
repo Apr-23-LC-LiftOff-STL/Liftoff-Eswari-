@@ -7,7 +7,7 @@ interface Car {
   make: string;
   model: string;
   mpg: number;
-} 
+}
 
 @Component({
   selector: 'app-profilepage',
