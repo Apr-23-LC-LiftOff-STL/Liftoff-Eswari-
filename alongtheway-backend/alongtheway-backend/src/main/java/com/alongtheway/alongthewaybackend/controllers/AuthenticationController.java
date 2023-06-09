@@ -1,27 +1,40 @@
 package com.alongtheway.alongthewaybackend.controllers;
 
-import org.springframework.web.bind.annotation.CrossOrigin;
-import com.alongtheway.alongthewaybackend.models.User;
-import com.alongtheway.alongthewaybackend.models.data.UserRepository;
-import com.alongtheway.alongthewaybackend.models.dto.LoginForm;
-import com.alongtheway.alongthewaybackend.models.dto.SignupForm;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.validation.Errors;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Optional;
+import java.util.concurrent.TimeUnit;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
 
-import java.util.Optional;
+import io.jsonwebtoken.Jwts;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.validation.Errors;
+import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RestController;
+
+import com.alongtheway.alongthewaybackend.models.User;
+import com.alongtheway.alongthewaybackend.models.data.UserRepository;
+import com.alongtheway.alongthewaybackend.models.dto.LoginForm;
+import com.alongtheway.alongthewaybackend.models.dto.SignupForm;
+
+import io.jsonwebtoken.SignatureAlgorithm;
+import io.jsonwebtoken.security.Keys;
 
 @RestController
 @CrossOrigin(origins = "http://localhost:4200")
 public class AuthenticationController {
+
+    // Generate a secure secret key for HS256 algorithm
+    private static final byte[] SECRET_KEY = Keys.secretKeyFor(SignatureAlgorithm.HS256).getEncoded();
 
     @Autowired
     private UserRepository userRepository;
@@ -46,8 +59,21 @@ public class AuthenticationController {
     private static void setUserInSession(HttpSession session, User user) {
         session.setAttribute(userSessionKey, user.getId());
     }
+    private String generateToken(String username) {
+        long expirationTimeMillis = TimeUnit.MINUTES.toMillis(30); // Token expiration time: 30 minutes
+        Date expirationDate = new Date(System.currentTimeMillis() + expirationTimeMillis);
 
-    @PostMapping
+        String token = Jwts.builder()
+                .claim("username", username) // Include username as a claim
+                .setExpiration(expirationDate)
+                .signWith(Keys.hmacShaKeyFor(SECRET_KEY), SignatureAlgorithm.HS256)
+                .compact();
+
+        return token;
+    }
+
+
+    @PostMapping("/signup")
     public ResponseEntity<?> processSignupForm(@RequestBody SignupForm signupForm, Errors errors) {
         if (errors.hasErrors()) {
             // Return the validation errors as a JSON response
@@ -78,7 +104,7 @@ public class AuthenticationController {
 
     @PostMapping("/login")
     public ResponseEntity<?> processLoginForm(@Valid @RequestBody LoginForm loginForm, HttpServletRequest request,
-            Errors errors) {
+                                              Errors errors) {
         if (errors.hasErrors()) {
             // Return validation errors
             return ResponseEntity.badRequest().body(errors.getAllErrors());
@@ -91,8 +117,19 @@ public class AuthenticationController {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid username or password");
         }
 
-        // Login successful, return OK response
-        setUserInSession(request.getSession(), user);
-        return ResponseEntity.ok().body("Login successful");
+        // Generate JWT token
+        String token = generateToken(user.getUsername());
+
+        // Set the token in the response
+
+        // Return the token in the response
+        Map<String, String> response = new HashMap<>();
+        response.put("token", token);
+        return ResponseEntity.ok(response);
     }
 }
+
+
+
+
+// Set the token in the response

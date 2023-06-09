@@ -3,6 +3,7 @@ import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { tap } from 'rxjs/operators';
+import jwt_decode from 'jwt-decode';
 
 @Injectable({
   providedIn: 'root'
@@ -24,7 +25,7 @@ export class AuthService {
   }
 
   login(username: string, password: string): Observable<any> {
-    const url = 'http://localhost:8080/auth/login';
+    const url = 'http://localhost:8080/login';
     const loginData = {
       username: username,
       password: password
@@ -54,8 +55,7 @@ export class AuthService {
   }
 
   private getUsernameFromToken(token: string): string {
-    // Implement your logic to extract the username from the token
-    // and return it here
-    return '';
+    const decodedToken: any = jwt_decode(token);
+    return decodedToken.username || '';
   }
 }

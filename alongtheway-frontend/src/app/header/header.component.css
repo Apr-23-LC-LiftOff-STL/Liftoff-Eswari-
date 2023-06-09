@@ -9,6 +9,7 @@ header {
 .logo {
   display: flex;
   align-items: center;
+  margin-left: 30px;
 }
 
 .logo img {
@@ -54,3 +55,8 @@ nav a.nav-button:hover::after {
   transform: scaleX(1);
 }
 
+@media (max-width: 3000px) {
+  nav ul {
+    margin-left: 40px; /* Adjust the margin value as per your requirement */
+  }
+}

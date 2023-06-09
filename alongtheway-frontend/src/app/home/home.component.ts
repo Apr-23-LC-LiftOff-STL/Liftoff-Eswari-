@@ -47,10 +47,10 @@ export class HomeComponent implements OnInit {
             }
           }
 
-          let iconElement = document.getElementById(`${point}-weather-icon`) as HTMLElement;
+          let iconElement = document.getElementById(`weather-icon-${point}`) as HTMLElement;
           iconElement.setAttribute("src", "https://openweathermap.org/img/wn/" + weatherIcon + "@2x.png");
 
-          let tempElement = document.getElementById(`${point}-weather-temp`) as HTMLElement;
+          let tempElement = document.getElementById(`weather-temp-${point}`) as HTMLElement;
           tempElement.textContent = Math.round(weatherTemp) + "°F";
         }
       });
@@ -60,12 +60,26 @@ export class HomeComponent implements OnInit {
   title = 'alongtheway-frontend';
   startLocation: string = "";
   endLocation: string = "";
-  averageMPG: number = 0;
-  tankCapacity: number = 0;
+  averageMPG: number = 30;
+  tankCapacity: number = 10;
+  totalGallonsNeeded: number = 0;
+  gallonGasPrice: number = 3.5;
+  gallonGasPriceString: string = "3.50";
+  distanceInMiles: number = 0;
+  distanceInMeters: number = 0;
+  driveTime: string = "0 hrs";
   map: google.maps.Map | null = null;
   directionsService: google.maps.DirectionsService | null = null;
   directionsRenderer: google.maps.DirectionsRenderer | null = null;
-  interest: string = "";
+  interest: string = "restaurant";
+  isCollapsibleCollapsed: boolean = false;
+  isSecondCollapsibleCollapsed: boolean = true;
+  isThirdCollapsibleCollapsed: boolean = true;
+  loading: boolean = false; // Add loading flag property
+  service!: google.maps.places.PlacesService;
+  places: any[] = [];
+  openInfoWindow: google.maps.InfoWindow | null = null; // Declare the openInfoWindow property
+  markers: google.maps.Marker[] = []; // Array to store the markers
 
   @ViewChild('mpgInput') mpgInputRef!: ElementRef<HTMLInputElement>;
   @ViewChild('tankInput') tankInputRef!: ElementRef<HTMLInputElement>;
@@ -100,13 +114,9 @@ export class HomeComponent implements OnInit {
   initAutocomplete(): void {
     const startInput = document.getElementById("start-input") as HTMLInputElement;
     const endInput = document.getElementById("end-input") as HTMLInputElement;
-    // const stopInput = document.getElementById("stop-input-{{i}}") as HTMLInputElement;
-    const mpgInput = document.getElementById("mpg-input") as HTMLInputElement;
-    const tankInput = document.getElementById("tank-input") as HTMLInputElement;
 
     const startAutocomplete = new google.maps.places.Autocomplete(startInput);
     const endAutocomplete = new google.maps.places.Autocomplete(endInput);
-    // const stopAutocomplete = new google.maps.places.Autocomplete(stopInput);
 
     startAutocomplete.addListener("place_changed", () => {
       const place = startAutocomplete.getPlace();
@@ -116,7 +126,7 @@ export class HomeComponent implements OnInit {
         this.startLocation = place.formatted_address ?? "";
         console.log("Start location:", this.startLocation);
 
-        this.getWeather("start", place.geometry.location.lat(), place.geometry.location.lng());
+        this.getWeather("start-input", place.geometry.location.lat(), place.geometry.location.lng());
       }
     });
 
@@ -128,23 +138,47 @@ export class HomeComponent implements OnInit {
         this.endLocation = place.formatted_address ?? "";
         console.log("End location:", this.endLocation);
 
-        this.getWeather("end", place.geometry.location.lat(), place.geometry.location.lng());
+        this.getWeather("end-input", place.geometry.location.lat(), place.geometry.location.lng());
       }
     });
 
-    setTimeout(() => {
-      const mpgInput = this.mpgInputRef.nativeElement;
-      const tankInput = this.tankInputRef.nativeElement;
+    const loader = new Loader({
+      apiKey: environment.apiKey,
+      libraries: ['places']
+    });
 
-      mpgInput.addEventListener("change", () => {
-        this.averageMPG = Number(mpgInput.value);
-        console.log("Average MPG:", this.averageMPG);
-      });
+    loader.load().then(() => {
+      const mapElement = document.getElementById("map");
+      if (mapElement) {
+        this.map = new google.maps.Map(mapElement, {
+          center: { lat: 39.828175, lng: -98.5795 },
+          zoom: 4
+        });
+        this.directionsService = new google.maps.DirectionsService();
+        this.directionsRenderer = new google.maps.DirectionsRenderer({
+          map: this.map
+        });
+        this.service = new google.maps.places.PlacesService(this.map); // Initialize PlacesService
+        for (let i = 0; i < this.stops.length; i++) {
+          this.initStopAutocomplete(i);
+        }
+      } else {
+        console.error("Could not find map element");
+      }
 
+      setTimeout(() => {
+        const mpgInput = this.mpgInputRef.nativeElement;
+        const tankInput = this.tankInputRef.nativeElement;
 
-      tankInput.addEventListener("change", () => {
-        this.tankCapacity = Number(tankInput.value);
-        console.log("Tank Capacity:", this.tankCapacity);
+        mpgInput.addEventListener("change", () => {
+          this.averageMPG = Number(mpgInput.value);
+          console.log("Average MPG:", this.averageMPG);
+        });
+
+        tankInput.addEventListener("change", () => {
+          this.tankCapacity = Number(tankInput.value);
+          console.log("Tank Capacity:", this.tankCapacity);
+        });
       });
     });
   }
@@ -170,7 +204,6 @@ export class HomeComponent implements OnInit {
     this.averageMPG = +this.averageMPG;
     this.tankCapacity = +this.tankCapacity;
     const apiKey = environment.apiKey;
-
 
     console.log("Calculating route...");
     console.log("Start location:", this.startLocation);
@@ -214,21 +247,19 @@ export class HomeComponent implements OnInit {
           console.log("Route calculated successfully");
           this.directionsRenderer?.setDirections(result);
 
-          if (result && result.routes && result.routes.length > 0) {
-            const polyline: google.maps.Polyline = new google.maps.Polyline({
-              path: result.routes[0]?.overview_path || [],
-            });
-
-            this.path = polyline.getPath().getArray();
+          if (result && result.routes && result.routes.length > 0 && result.routes[0].legs && result.routes[0].legs.length > 0) {
+            this.driveTime = result.routes[0].legs[0].duration?.text ?? 'Unknown';
           } else {
-            console.error("Directions request failed:", status);
-            // Handle the case when result is null or there are no routes
+            console.error('Invalid directions response:', result);
           }
 
-          let routeBoxer = new RouteBoxer();
-          this.boxes = routeBoxer.box(this.path, 10);
-          console.log('Boxes:', this.boxes);
-          this.drawBoxes(this.boxes);
+          this.createRouteBoxes(result);
+
+          // THIS IS THE LINE THAT TURNS ON PLACE SEARCH
+          // DO NOT UNCOMMENT IT UNLESS YOU KNOW WHAT YOU ARE DOING
+          // IF YOU ENABLE IT YOU WILL DRAIN OUR ACCOUNT BALANCE
+          // TALK TO JONATHAN IF YOU WANT TO TEST IT
+          // this.searchPlacesAlongRoute();
 
           // calculate the midpoint of the route + old places code
           // const midLat = (result!.routes[0].bounds.getNorthEast().lat() + result!.routes[0].bounds.getSouthWest().lat()) / 2;
@@ -241,8 +272,6 @@ export class HomeComponent implements OnInit {
           //   map: this.map,
           //   title: 'Midpoint'
           // });
-
-
 
           // make the Google Places API request using the PlacesService
 
@@ -274,7 +303,7 @@ export class HomeComponent implements OnInit {
             destinationTime = Date.now() / 1000 + duration;
           }
 
-          this.getWeather("end", lat, lng, destinationTime);
+          this.getWeather("end-input", lat, lng, destinationTime);
 
           // Get the direction steps
           const steps = result?.routes[0]?.legs[0]?.steps;
@@ -282,21 +311,21 @@ export class HomeComponent implements OnInit {
             this.showSteps(steps);
           }
 
-          // Calculate gas usage
-          const distanceMeters = result?.routes[0]?.legs[0]?.distance?.value;
-          if (distanceMeters) {
-            const distanceMiles = distanceMeters * 0.000621371; // Convert meters to miles
-            const tanksNeeded = distanceMiles / (this.averageMPG * this.tankCapacity);
-            console.log("Tanks of gas needed:", tanksNeeded);
-
-            // Display gas usage
-            const gasUsageInfoElement = document.getElementById("gas-usage-info");
-            if (gasUsageInfoElement) {
-              gasUsageInfoElement.textContent = `Distance: ${distanceMiles.toFixed(2)} miles. Tanks of gas needed: ${tanksNeeded.toFixed(2)}`;
-            }
-          } else {
-            console.error("Could not calculate distance");
-          }
+//           // Calculate gas usage //This is old code no longer needed
+//           const distanceMeters = result?.routes[0]?.legs[0]?.distance?.value;
+//           if (distanceMeters) {
+//             const distanceMiles = distanceMeters * 0.000621371; // Convert meters to miles
+//             const tanksNeeded = distanceMiles / (this.averageMPG * this.tankCapacity);
+//             console.log("Tanks of gas needed:", tanksNeeded);
+//
+//             // Display gas usage
+//             const gasUsageInfoElement = document.getElementById("gas-usage-info");
+//             if (gasUsageInfoElement) {
+//               gasUsageInfoElement.textContent = `Distance: ${distanceMiles.toFixed(2)} miles. Tanks of gas needed: ${tanksNeeded.toFixed(2)}`;
+//             }
+//           } else {
+//             console.error("Could not calculate distance");
+//           }
         } else {
           console.error("Directions request failed:", status);
         }
@@ -326,7 +355,7 @@ export class HomeComponent implements OnInit {
         this.stops[index].location = place.formatted_address ?? "";
         console.log(`Stop location ${index}:`, this.stops[index].location);
 
-        this.getWeather(`stop${index}`, place.geometry.location.lat(), place.geometry.location.lng());
+        this.getWeather(`stop-input-${index}`, place.geometry.location.lat(), place.geometry.location.lng());
       }
     });
   }
@@ -341,6 +370,62 @@ export class HomeComponent implements OnInit {
         stepDiv.innerHTML = step.instructions;
         stepsContainer.appendChild(stepDiv);
       });
+    }
+  }
+
+  createRouteBoxes(result: google.maps.DirectionsResult | null): void {
+    if (result === null) {
+        console.error("Directions result is null");
+        return;
+    }
+
+    if (result && result.routes && result.routes.length > 0) {
+      const polyline: google.maps.Polyline = new google.maps.Polyline({
+        path: result.routes[0]?.overview_path || [],
+      });
+
+      this.path = polyline.getPath().getArray();
+    } else {
+      console.error("Directions request failed:", status);
+      // Handle the case when result is null or there are no routes
+    }
+
+    let routeBoxer = new RouteBoxer();
+
+    this.clearBoxes();
+
+    let totalDistanceInMeters = 0;
+
+    if (result && result.routes && result.routes.length > 0) {
+      const route = result.routes[0];
+
+      if (route && route.legs && route.legs.length > 0) {
+        for (const leg of route.legs) {
+          if (leg.distance && leg.distance.value) {
+            totalDistanceInMeters += leg.distance.value;
+          }
+        }
+      }
+    }
+
+    this.distanceInMeters = totalDistanceInMeters;
+
+    if (this.distanceInMeters) {
+      this.distanceInMiles = this.distanceInMeters * 0.000621371; // Convert meters to miles
+      console.log("Distance in miles: ", this.distanceInMiles);
+
+      if ((this.distanceInMiles > 0) && (this.distanceInMiles <= 99.9)) {
+        this.boxes = routeBoxer.box(this.path, 1.5);
+      } else if ((this.distanceInMiles >= 100) && (this.distanceInMiles <= 499.9)) {
+        this.boxes = routeBoxer.box(this.path, 10);
+      } else if ((this.distanceInMiles >= 500) && (this.distanceInMiles <= 999.9)) {
+        this.boxes = routeBoxer.box(this.path, 20);
+      } else if (this.distanceInMiles >= 1000) {
+        this.boxes = routeBoxer.box(this.path, 50);
+      }
+
+      console.log('Boxes:', this.boxes);
+      this.drawBoxes(this.boxes);
     }
   }
 
@@ -366,5 +451,159 @@ export class HomeComponent implements OnInit {
         }
         this.boxpolys = [];
   }
+
+  toggleCollapsible(): void {
+    this.isCollapsibleCollapsed = !this.isCollapsibleCollapsed;
+  }
+
+  toggleSecondCollapsible(): void {
+    this.isSecondCollapsibleCollapsed = !this.isSecondCollapsibleCollapsed;
+  }
+
+  toggleThirdCollapsible(): void {
+    this.isThirdCollapsibleCollapsed = !this.isThirdCollapsibleCollapsed;
+  }
+
+  distanceInMetersToMiles(): string {
+    // Convert distanceInMeters to miles here
+    const distanceInMiles = this.distanceInMeters * 0.000621371;
+    return (distanceInMiles.toFixed(2) + " miles"); // Adjust decimal places as needed
+  }
+
+  calculateTotalGasCost() {
+    // Retrieve the value from the gasPrice variable
+    const distanceInMiles = this.distanceInMeters * 0.000621371;
+    const totalGallonsNeeded = (distanceInMiles / this.averageMPG);
+    const gasPriceTotal = (totalGallonsNeeded * Number(this.gallonGasPriceString));
+
+    // Format the value as currency
+    const formattedGasPrice = gasPriceTotal.toLocaleString('en-US', {
+      style: 'currency',
+      currency: 'USD',
+    });
+
+    // Return the formatted value
+    return formattedGasPrice;
+  }
+
+  calculateTotalGallons(): string {
+    const distanceInMiles = this.distanceInMeters * 0.000621371;
+    const totalGallonsNeeded = (distanceInMiles / this.averageMPG);
+    const formattedTotalGallonsNeeded: string = totalGallonsNeeded.toFixed(1);
+    return formattedTotalGallonsNeeded;
+  }
+
+  calculateTanksNeeded(): string {
+    let tanksNeeded = (Number(this.calculateTotalGallons()) / this.tankCapacity);
+    let tanksNeededString = tanksNeeded.toFixed(1);
+    return tanksNeededString;
+  }
+
+  calculateDriveTime(): string {
+      return this.driveTime;
+  }
+
+  searchPlacesAlongRoute(): void {
+      const radiusMiles = 1; // Set the radius for searching places in miles
+      const minimumRating = 4; // Minimum rating to include in the results
+      const maxResults = 20; // Maximum number of results to display
+
+      // Clear all markers from the map
+      this.clearMarkers();
+
+      // Clear the places list
+      this.places = [];
+
+      const promises: Promise<google.maps.places.PlaceResult[]>[] = [];
+
+      this.boxes.forEach((box: google.maps.LatLngBounds) => {
+        const request = {
+          bounds: box,
+          type: 'restaurant' // Set the type of place you want to search for
+        };
+
+        const promise = new Promise<google.maps.places.PlaceResult[]>((resolve, reject) => {
+          this.service.nearbySearch(request, (results: google.maps.places.PlaceResult[] | null, status: google.maps.places.PlacesServiceStatus, pagination: google.maps.places.PlaceSearchPagination | null) => {
+            if (status === google.maps.places.PlacesServiceStatus.OK && results !== null) {
+              // Filter results based on minimum rating
+              console.log('Number of place results before filtering:', results);
+              const filteredResults = results.filter((place: google.maps.places.PlaceResult) =>
+                place.rating && place.rating >= minimumRating && place.user_ratings_total && place.user_ratings_total > 500
+              );
+
+              resolve(filteredResults); // Resolve with filtered results
+            } else {
+              resolve([]); // Resolve with an empty array if no results
+            }
+          });
+        });
+
+        promises.push(promise);
+      });
+
+      // Wait for all promises to resolve
+      Promise.all(promises)
+        .then((resultsArray: google.maps.places.PlaceResult[][]) => {
+          // Concatenate all the filtered results from each request
+          const combinedResults = resultsArray.reduce((accumulator, currentArray) => accumulator.concat(currentArray), []);
+
+          // Log the number of place results
+          console.log('Number of place results:', combinedResults.length);
+
+          // Remove duplicate results based on place ID
+          const uniqueResults = this.removeDuplicateResults(combinedResults);
+
+          // Sort the unique results by rating in descending order
+          uniqueResults.sort((a: google.maps.places.PlaceResult, b: google.maps.places.PlaceResult) => (b.rating ?? 0) - (a.rating ?? 0));
+
+          // Get the top-rated results up to the maximum limit
+          const topResults = uniqueResults.slice(0, maxResults);
+
+          // Process the search results here
+          this.updatePlacesList(topResults); // Update the places list with the filtered results
+
+          // Add markers for each place
+          topResults.forEach((place: google.maps.places.PlaceResult) => {
+            // Rest of the code...
+          });
+
+          console.log('Places search completed.');
+          this.loading = false; // Disable loading flag after search completion
+        })
+        .catch(() => {
+          console.error('Error occurred while searching for places.');
+          this.loading = false; // Disable loading flag in case of error
+        });
+    }
+
+  removeDuplicateResults(results: google.maps.places.PlaceResult[]): google.maps.places.PlaceResult[] {
+      const uniqueResults: google.maps.places.PlaceResult[] = [];
+      const placeIds: string[] = [];
+
+      results.forEach((result: google.maps.places.PlaceResult) => {
+        const placeId = result.place_id;
+        if (placeId && !placeIds.includes(placeId)) {
+          uniqueResults.push(result);
+          placeIds.push(placeId);
+        }
+      });
+
+      return uniqueResults;
+    }
+
+  updatePlacesList(results: any[]): void {
+      this.places = [...results];
+    }
+
+  clearMarkers(): void {
+      // Remove markers from the map
+      this.markers.forEach((marker: google.maps.Marker) => {
+        marker.setMap(null);
+      });
+
+      // Clear the markers array
+      this.markers = [];
+    }
+
 
 }

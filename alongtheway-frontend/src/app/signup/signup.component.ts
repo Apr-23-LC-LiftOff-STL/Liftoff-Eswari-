@@ -1,6 +1,6 @@
+import { HttpHeaders } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
 import { ApiService } from '../api.service';
-import { HttpHeaders } from '@angular/common/http';
 
 @Component({
   selector: 'app-signup',
