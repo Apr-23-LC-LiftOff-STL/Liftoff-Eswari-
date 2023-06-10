@@ -1,0 +1,60 @@
+            <li>#4 - Hank's Bowl Inc Lounge and Restaurant (Rating: 4.8 - Reviews: 139)<br>
+              Address: 29 West Illinois Street, Trenton</li>
+            <li>#5 - Mike's Place Bar and Grill (Rating: 4.8 - Reviews: 222)<br>
+              Address: 100 Main Street, Summerfield</li>
+            <li>#6 - Pappy's Smokehouse (Rating: 4.7 - Reviews: 7588)<br>
+              Address: 3106 Olive Street, St. Louis</li>
+            <li>#7 - Bogart's Smokehouse (Rating: 4.7 - Reviews: 1820)<br>
+              Address: 1627 South 9th Street, St. Louis</li>
+            <li>#8 - The Fountain on Locust (Rating: 4.7 - Reviews: 2697)<br>
+              Address: 3037 Locust Street, St. Louis</li>
+            <li>#9 - Dairy King (Rating: 4.6 - Reviews: 1021)<br>
+              Address: 691 North 4th Street, Breese</li>
+            <li>#10 - Mexico Tipico (Rating: 4.6 - Reviews: 585)<br>
+              Address: 501 South Madison Street, Lebanon</li>
+            <li>#11 - Dairy King (Rating: 4.6 - Reviews: 1149)<br>
+              Address: 320 West Broadway, Trenton</li>
+            <li>#12 - Mexico On Main (Rating: 4.6 - Reviews: 347)<br>
+              Address: 10 South Main Street, Trenton</li>
+            <li>#13 - Broadway Oyster Bar (Rating: 4.6 - Reviews: 7113)<br>
+              Address: 736 South Broadway, St. Louis</li>
+            <li>#14 - John D. McGurk's Irish Pub and Garden (Rating: 4.6 - Reviews: 2993)<br>
+              Address: 1200 Russell Boulevard, St. Louis</li>
+            <li>#15 - Lemp Mansion (Rating: 4.6 - Reviews: 1544)<br>
+              Address: 3322 Demenil Place, St. Louis</li>
+            <li>#16 - Eleven Eleven Mississippi (Rating: 4.6 - Reviews: 1378)<br>
+              Address: 1111 Mississippi Avenue, St. Louis</li>
+            <li>#17 - Millside Inn (Rating: 4.5 - Reviews: 147)<br>
+              Address: 501 Main Street, Germantown</li>
+            <li>#18 - P J's Diner (Rating: 4.5 - Reviews: 513)<br>
+              Address: 560 North 4th Street, Breese</li>
+            <li>#19 - 7 West Bar & Grill (Rating: 4.5 - Reviews: 332)<br>
+              Address: 7 West Broadway, Trenton</li>
+            <li>#20 - Trenton House (Rating: 4.5 - Reviews: 380)<br>
+              Address: 2 East Broadway, Trenton</li>
+            <li>#21 - Texas Roadhouse (Rating: 4.5 - Reviews: 3536)<br>
+              Address: 1412 Central Park Circle, O'Fallon</li>
+            <li>#22 - Andrias Steakhouse (Rating: 4.5 - Reviews: 589)<br>
+              Address: 6805 Old Collinsville Road, O'Fallon</li>
+            <li>#23 - Global Brew Tap House (Rating: 4.5 - Reviews: 622)<br>
+              Address: 455 Regency Park B, O'Fallon</li>
+            <li>#24 - The Schlafly Tap Room (Rating: 4.5 - Reviews: 1239)<br>
+              Address: 2100 Locust Street, St. Louis</li>
+            <li>#25 - Bridge Tap House & Wine Bar (Rating: 4.5 - Reviews: 914)<br>
+              Address: 1004 Locust Street, St. Louis</li>
+            <li>#26 - Hodak's Restaurant & Bar (Rating: 4.5 - Reviews: 5033)<br>
+              Address: 2100 Gravois Avenue, St. Louis</li>
+            <li>#27 - Square One Brewery & Distillery (Rating: 4.5 - Reviews: 715)<br>
+              Address: 1727 Park Avenue, St. Louis</li>
+            <li>#28 - BB's Jazz, Blues and Soups (Rating: 4.5 - Reviews: 1402)<br>
+              Address: 700 South Broadway, St. Louis</li>
+            <li>#29 - The Shaved Duck Smokehouse (Rating: 4.5 - Reviews: 2692)<br>
+              Address: 2900 Virginia Avenue, St. Louis</li>
+            <li>#30 - El Arado (Rating: 4.4 - Reviews: 366)<br>
+              Address: 50 North 4th Street, Breese</li>
+            <li>#31 - Three Sixty (Rating: 4.4 - Reviews: 2220)<br>
+              Address: 1 South Broadway, St. Louis</li>
+            <li>#32 - SqWires Restaurant & Market (Rating: 4.4 - Reviews: 1235)<br>
+              Address: 1415 South 18th Street, St. Louis</li>
+            <li>#33 - Gridiron Grill (Rating: 4.3 - Reviews: 169)<br>
+              Address: 259 North Main Street, Breese</li>

@@ -241,7 +241,7 @@
 }
 
 .searchresults .list-items li {
-  display: flex;
+  /*display: flex; Commented out for test data*/
   align-items: center;
   justify-content: space-between;
   margin-bottom: 2px;
@@ -253,7 +253,7 @@
 }
 
 .searchresults .list-items {
-  height: 55vh; /* 100% of the viewport height minus 90px for other elements */
+  height: 30vh;
   overflow-y: auto;
   padding-left: 1px;
   padding-right: 4px;
@@ -265,3 +265,6 @@
     margin-right: 8px;
 }
 
+.bold-text {
+    font-weight: bold;
+}
