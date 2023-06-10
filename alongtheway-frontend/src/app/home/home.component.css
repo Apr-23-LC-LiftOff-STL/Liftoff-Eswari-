@@ -190,11 +190,15 @@
   color: black;
   letter-spacing: 0.06em;
   background-image: linear-gradient(white, #c7dfff);
+  background-radius: 7px;
   padding: 8px;
   cursor: pointer;
   text-align: center;
+  border: 1px solid;
+  border-width: 1px;
+  border-image: linear-gradient(#6e6e6e, #bfbfbf) 1;
   /*border: 1px solid gray; /* Add border properties */
-  border-radius: 5px; /* Add border-radius for rounded corners */
+  border-radius: 3px; /* Add border-radius for rounded corners */
   position: relative; /* Add position relative for pseudo-element */
   height: 14px; /* Adjust this value as needed */
   line-height: 14px; /* Should be the same as height */
