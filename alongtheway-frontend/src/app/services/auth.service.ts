@@ -2,6 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
 import jwt_decode from 'jwt-decode';
+import { CookieService } from 'ngx-cookie-service';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { tap } from 'rxjs/operators';
 
@@ -11,12 +12,7 @@ import { tap } from 'rxjs/operators';
 export class AuthService {
   private isLoggedIn$ = new BehaviorSubject<boolean>(false);
   private username$ = new BehaviorSubject<string>('');
-  private userId$ = new BehaviorSubject<string>('');
-
-  getToken(): string | null {
-    return localStorage.getItem('token');
-  }
-  
+  private userId$ = new BehaviorSubject<string | null>(null);
 
   get isLoggedIn(): Observable<boolean> {
     return this.isLoggedIn$.asObservable();
@@ -26,12 +22,21 @@ export class AuthService {
     return this.username$.asObservable();
   }
 
-  get getUserId(): Observable<string> {
+  get getUserId(): Observable<string | null> {
     return this.userId$.asObservable();
   }
 
-  constructor(private http: HttpClient, private router: Router) {
+  constructor(
+    private http: HttpClient,
+    private router: Router,
+    private cookieService: CookieService
+  ) {
     this.initializeAuthState();
+  }
+
+  getToken(): string | null {
+    const token = this.cookieService.get('token');
+    return token ? `Bearer ${token}` : null;
   }
 
   login(username: string, password: string): Observable<any> {
@@ -43,7 +48,7 @@ export class AuthService {
     return this.http.post(url, loginData).pipe(
       tap((response: any) => {
         const token = response.token as string;
-        localStorage.setItem('token', token); // Store the token in local storage
+        this.cookieService.set('token', token); // Set the token as a cookie
         this.isLoggedIn$.next(true);
         this.username$.next(this.getUsernameFromToken(token));
         this.userId$.next(this.getUserIdFromToken(token));
@@ -61,7 +66,7 @@ export class AuthService {
     return this.http.post(url, signupData).pipe(
       tap(response => {
         const token = (response as any).token as string;
-        localStorage.setItem('token', token);
+        this.cookieService.set('token', token); // Set the token as a cookie
         this.isLoggedIn$.next(true);
         this.username$.next(this.getUsernameFromToken(token));
         this.userId$.next(this.getUserIdFromToken(token));
@@ -71,39 +76,36 @@ export class AuthService {
   }
 
   logout(): Observable<any> {
-    localStorage.removeItem('token');
+    this.cookieService.delete('token'); // Remove the token cookie
     this.isLoggedIn$.next(false);
     this.username$.next('');
-    this.userId$.next('');
+    this.userId$.next(null);
     this.router.navigate(['/login']); // Navigate to the login page
     return this.http.post<any>('/logout', {});
   }
-  
 
   private initializeAuthState(): void {
-    const token = localStorage.getItem('token'); // Retrieve the token from local storage
+    const token = this.cookieService.get('token'); // Retrieve the token from the cookie
     this.isLoggedIn$.next(!!token);
     this.username$.next(token ? this.getUsernameFromToken(token) : '');
-    this.userId$.next(token ? this.getUserIdFromToken(token) : '');
+    this.userId$.next(token ? this.getUserIdFromToken(token) : null);
   }
-  
+
   private getUsernameFromToken(token: string | null): string {
     if (!token) {
       return '';
     }
-    
+
     const decodedToken: any = jwt_decode(token);
     return decodedToken.username || '';
   }
-  
-  private getUserIdFromToken(token: string | null): string {
-    if (!token) {
-      return '';
-    }
-    
-    const decodedToken: any = jwt_decode(token);
-    return decodedToken.userId || '';
-  }
-  
 
+  private getUserIdFromToken(token: string | null): string | null {
+    if (!token) {
+      return null;
+    }
+
+    const decodedToken: any = jwt_decode(token);
+    return decodedToken.userId || null;
+  }
 }

@@ -1,4 +1,3 @@
-import { HttpHeaders } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { AuthService } from '../services/auth.service';
@@ -51,16 +50,9 @@ export class ProfilepageComponent implements OnInit {
       this.username = username;
     });
 
-    this.authService.getUserId.subscribe((userId: string) => {
+    this.authService.getUserId.subscribe((userId: string | null) => {
       if (userId) {
-        const httpOptions = {
-          headers: new HttpHeaders({
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${this.authService.getToken()}`
-          })
-        };
-
-        this.userService.getUser(userId, httpOptions).subscribe((user: User | null) => {
+        this.userService.getUser(userId).subscribe((user: User | null) => {
           if (user) {
             this.user = {
               ...user,
@@ -68,7 +60,7 @@ export class ProfilepageComponent implements OnInit {
               tankCapacity: { $numberInt: String(user.tankCapacity) },
             };
 
-            this.editUserForm = this.fb.group({ // Now you can use fb and editUserForm
+            this.editUserForm = this.fb.group({
               mpg: [Number(user.mpg.$numberInt), Validators.required],
               tankCapacity: [Number(user.tankCapacity.$numberInt), Validators.required],
             });
@@ -78,25 +70,15 @@ export class ProfilepageComponent implements OnInit {
     });
   }
 
-  
-  
-
   getUserData(userId: string): void {
     const token = this.authService.getToken();
-  
+
     if (!token) {
       console.error('No authentication token');
       return;
     }
-  
-    const httpOptions = {
-      headers: new HttpHeaders({
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${token}`,
-      }),
-    };
-  
-    this.userService.getUser(userId, httpOptions).subscribe(
+
+    this.userService.getUser(userId).subscribe(
       (user: User | null) => {
         if (user) {
           this.user = user;
@@ -134,7 +116,6 @@ export class ProfilepageComponent implements OnInit {
       }
     );
   }
-  
 
   editCar(): void {
     this.isEditing = true;

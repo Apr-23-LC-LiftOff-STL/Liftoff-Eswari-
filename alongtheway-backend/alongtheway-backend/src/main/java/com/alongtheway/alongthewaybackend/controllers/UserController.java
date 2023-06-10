@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.CookieValue;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -38,16 +39,14 @@ public class UserController {
     private String SECRET_KEY;
 
     @GetMapping("/{userId}")
-    public ResponseEntity<?> getUser(@PathVariable String userId, HttpServletRequest request) {
+    public ResponseEntity<?> getUser(@PathVariable String userId, HttpServletRequest request,
+            @CookieValue(value = "token", defaultValue = "") String token) {
 
-        String authHeader = request.getHeader("Authorization");
-
-        if (authHeader == null || !authHeader.startsWith("Bearer ")) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Missing or invalid Authorization header");
+        if (token.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Missing or invalid Authorization token");
         }
 
         try {
-            String token = authHeader.substring(7);
             Jws<Claims> jws = Jwts.parserBuilder()
                     .setSigningKey(SECRET_KEY.getBytes(StandardCharsets.UTF_8))
                     .build()
@@ -67,15 +66,14 @@ public class UserController {
     }
 
     @PostMapping("/{userId}/car")
-      public ResponseEntity<?> updateUserCarInfo(@PathVariable String userId, @RequestBody CarForm carForm, HttpServletRequest request) {
-        String authHeader = request.getHeader("Authorization");
+    public ResponseEntity<?> updateUserCarInfo(@PathVariable String userId, @RequestBody CarForm carForm,
+            HttpServletRequest request, @CookieValue(value = "token", defaultValue = "") String token) {
 
-        if (authHeader == null || !authHeader.startsWith("Bearer ")) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Missing or invalid Authorization header");
+        if (token.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Missing or invalid Authorization token");
         }
 
         try {
-            String token = authHeader.substring(7);
             Jws<Claims> jws = Jwts.parserBuilder()
                     .setSigningKey(SECRET_KEY.getBytes(StandardCharsets.UTF_8))
                     .build()
@@ -90,17 +88,16 @@ public class UserController {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid token");
         }
 
-    Optional<User> optionalUser = userRepository.findById(userId);
-    if (optionalUser.isEmpty()) {
-        return ResponseEntity.notFound().build();
+        Optional<User> optionalUser = userRepository.findById(userId);
+        if (optionalUser.isEmpty()) {
+            return ResponseEntity.notFound().build();
+        }
+
+        User user = optionalUser.get();
+        user.setMpg(carForm.getMpg());
+        user.setTankCapacity(carForm.getTankCapacity());
+        userRepository.save(user);
+
+        return ResponseEntity.ok("User car information updated");
     }
-
-    User user = optionalUser.get();
-    user.setMpg(carForm.getMpg());
-    user.setTankCapacity(carForm.getTankCapacity());
-    userRepository.save(user);
-
-    return ResponseEntity.ok("User car information updated");
-}
-
 }

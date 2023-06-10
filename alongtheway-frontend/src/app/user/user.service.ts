@@ -1,8 +1,7 @@
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable, of } from 'rxjs';
-import { catchError } from 'rxjs/internal/operators/catchError';
-import { map } from 'rxjs/internal/operators/map';
+import { catchError, map } from 'rxjs/operators';
 import { AuthService } from '../services/auth.service';
 import { User, UserForUpdate } from './user.model';
 
@@ -17,8 +16,21 @@ export class UserService {
     private authService: AuthService
   ) {}
 
-  getUser(userId: string, httpOptions: any): Observable<User | null> {
+  getUser(userId: string): Observable<User | null> {
     const url = `${this.apiUrl}/${userId}`;
+    const token = this.authService.getToken();
+
+    if (!token) {
+      throw new Error('No authentication token');
+    }
+
+    const httpOptions = {
+      headers: new HttpHeaders({
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer ' + token
+      })
+    };
+
     return this.http.get<User>(url, httpOptions).pipe(
       map((response: any) => {
         return {
@@ -29,33 +41,29 @@ export class UserService {
       }),
       catchError(() => of(null))
     );
-}
-
-  
-  
-
-updateUserCarInfo(userId: string, userData: UserForUpdate): Observable<User> {
-  const url = `${this.apiUrl}/${userId}/car`;
-  const token = this.authService.getToken();
-
-  if (!token) {
-    throw new Error('No authentication token');
   }
 
-  const httpOptions = {
-    headers: new HttpHeaders({
-      'Content-Type': 'application/json',
-      'Authorization': 'Bearer ' + token
-    })
-  };
+  updateUserCarInfo(userId: string, userData: UserForUpdate): Observable<User> {
+    const url = `${this.apiUrl}/${userId}/car`;
+    const token = this.authService.getToken();
 
-  const userDataToSend = {
-    ...userData,
-    mpg: { $numberInt: userData.mpg.toString() },
-    tankCapacity: { $numberInt: userData.tankCapacity.toString() }
-  };
-    
-  return this.http.put<User>(url, userDataToSend, httpOptions);
-}
+    if (!token) {
+      throw new Error('No authentication token');
+    }
 
+    const httpOptions = {
+      headers: new HttpHeaders({
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer ' + token
+      })
+    };
+
+    const userDataToSend = {
+      ...userData,
+      mpg: { $numberInt: userData.mpg.toString() },
+      tankCapacity: { $numberInt: userData.tankCapacity.toString() }
+    };
+
+    return this.http.put<User>(url, userDataToSend, httpOptions);
+  }
 }
