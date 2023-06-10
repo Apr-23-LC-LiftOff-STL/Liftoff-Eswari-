@@ -33,7 +33,7 @@
 }
 
 .flex-container.margin-between2 {
-  margin-bottom: 2px;
+  margin-bottom: 4px;
 }
 
 .flex-container .flex-label {
@@ -43,6 +43,12 @@
 }
 
 .flex-container .flex-input:not(:first-child) {
+  margin-left: 7px;
+  margin-right: 7px;
+  margin-top: 2px;
+}
+
+.flex-container .flex-input-2:not(:first-child) {
   margin-left: 7px;
   margin-right: 7px;
   margin-top: 1px;
@@ -295,4 +301,12 @@
   font-size: 14px;
   padding: 1px 6px;
   margin-top: 12px;
+}
+
+input[type="number"] {
+  max-width: 35px;
+}
+
+#gas-price-input {
+  max-width: 46px;
 }
