@@ -182,6 +182,7 @@
   margin-right: 7px;
   margin-bottom: 4px;
   color: black;
+  letter-spacing: 0.06em;
   background-image: linear-gradient(white, #c7dfff);
   padding: 8px;
   cursor: pointer;
