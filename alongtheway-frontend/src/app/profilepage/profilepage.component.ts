@@ -16,14 +16,14 @@ interface Car {
 })
 export class ProfilepageComponent implements OnInit {
   user: User = {
-    id: '',
+    _id: '',
     username: '',
     mpg: { $numberInt: '0' },
     tankCapacity: { $numberInt: '0' }
   };
 
   updatedUser: UserForUpdate = {
-    id: '',
+    _id: '',
     username: '',
     mpg: 0,
     tankCapacity: 0
@@ -83,7 +83,7 @@ export class ProfilepageComponent implements OnInit {
         if (user) {
           this.user = user;
           this.updatedUser = {
-            id: user.id,
+            _id: user._id,
             username: user.username,
             mpg: Number(user.mpg.$numberInt),
             tankCapacity: Number(user.tankCapacity.$numberInt)
@@ -99,11 +99,11 @@ export class ProfilepageComponent implements OnInit {
   }
 
   saveUserCarInfo(): void {
-    this.userService.updateUserCarInfo(this.user.id, this.updatedUser).subscribe(
+    this.userService.updateUserCarInfo(this.user._id, this.updatedUser).subscribe(
       (user: User) => {
         this.user = user;
         this.updatedUser = {
-          id: user.id,
+          _id: user._id,
           username: user.username,
           mpg: Number(user.mpg.$numberInt),
           tankCapacity: Number(user.tankCapacity.$numberInt)

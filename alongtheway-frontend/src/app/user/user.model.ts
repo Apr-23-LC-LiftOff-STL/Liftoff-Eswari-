@@ -1,5 +1,5 @@
 export interface User {
-  id: string;
+  _id: string;
   username: string;
   mpg: { $numberInt: string; };
   tankCapacity: { $numberInt: string; };
@@ -9,7 +9,7 @@ export interface User {
 
 
 export interface UserForUpdate {
-  id: string;
+  _id: string;
   username: string;
   mpg: number;
   tankCapacity: number;

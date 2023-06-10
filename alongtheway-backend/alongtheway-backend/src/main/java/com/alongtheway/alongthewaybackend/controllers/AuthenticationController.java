@@ -11,7 +11,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.BeanPropertyBindingResult;
 import org.springframework.validation.Errors;
+import org.springframework.validation.ValidationUtils;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -58,8 +60,9 @@ public class AuthenticationController {
     }
 
     @PostMapping("/signup")
-    public ResponseEntity<?> processSignupForm(@Valid @RequestBody SignupForm signupForm, Errors errors) {
-        if (errors.hasErrors()) {
+    public ResponseEntity<?> signup(@RequestBody SignupForm signupForm, HttpServletRequest request) {
+      Errors errors = validateSignupForm(signupForm);
+      if (errors.hasErrors()) {
             // Return the validation errors as a JSON response
             return ResponseEntity.badRequest().body(errors.getAllErrors());
         }
@@ -81,9 +84,8 @@ public class AuthenticationController {
 
         // Create a new user
         User newUser = new User(signupForm.getUsername(), signupForm.getPassword());
-        newUser.setMpg(signupForm.getMpg()); // Set MPG directly
-        newUser.setTankCapacity(signupForm.getTankCapacity()); // Set tank capacity directly
-        userRepository.save(newUser);
+        newUser = this.userRepository.save(newUser);  // Save the newUser and use the returned persisted user
+        setUserInSession(request.getSession(), newUser);
 
         // Generate JWT token
         String token = jwtTokenProvider.generateToken(newUser.getId(), newUser.getUsername());
@@ -94,6 +96,25 @@ public class AuthenticationController {
         response.put("token", token);
         return ResponseEntity.ok(response);
     }
+
+    private Errors validateSignupForm(SignupForm signupForm) {
+    Errors errors = new BeanPropertyBindingResult(signupForm, "signupForm");
+
+    // Perform validation using Spring's ValidationUtils or custom validation code
+    ValidationUtils.rejectIfEmptyOrWhitespace(errors, "username", "field.required");
+    ValidationUtils.rejectIfEmptyOrWhitespace(errors, "password", "field.required");
+    ValidationUtils.rejectIfEmptyOrWhitespace(errors, "verifyPassword", "field.required");
+
+    // Custom validation: Check if passwords match
+    if (!signupForm.getPassword().equals(signupForm.getVerifyPassword())) {
+        errors.rejectValue("verifyPassword", "password.mismatch");
+    }
+
+    // Add more validation rules as needed
+
+    return errors;
+}
+
 
     @PostMapping("/login")
     public ResponseEntity<?> processLoginForm(@Valid @RequestBody LoginForm loginForm, HttpServletRequest request,
