@@ -1,4 +1,4 @@
-// package com.alongtheway.config;
+package com.alongtheway.config;
 
 import java.io.IOException;
 

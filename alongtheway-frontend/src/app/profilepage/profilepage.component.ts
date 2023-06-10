@@ -50,16 +50,14 @@ export class ProfilepageComponent implements OnInit {
   
 
   getUserData(userId: string): void {
-    this.authService.getUserId.subscribe((userId: string) => {
-      this.userService.getUser(userId).subscribe({
-        next: (user: User) => {
-          this.user = user;
-          this.updatedUser = { ...user }; // Make a copy of the user object for editing
-        },
-        error: (error: any) => {
-          console.error('Error fetching user data:', error);
-        }
-      });
+    this.userService.getUser(userId).subscribe({
+      next: (user: User) => {
+        this.user = user;
+        this.updatedUser = { ...user }; // Make a copy of the user object for editing
+      },
+      error: (error: any) => {
+        console.error('Error fetching user data:', error);
+      }
     });
   }
   
@@ -107,4 +105,3 @@ export class ProfilepageComponent implements OnInit {
     form.resetForm();
   }
 }
-

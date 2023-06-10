@@ -57,25 +57,27 @@ public class AuthenticationController {
         session.setAttribute(userSessionKey, user.getId());
     }
 
-    private String generateToken(String username) {
-        long expirationTimeMillis = TimeUnit.MINUTES.toMillis(30); // Token expiration time: 30 minutes
-        Date expirationDate = new Date(System.currentTimeMillis() + expirationTimeMillis);
+    private String generateToken(User user) {
+    long expirationTimeMillis = TimeUnit.MINUTES.toMillis(30); // Token expiration time: 30 minutes
+    Date expirationDate = new Date(System.currentTimeMillis() + expirationTimeMillis);
 
-        String token = Jwts.builder()
-                .claim("username", username) // Include username as a claim
-                .setExpiration(expirationDate)
-                .signWith(Keys.hmacShaKeyFor(SECRET_KEY), SignatureAlgorithm.HS256)
-                .compact();
+    String token = Jwts.builder()
+            .claim("username", user.getUsername()) // Include username as a claim
+            .claim("userId", user.getId()) // Include user's ID as a claim
+            .setExpiration(expirationDate)
+            .signWith(Keys.hmacShaKeyFor(SECRET_KEY), SignatureAlgorithm.HS256)
+            .compact();
 
-        return token;
-    }
+    return token;
+}
+
 
     @PostMapping("/signup")
-    public ResponseEntity<?> processSignupForm(@Valid @RequestBody SignupForm signupForm, Errors errors) {
-        if (errors.hasErrors()) {
-            // Return the validation errors as a JSON response
-            return ResponseEntity.badRequest().body(errors.getAllErrors());
-        }
+public ResponseEntity<?> processSignupForm(@Valid @RequestBody SignupForm signupForm, Errors errors) {
+    if (errors.hasErrors()) {
+        // Return the validation errors as a JSON response
+        return ResponseEntity.badRequest().body(errors.getAllErrors());
+    }
 
     // Check if the username already exists
     User existingUser = userRepository.findByUsername(signupForm.getUsername());
@@ -98,11 +100,16 @@ public class AuthenticationController {
     newUser.setTankCapacity(signupForm.getTankCapacity()); // Set tank capacity directly
     userRepository.save(newUser);
 
-    // Return success message as JSON
+    // Generate JWT token
+    String token = generateToken(newUser);
+
+    // Return success message and token as JSON
     Map<String, String> response = new HashMap<>();
     response.put("message", "Sign-up successful");
+    response.put("token", token);
     return ResponseEntity.ok(response);
 }
+
 
 
 
@@ -122,7 +129,8 @@ public class AuthenticationController {
         }
 
         // Generate JWT token
-        String token = generateToken(user.getUsername());
+        String token = generateToken(user);
+
 
         // Set the token in the response
 

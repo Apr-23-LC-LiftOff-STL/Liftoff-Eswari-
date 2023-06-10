@@ -13,6 +13,11 @@ export class AuthService {
   private username$ = new BehaviorSubject<string>('');
   private userId$ = new BehaviorSubject<string>('');
 
+  getToken(): string | null {
+    return localStorage.getItem('token');
+  }
+  
+
   get isLoggedIn(): Observable<boolean> {
     return this.isLoggedIn$.asObservable();
   }
@@ -60,7 +65,6 @@ export class AuthService {
         this.isLoggedIn$.next(true);
         this.username$.next(this.getUsernameFromToken(token));
         this.userId$.next(this.getUserIdFromToken(token));
-        this.userId$.next(this.getUserIdFromToken(token));
         this.router.navigate(['/home']);
       })
     );
@@ -81,17 +85,25 @@ export class AuthService {
     this.isLoggedIn$.next(!!token);
     this.username$.next(token ? this.getUsernameFromToken(token) : '');
     this.userId$.next(token ? this.getUserIdFromToken(token) : '');
-    this.userId$.next(token ? this.getUserIdFromToken(token) : '');
   }
   
-  private getUsernameFromToken(token: string): string {
+  private getUsernameFromToken(token: string | null): string {
+    if (!token) {
+      return '';
+    }
+    
     const decodedToken: any = jwt_decode(token);
     return decodedToken.username || '';
   }
-
-  private getUserIdFromToken(token: string): string {
+  
+  private getUserIdFromToken(token: string | null): string {
+    if (!token) {
+      return '';
+    }
+    
     const decodedToken: any = jwt_decode(token);
     return decodedToken.userId || '';
   }
+  
 
 }
