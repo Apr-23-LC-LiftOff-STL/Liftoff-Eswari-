@@ -77,27 +77,34 @@ public class AuthenticationController {
             return ResponseEntity.badRequest().body(errors.getAllErrors());
         }
 
-        // Check if the username already exists
-        User existingUser = userRepository.findByUsername(signupForm.getUsername());
-        if (existingUser != null) {
-            // Return error as JSON
-            return ResponseEntity.status(HttpStatus.CONFLICT).body("A user with that username already exists");
-        }
-
-        // Check if passwords match
-        String password = signupForm.getPassword();
-        String verifyPassword = signupForm.getVerifyPassword();
-        if (!password.equals(verifyPassword)) {
-            // Return error as JSON
-            return ResponseEntity.badRequest().body("Passwords do not match");
-        }
-
-        // Create a new user
-        User newUser = new User(signupForm.getUsername(), signupForm.getPassword());
-        userRepository.save(newUser);
-
-        return ResponseEntity.ok("Sign-up successful");
+    // Check if the username already exists
+    User existingUser = userRepository.findByUsername(signupForm.getUsername());
+    if (existingUser != null) {
+        // Return error as JSON
+        return ResponseEntity.status(HttpStatus.CONFLICT).body("A user with that username already exists");
     }
+
+    // Check if passwords match
+    String password = signupForm.getPassword();
+    String verifyPassword = signupForm.getVerifyPassword();
+    if (!password.equals(verifyPassword)) {
+        // Return error as JSON
+        return ResponseEntity.badRequest().body("Passwords do not match");
+    }
+
+    // Create a new user
+    User newUser = new User(signupForm.getUsername(), signupForm.getPassword());
+    newUser.setMpg(signupForm.getMpg()); // Set MPG directly
+    newUser.setTankCapacity(signupForm.getTankCapacity()); // Set tank capacity directly
+    userRepository.save(newUser);
+
+    // Return success message as JSON
+    Map<String, String> response = new HashMap<>();
+    response.put("message", "Sign-up successful");
+    return ResponseEntity.ok(response);
+}
+
+
 
     @PostMapping("/login")
     public ResponseEntity<?> processLoginForm(@Valid @RequestBody LoginForm loginForm, HttpServletRequest request,

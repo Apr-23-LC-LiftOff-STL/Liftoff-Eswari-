@@ -12,6 +12,7 @@ export class AuthService {
   private isLoggedIn$ = new BehaviorSubject<boolean>(false);
   private username$ = new BehaviorSubject<string>('');
   private userId$ = new BehaviorSubject<string>('');
+  private userId$ = new BehaviorSubject<string>('');
 
   get isLoggedIn(): Observable<boolean> {
     return this.isLoggedIn$.asObservable();
@@ -19,6 +20,10 @@ export class AuthService {
 
   get getUsername(): Observable<string> {
     return this.username$.asObservable();
+  }
+
+  get getUserId(): Observable<string> {
+    return this.userId$.asObservable();
   }
 
   get getUserId(): Observable<string> {
@@ -36,11 +41,35 @@ export class AuthService {
       password: password
     };
     return this.http.post(url, loginData).pipe(
+      tap((response: any) => {
+        const token = response.token as string;
+        localStorage.setItem('token', token); // Store the token in local storage
+        this.isLoggedIn$.next(true);
+        this.username$.next(this.getUsernameFromToken(token));
+        this.userId$.next(this.getUserIdFromToken(token));
+        this.router.navigate(['/home']);
+      })
+    );
+  }
+
+  logout(): Observable<any> {
+    // Perform logout logic here
+    return this.http.post('/auth/logout', {});
+  }
+
+  signup(username: string, password: string): Observable<any> {
+    const url = 'http://localhost:8080/signup';
+    const signupData = {
+      username: username,
+      password: password
+    };
+    return this.http.post(url, signupData).pipe(
       tap(response => {
         const token = (response as any).token as string;
         localStorage.setItem('token', token);
         this.isLoggedIn$.next(true);
         this.username$.next(this.getUsernameFromToken(token));
+        this.userId$.next(this.getUserIdFromToken(token));
         this.userId$.next(this.getUserIdFromToken(token));
         this.router.navigate(['/home']);
       })
@@ -56,15 +85,24 @@ export class AuthService {
   }
 
   private initializeAuthState(): void {
-    const token = localStorage.getItem('token');
+    const token = localStorage.getItem('token'); // Retrieve the token from local storage
     this.isLoggedIn$.next(!!token);
     this.username$.next(token ? this.getUsernameFromToken(token) : '');
     this.userId$.next(token ? this.getUserIdFromToken(token) : '');
+    this.userId$.next(token ? this.getUserIdFromToken(token) : '');
   }
+  
+  
+  
 
   private getUsernameFromToken(token: string): string {
     const decodedToken: any = jwt_decode(token);
     return decodedToken.username || '';
+  }
+
+  private getUserIdFromToken(token: string): string {
+    const decodedToken: any = jwt_decode(token);
+    return decodedToken.userId || '';
   }
 
   private getUserIdFromToken(token: string): string {

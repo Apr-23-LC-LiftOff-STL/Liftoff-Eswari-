@@ -8,11 +8,9 @@
   <nav>
     <ul>
       <li>
-        <ng-container *ngIf="authService.isLoggedIn | async; let isLoggedIn">
-          <ng-container *ngIf="isLoggedIn">
-            <span>Hi, {{ username }}! </span>
-            <button (click)="logout()">Logout</button>
-          </ng-container>
+        <ng-container *ngIf="username$ | async as username">
+          <span>Hi, {{ username }}! </span>
+          <button (click)="logout()">Logout</button>
         </ng-container>
       </li>
       <li><a href="/home" class="nav-button">HOME</a></li>
@@ -22,3 +20,4 @@
     </ul>
   </nav>
 </header>
+

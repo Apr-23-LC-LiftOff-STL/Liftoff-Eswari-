@@ -5,10 +5,8 @@ import { User } from '../user/user.model';
 import { UserService } from '../user/user.service';
 
 interface Car {
-  year: number;
-  make: string;
-  model: string;
   mpg: number;
+  tankCapacity: number;
 }
 
 @Component({
@@ -87,6 +85,14 @@ export class ProfilepageComponent implements OnInit {
     this.carList[index] = { ...this.carList[index] };
   }
 
+  cancelEdit() {
+    if (this.editedCarIndex !== null) {
+      this.carList[this.editedCarIndex] = { ...this.editedCar };
+      this.editedCarIndex = null;
+      this.editedCar = { mpg: 0, tankCapacity: 0 };
+    }
+  }
+
   removeCar(index: number): void {
     this.carList.splice(index, 1);
   }
@@ -103,3 +109,4 @@ export class ProfilepageComponent implements OnInit {
     form.resetForm();
   }
 }
+
