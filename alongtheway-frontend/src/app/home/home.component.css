@@ -242,15 +242,16 @@
   font-size: 14px;
   border: 1px solid black;
   padding: 2px;
-  background: #e4ecf7;
+  background-image: linear-gradient(white, #c7dfff);
+  border-radius: 3px;
 }
 
 .searchresults .list-items {
-    height: 55vh; /* 100% of the viewport height minus 90px for other elements */
-    overflow-y: auto;
-    padding-left: 1px;
-    padding-right: 4px;
-    margin-top: 0;
+  height: 55vh; /* 100% of the viewport height minus 90px for other elements */
+  overflow-y: auto;
+  padding-left: 1px;
+  padding-right: 4px;
+  margin-top: 0;
 }
 
 .list-button {
