@@ -190,8 +190,8 @@
   /*border: 1px solid gray; /* Add border properties */
   border-radius: 5px; /* Add border-radius for rounded corners */
   position: relative; /* Add position relative for pseudo-element */
-  height: 12px; /* Adjust this value as needed */
-  line-height: 12px; /* Should be the same as height */
+  height: 14px; /* Adjust this value as needed */
+  line-height: 14px; /* Should be the same as height */
   user-select: none;
 }
 
