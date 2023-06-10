@@ -29,7 +29,8 @@ export class ProfilepageComponent implements OnInit {
     tankCapacity: 0
   };
 
-  editedCarIndex: number | null = null;
+  isEditing = false;
+  username = '';
   carList: Car[] = [];
 
   constructor(
@@ -39,6 +40,9 @@ export class ProfilepageComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
+    this.authService.getUsername.subscribe((username: string) => {
+      this.username = username;
+    });
     this.authService.getUserId.subscribe((userId: string) => {
       this.getUserData(userId);
     });
@@ -67,7 +71,7 @@ export class ProfilepageComponent implements OnInit {
       (user: User) => {
         this.user = user;
         console.log('User car information updated:', user);
-        this.router.navigate(['/profile']); // Navigate to the profile page
+        this.isEditing = false; // Exit editing mode
       },
       (error: any) => {
         console.error('Error updating user car information:', error);
@@ -75,30 +79,24 @@ export class ProfilepageComponent implements OnInit {
     );
   }
 
-  editCar(index: number): void {
-    this.editedCarIndex = index;
+  editCar(): void {
+    this.isEditing = true;
   }
 
   saveChanges(index: number): void {
-    this.editedCarIndex = null;
+    this.isEditing = false; // Exit editing mode
     // Update the car at the specified index in the carList
     this.carList[index] = { ...this.carList[index] };
   }
+  
 
-  cancelEdit() {
-    if (this.editedCarIndex !== null) {
-      this.carList[this.editedCarIndex] = { ...this.editedCar };
-      this.editedCarIndex = null;
-      this.editedCar = { mpg: 0, tankCapacity: 0 };
-    }
+  cancelEdit(): void {
+    this.isEditing = false; // Exit editing mode
   }
+  
 
   removeCar(index: number): void {
     this.carList.splice(index, 1);
-  }
-
-  cancelEdit(): void {
-    this.editedCarIndex = null;
   }
 
   saveCar(car: Car): void {

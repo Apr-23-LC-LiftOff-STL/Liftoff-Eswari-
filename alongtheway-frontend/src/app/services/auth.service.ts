@@ -12,7 +12,6 @@ export class AuthService {
   private isLoggedIn$ = new BehaviorSubject<boolean>(false);
   private username$ = new BehaviorSubject<string>('');
   private userId$ = new BehaviorSubject<string>('');
-  private userId$ = new BehaviorSubject<string>('');
 
   get isLoggedIn(): Observable<boolean> {
     return this.isLoggedIn$.asObservable();
@@ -20,10 +19,6 @@ export class AuthService {
 
   get getUsername(): Observable<string> {
     return this.username$.asObservable();
-  }
-
-  get getUserId(): Observable<string> {
-    return this.userId$.asObservable();
   }
 
   get getUserId(): Observable<string> {
@@ -52,11 +47,6 @@ export class AuthService {
     );
   }
 
-  logout(): Observable<any> {
-    // Perform logout logic here
-    return this.http.post('/auth/logout', {});
-  }
-
   signup(username: string, password: string): Observable<any> {
     const url = 'http://localhost:8080/signup';
     const signupData = {
@@ -81,8 +71,10 @@ export class AuthService {
     this.isLoggedIn$.next(false);
     this.username$.next('');
     this.userId$.next('');
+    this.router.navigate(['/login']); // Navigate to the login page
     return this.http.post<any>('/logout', {});
   }
+  
 
   private initializeAuthState(): void {
     const token = localStorage.getItem('token'); // Retrieve the token from local storage
@@ -92,9 +84,6 @@ export class AuthService {
     this.userId$.next(token ? this.getUserIdFromToken(token) : '');
   }
   
-  
-  
-
   private getUsernameFromToken(token: string): string {
     const decodedToken: any = jwt_decode(token);
     return decodedToken.username || '';
@@ -105,8 +94,4 @@ export class AuthService {
     return decodedToken.userId || '';
   }
 
-  private getUserIdFromToken(token: string): string {
-    const decodedToken: any = jwt_decode(token);
-    return decodedToken.userId || '';
-  }
 }
