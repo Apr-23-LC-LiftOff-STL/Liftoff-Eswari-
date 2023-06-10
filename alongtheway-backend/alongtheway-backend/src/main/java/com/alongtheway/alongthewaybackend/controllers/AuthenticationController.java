@@ -1,4 +1,5 @@
 package com.alongtheway.alongthewaybackend.controllers;
+import java.util.Base64;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -10,6 +11,7 @@ import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.Errors;
@@ -31,7 +33,8 @@ import io.jsonwebtoken.security.Keys;
 @CrossOrigin(origins = "http://localhost:4200")
 public class AuthenticationController {
 
-    private static final byte[] SECRET_KEY = Keys.secretKeyFor(SignatureAlgorithm.HS256).getEncoded();
+    @Value("${app.jwt.secret}")
+    private String secretKeyString;
 
     @Autowired
     private UserRepository userRepository;
@@ -61,12 +64,15 @@ public class AuthenticationController {
     long expirationTimeMillis = TimeUnit.MINUTES.toMillis(30); // Token expiration time: 30 minutes
     Date expirationDate = new Date(System.currentTimeMillis() + expirationTimeMillis);
 
+    byte[] secretKey = Base64.getDecoder().decode(secretKeyString);
+
+
     String token = Jwts.builder()
-            .claim("username", user.getUsername()) // Include username as a claim
-            .claim("userId", user.getId()) // Include user's ID as a claim
-            .setExpiration(expirationDate)
-            .signWith(Keys.hmacShaKeyFor(SECRET_KEY), SignatureAlgorithm.HS256)
-            .compact();
+                .claim("username", user.getUsername()) // Include username as a claim
+                .claim("userId", user.getId()) // Include user's ID as a claim
+                .setExpiration(expirationDate)
+                .signWith(Keys.hmacShaKeyFor(secretKey), SignatureAlgorithm.HS256)
+                .compact();
 
     return token;
 }
