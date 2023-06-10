@@ -34,7 +34,7 @@ import io.jsonwebtoken.security.Keys;
 public class AuthenticationController {
 
     @Value("${app.jwt.secret}")
-    private String secretKeyString;
+    private String secretKey;
 
     @Autowired
     private UserRepository userRepository;
@@ -64,14 +64,14 @@ public class AuthenticationController {
     long expirationTimeMillis = TimeUnit.MINUTES.toMillis(30); // Token expiration time: 30 minutes
     Date expirationDate = new Date(System.currentTimeMillis() + expirationTimeMillis);
 
-    byte[] secretKey = Base64.getDecoder().decode(secretKeyString);
+    byte[] secretBytes = Base64.getDecoder().decode(secretKey);
 
 
     String token = Jwts.builder()
                 .claim("username", user.getUsername()) // Include username as a claim
                 .claim("userId", user.getId()) // Include user's ID as a claim
                 .setExpiration(expirationDate)
-                .signWith(Keys.hmacShaKeyFor(secretKey), SignatureAlgorithm.HS256)
+                .signWith(Keys.hmacShaKeyFor(secretBytes), SignatureAlgorithm.HS256)
                 .compact();
 
     return token;

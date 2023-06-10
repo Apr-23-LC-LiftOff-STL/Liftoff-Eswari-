@@ -32,35 +32,28 @@ import java.util.Map;
 public class AlongthewayBackendApplication {
 
 
-	public static void main(String[] args) {
-		ConfigurableApplicationContext context = SpringApplication.run(AlongthewayBackendApplication.class, args);
-		loadEnvProperties(context.getEnvironment());
-	}
+	public static void main(String[] args) { SpringApplication.run(AlongthewayBackendApplication.class, args);}
 
-	private static void loadEnvProperties(ConfigurableEnvironment environment) {
-		Dotenv dotenv = Dotenv.configure().load();
-		Map<String, Object> properties = new HashMap<>();
-		properties.put("app.jwt.secret", dotenv.get("APP_JWT_SECRET"));
-		environment.getPropertySources().addFirst(new MapPropertySource("dotenvProperties", properties));
-	}
+
 
 	@Configuration
-	public class ApplicationStartup implements ApplicationListener<ContextRefreshedEvent> {
+	public class ApplicationStartup implements ApplicationListener<ApplicationReadyEvent> {
 
 		@Autowired
 		private ApplicationContext applicationContext;
 
-		@Override
-		public void onApplicationEvent(ContextRefreshedEvent event) {
-			Environment environment = applicationContext.getEnvironment();
-			String jwtSecret = environment.getProperty("app.jwt.secret");
+		@Value("${app.jwt.secret}")
+		private String jwtSecret;
 
-			if (jwtSecret.equals("yoursecretkeyhere")) {
-				Dotenv dotenv = Dotenv.configure().load();
-				String secretKey = dotenv.get("APP_JWT_SECRET");
-				System.setProperty("app.jwt.secret", secretKey);
-				System.out.println("Loaded Secret Key from .env: " + secretKey);
+		@Override
+		public void onApplicationEvent(ApplicationReadyEvent event) {
+			if (jwtSecret.equals("${app.jwt.secret}")) {
+				System.err.println("ERROR: 'app.jwt.secret' placeholder not resolved");
+				System.exit(1);
 			}
+
+			System.out.println("Loaded Secret Key: " + jwtSecret);
+			// Your additional logic here
 		}
 	}
 }

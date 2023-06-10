@@ -1,3 +1,4 @@
+import { HttpHeaders } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { AuthService } from '../services/auth.service';
@@ -50,16 +51,41 @@ export class ProfilepageComponent implements OnInit {
   
 
   getUserData(userId: string): void {
-    this.userService.getUser(userId).subscribe({
-      next: (user: User) => {
-        this.user = user;
-        this.updatedUser = { ...user }; // Make a copy of the user object for editing
+    const token = this.authService.getToken();
+  
+    if (!token) {
+      console.error('No authentication token');
+      return;
+    }
+  
+    const httpOptions = {
+      headers: new HttpHeaders({
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+      }),
+    };
+  
+    this.userService.getUser(userId, httpOptions).subscribe(
+      (user: User | null) => {
+        if (user) {
+          this.user = user;
+          this.updatedUser = { ...user }; // Make a copy of the user object for editing
+        } else {
+          console.error('Error fetching user data');
+        }
       },
-      error: (error: any) => {
+      (error: any) => {
         console.error('Error fetching user data:', error);
       }
-    });
+    );
   }
+  
+  
+  
+  
+  
+  
+  
   
   
   

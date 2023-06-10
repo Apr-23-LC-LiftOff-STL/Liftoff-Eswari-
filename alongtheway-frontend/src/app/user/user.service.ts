@@ -1,6 +1,8 @@
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { Observable } from 'rxjs';
+import { Observable, of } from 'rxjs';
+import { catchError } from 'rxjs/internal/operators/catchError';
+import { map } from 'rxjs/internal/operators/map';
 import { AuthService } from '../services/auth.service';
 import { UpdateUser, User } from './user.model';
 
@@ -15,23 +17,14 @@ export class UserService {
     private authService: AuthService
   ) {}
 
-  getUser(userId: string): Observable<User> {
+  getUser(userId: string, httpOptions: any): Observable<User | null> {
     const url = `${this.apiUrl}/${userId}`;
-    const token = this.authService.getToken();
-  
-    if (!token) {
-      throw new Error('No authentication token');
-    }
-  
-    const httpOptions = {
-      headers: new HttpHeaders({
-        'Content-Type': 'application/json',
-        'Authorization': 'Bearer ' + token
-      })
-    };
-  
-    return this.http.get<User>(url, httpOptions);
+    return this.http.get<User>(url, httpOptions).pipe(
+      map((response: any) => response as User),
+      catchError(() => of(null))
+    );
   }
+  
   
 
   updateUserCarInfo(userId: string, userData: UpdateUser): Observable<User> {
@@ -51,5 +44,4 @@ export class UserService {
     
     return this.http.put<User>(url, userData, httpOptions);
   }
-  
 }
