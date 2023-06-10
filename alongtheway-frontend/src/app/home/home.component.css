@@ -200,7 +200,7 @@
   margin-bottom: 6px; /* Remove the margin */
   padding: 0; /* Remove the padding */
   font-size: 11px;
-  font-weight: 500;
+  font-weight: 600;
 }
 
 .arrow-icon {
@@ -268,7 +268,7 @@
   font-size: 14px;
   border: 1px solid black;
   padding: 2px;
-  background-image: linear-gradient(white, #c7dfff);
+  background-image: linear-gradient(to right, #73b6ff, #a1ffdb);
   border-radius: 3px;
 }
 
