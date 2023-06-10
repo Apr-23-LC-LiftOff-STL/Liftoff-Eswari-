@@ -203,6 +203,7 @@
 
 .collapsible-title {
   text-align: center;
+  letter-spacing: 0.02em;
   margin-top: 3px;
   margin-bottom: 6px; /* Remove the margin */
   padding: 0; /* Remove the padding */
