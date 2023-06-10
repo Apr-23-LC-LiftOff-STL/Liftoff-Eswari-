@@ -61,6 +61,12 @@
   align-items: center;
 }
 
+.addstop-weather-group {
+  margin-right: 1px;
+  display: flex;
+  align-items: center;
+}
+
 .weather-icon {
   height: 22px;
   margin-right: auto;
