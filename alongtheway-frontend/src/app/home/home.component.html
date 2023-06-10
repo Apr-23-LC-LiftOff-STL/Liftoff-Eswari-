@@ -136,20 +136,20 @@
           <h2 class="collapsible-title">Search Results</h2>
 <!--          <h2 class="collapsible-title">This is fake data so that I can improve formatting without making a bunch of API calls</h2>-->
           <ul class="list-items">
-<!--            <li *ngFor="let place of places; let i = index" class="list-item">-->
-<!--              <div class="list-content">-->
-<!--                #{{ i + 1 }} - {{ place.name }} (Rating: {{ place.rating }} - Reviews: {{ place.user_ratings_total }})<br>-->
-<!--                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Address: {{ place.vicinity }} {{ getAddressComponent(place.address_components) }}-->
-<!--              </div>-->
-<!--              <button class="list-button">Save</button>-->
-<!--            </li>-->
+            <li *ngFor="let place of places; let i = index" class="list-item">
+              <div class="list-content">
+                #{{ i + 1 }} - {{ place.name }} (Rating: {{ place.rating }} - Reviews: {{ place.user_ratings_total }})<br>
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Address: {{ place.vicinity }} {{ getAddressComponent(place.address_components) }}
+              </div>
+              <button class="list-button">Save</button>
+            </li>
 
-            <li>
+            <!--<li>
               <div>
                 <span class="bold-text">#1 - Popeye's Chop House</span> (Rating: 4.8 - Reviews: 1155)<br>
               </div>
               &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Address: 17910 Saint Rose Road, Breese, IL</li>
-              <li *ngIf="loading">Loading... <span class="loading"></span></li>
+              <li *ngIf="loading">Loading... <span class="loading"></span></li>-->
           </ul>
         </div>
       </div>

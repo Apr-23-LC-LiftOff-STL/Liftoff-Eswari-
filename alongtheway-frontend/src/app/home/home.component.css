@@ -241,7 +241,7 @@
 }
 
 .searchresults .list-items li {
-  /*display: flex; Commented out for test data*/
+  display: flex;
   align-items: center;
   justify-content: space-between;
   margin-bottom: 2px;
@@ -253,7 +253,7 @@
 }
 
 .searchresults .list-items {
-  height: 30vh;
+  height: 56vh;
   overflow-y: auto;
   padding-left: 1px;
   padding-right: 4px;

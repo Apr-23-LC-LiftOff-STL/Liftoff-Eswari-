@@ -258,7 +258,27 @@ export class HomeComponent implements OnInit {
 
           // Code for grabbing drive time
           if (result && result.routes && result.routes.length > 0 && result.routes[0].legs && result.routes[0].legs.length > 0) {
-            this.driveTime = result.routes[0].legs[0].duration?.text ?? 'Unknown';
+            let totalDriveTime = 0;
+
+            for (const leg of result.routes[0].legs) {
+              if (leg.duration && leg.duration.value) {
+                totalDriveTime += leg.duration.value;
+              } else {
+                console.error('Invalid leg duration:', leg);
+              }
+            }
+
+            const minutes = Math.floor((totalDriveTime % 3600) / 60);
+
+            let driveTime;
+            if (totalDriveTime <= 59 * 60) {
+              driveTime = `${minutes} minute${minutes !== 1 ? 's' : ''}`;
+            } else {
+              const hours = Math.floor(totalDriveTime / 3600);
+              driveTime = `${hours} hour${hours !== 1 ? 's' : ''} ${minutes} minute${minutes !== 1 ? 's' : ''}`;
+            }
+
+            this.driveTime = driveTime;
           } else {
             console.error('Invalid directions response:', result);
           }
