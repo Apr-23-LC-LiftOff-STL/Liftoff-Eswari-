@@ -94,7 +94,7 @@
   font-size: 14px;
   padding: 1px 8px;
   margin-left: auto;
-  margin-right: 49px;
+  margin-right: 45px;
   margin-bottom: 2px;
   margin-top: 3px;
   font-family: var(--main-font-family);
@@ -182,7 +182,7 @@
   margin-right: 7px;
   margin-bottom: 4px;
   color: black;
-  background-image: linear-gradient(white, #c7dfff);
+  background-image: linear-gradient(to right, #73b6ff, #a1ffdb);
   padding: 8px;
   cursor: pointer;
   text-align: center;
@@ -199,8 +199,8 @@
   margin-top: 3px;
   margin-bottom: 6px; /* Remove the margin */
   padding: 0; /* Remove the padding */
-  font-size: 12px;
-  font-weight: 600;
+  font-size: 11px;
+  font-weight: 500;
 }
 
 .arrow-icon {

@@ -4,12 +4,12 @@
 } */
 
 html {
-  background-color: #e3e4eb;
+  background-image: linear-gradient(to right, #99caff, #a1ffdb, #9f73ff);
   overflow: hidden;
 }
 
 body {
-  font-family: 'Roboto', sans-serif;
+  font-family: 'Roboto Condensed', sans-serif;
   font-size: 14px;
   font-weight: 400;
 }

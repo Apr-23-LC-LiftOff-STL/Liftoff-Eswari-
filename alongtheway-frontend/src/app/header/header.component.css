@@ -47,7 +47,7 @@ nav a.nav-button::after {
   left: 0;
   width: 100%;
   height: 2px;
-  background-image: linear-gradient(to right, #71beeb, #1d2b6b);
+  background-image: linear-gradient(to right, #7a9eff, #b47aff);
   transform: scaleX(0);
   transform-origin: left;
   transition: transform 0.3s ease-in-out;
