@@ -4,7 +4,7 @@ import { Observable, of } from 'rxjs';
 import { catchError } from 'rxjs/internal/operators/catchError';
 import { map } from 'rxjs/internal/operators/map';
 import { AuthService } from '../services/auth.service';
-import { UpdateUser, User } from './user.model';
+import { User, UserForUpdate } from './user.model';
 
 @Injectable({
   providedIn: 'root'
@@ -20,28 +20,42 @@ export class UserService {
   getUser(userId: string, httpOptions: any): Observable<User | null> {
     const url = `${this.apiUrl}/${userId}`;
     return this.http.get<User>(url, httpOptions).pipe(
-      map((response: any) => response as User),
+      map((response: any) => {
+        return {
+          ...response,
+          mpg: parseInt(response.mpg.$numberInt),
+          tankCapacity: parseInt(response.tankCapacity.$numberInt)
+        };
+      }),
       catchError(() => of(null))
     );
-  }
+}
+
   
   
 
-  updateUserCarInfo(userId: string, userData: UpdateUser): Observable<User> {
-    const url = `${this.apiUrl}/${userId}/car`;
-    const token = this.authService.getToken();
-  
-    if (!token) {
-      throw new Error('No authentication token');
-    }
-  
-    const httpOptions = {
-      headers: new HttpHeaders({
-        'Content-Type': 'application/json',
-        'Authorization': 'Bearer ' + token
-      })
-    };
-    
-    return this.http.put<User>(url, userData, httpOptions);
+updateUserCarInfo(userId: string, userData: UserForUpdate): Observable<User> {
+  const url = `${this.apiUrl}/${userId}/car`;
+  const token = this.authService.getToken();
+
+  if (!token) {
+    throw new Error('No authentication token');
   }
+
+  const httpOptions = {
+    headers: new HttpHeaders({
+      'Content-Type': 'application/json',
+      'Authorization': 'Bearer ' + token
+    })
+  };
+
+  const userDataToSend = {
+    ...userData,
+    mpg: { $numberInt: userData.mpg.toString() },
+    tankCapacity: { $numberInt: userData.tankCapacity.toString() }
+  };
+    
+  return this.http.put<User>(url, userDataToSend, httpOptions);
+}
+
 }

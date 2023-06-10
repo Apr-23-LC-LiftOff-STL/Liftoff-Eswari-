@@ -61,21 +61,20 @@ public class AuthenticationController {
     }
 
     private String generateToken(User user) {
-    long expirationTimeMillis = TimeUnit.MINUTES.toMillis(30); // Token expiration time: 30 minutes
-    Date expirationDate = new Date(System.currentTimeMillis() + expirationTimeMillis);
+        long expirationTimeMillis = TimeUnit.MINUTES.toMillis(30); // Token expiration time: 30 minutes
+        Date expirationDate = new Date(System.currentTimeMillis() + expirationTimeMillis);
 
-    byte[] secretBytes = Base64.getDecoder().decode(secretKey);
+        byte[] secretBytes = Base64.getDecoder().decode(secretKey);
 
+        String token = Jwts.builder()
+                    .claim("username", user.getUsername()) // Include username as a claim
+                    .claim("userId", user.getId()) // Include user's ID as a claim
+                    .setExpiration(expirationDate)
+                    .signWith(Keys.hmacShaKeyFor(secretBytes), SignatureAlgorithm.HS256)
+                    .compact();
 
-    String token = Jwts.builder()
-                .claim("username", user.getUsername()) // Include username as a claim
-                .claim("userId", user.getId()) // Include user's ID as a claim
-                .setExpiration(expirationDate)
-                .signWith(Keys.hmacShaKeyFor(secretBytes), SignatureAlgorithm.HS256)
-                .compact();
-
-    return token;
-}
+        return token;
+    }
 
 
     @PostMapping("/signup")

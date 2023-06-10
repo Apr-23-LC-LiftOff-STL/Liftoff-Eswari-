@@ -1,8 +1,8 @@
 import { HttpHeaders } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
-import { Router } from '@angular/router';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { AuthService } from '../services/auth.service';
-import { User } from '../user/user.model';
+import { User, UserForUpdate } from '../user/user.model';
 import { UserService } from '../user/user.service';
 
 interface Car {
@@ -19,35 +19,66 @@ export class ProfilepageComponent implements OnInit {
   user: User = {
     id: '',
     username: '',
-    mpg: 0,
-    tankCapacity: 0
+    mpg: { $numberInt: '0' },
+    tankCapacity: { $numberInt: '0' }
   };
 
-  updatedUser: User = {
+  updatedUser: UserForUpdate = {
     id: '',
     username: '',
     mpg: 0,
     tankCapacity: 0
   };
 
-  isEditing = false;
-  username = '';
-  carList: Car[] = [];
+  isLoggedIn: boolean = false;
+  userId: string = '';
+  username: string = '';
+  isEditing: boolean = false;
+  editUserForm!: FormGroup;
 
   constructor(
     private userService: UserService,
     private authService: AuthService,
-    private router: Router
+    private fb: FormBuilder
   ) {}
 
   ngOnInit(): void {
+    this.authService.isLoggedIn.subscribe((isLoggedIn: boolean) => {
+      this.isLoggedIn = isLoggedIn;
+    });
+
     this.authService.getUsername.subscribe((username: string) => {
       this.username = username;
     });
+
     this.authService.getUserId.subscribe((userId: string) => {
-      this.getUserData(userId);
+      if (userId) {
+        const httpOptions = {
+          headers: new HttpHeaders({
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${this.authService.getToken()}`
+          })
+        };
+
+        this.userService.getUser(userId, httpOptions).subscribe((user: User | null) => {
+          if (user) {
+            this.user = {
+              ...user,
+              mpg: { $numberInt: String(user.mpg) },
+              tankCapacity: { $numberInt: String(user.tankCapacity) },
+            };
+
+            this.editUserForm = this.fb.group({ // Now you can use fb and editUserForm
+              mpg: [Number(user.mpg.$numberInt), Validators.required],
+              tankCapacity: [Number(user.tankCapacity.$numberInt), Validators.required],
+            });
+          }
+        });
+      }
     });
   }
+
+  
   
 
   getUserData(userId: string): void {
@@ -69,7 +100,12 @@ export class ProfilepageComponent implements OnInit {
       (user: User | null) => {
         if (user) {
           this.user = user;
-          this.updatedUser = { ...user }; // Make a copy of the user object for editing
+          this.updatedUser = {
+            id: user.id,
+            username: user.username,
+            mpg: Number(user.mpg.$numberInt),
+            tankCapacity: Number(user.tankCapacity.$numberInt)
+          };
         } else {
           console.error('Error fetching user data');
         }
@@ -79,21 +115,17 @@ export class ProfilepageComponent implements OnInit {
       }
     );
   }
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
 
   saveUserCarInfo(): void {
     this.userService.updateUserCarInfo(this.user.id, this.updatedUser).subscribe(
       (user: User) => {
         this.user = user;
+        this.updatedUser = {
+          id: user.id,
+          username: user.username,
+          mpg: Number(user.mpg.$numberInt),
+          tankCapacity: Number(user.tankCapacity.$numberInt)
+        };
         console.log('User car information updated:', user);
         this.isEditing = false; // Exit editing mode
       },
@@ -102,32 +134,13 @@ export class ProfilepageComponent implements OnInit {
       }
     );
   }
+  
 
   editCar(): void {
     this.isEditing = true;
   }
 
-  saveChanges(index: number): void {
-    this.isEditing = false; // Exit editing mode
-    // Update the car at the specified index in the carList
-    this.carList[index] = { ...this.carList[index] };
-  }
-  
-
   cancelEdit(): void {
     this.isEditing = false; // Exit editing mode
-  }
-  
-
-  removeCar(index: number): void {
-    this.carList.splice(index, 1);
-  }
-
-  saveCar(car: Car): void {
-    this.carList.push(car);
-  }
-
-  clearInputs(form: any): void {
-    form.resetForm();
   }
 }

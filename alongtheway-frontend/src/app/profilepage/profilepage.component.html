@@ -1,4 +1,4 @@
-<h2>Car Information</h2>
+<!-- <h2>Car Information</h2>
 <div class="form-group">
   <label for="mpg-input">Average MPG:</label>
   <input id="mpg-input" type="number" [(ngModel)]="updatedUser.mpg" name="mpg" required>
@@ -8,15 +8,14 @@
   <input id="tank-capacity-input" type="number" [(ngModel)]="updatedUser.tankCapacity" name="tankCapacity" required>
 </div>
 
-<button (click)="saveUserCarInfo()">Save</button>
+<button (click)="saveUserCarInfo()">Save</button> -->
 
 <!-- Display the saved car information -->
 <h3>{{ username }}'s Saved Car Information</h3>
-<div *ngFor="let car of carList; let i = index">
-  <p>Average MPG: {{ car.mpg }}</p>
-  <p>Tank Capacity: {{ car.tankCapacity }}</p>
+<div>
+  <p>Average MPG: {{ user.mpg.$numberInt }}</p>
+  <p>Tank Capacity: {{ user.tankCapacity.$numberInt }}</p>
   <button (click)="editCar()">Edit</button>
-  <button (click)="removeCar(i)">Remove</button>
 </div>
 
 <!-- Edit car section -->

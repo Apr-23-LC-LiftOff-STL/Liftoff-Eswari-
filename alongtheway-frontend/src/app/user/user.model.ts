@@ -1,11 +1,16 @@
 export interface User {
   id: string;
   username: string;
-  mpg: number;
-  tankCapacity: number;
+  mpg: { $numberInt: string; };
+  tankCapacity: { $numberInt: string; };
 }
 
-export interface UpdateUser {
+
+
+
+export interface UserForUpdate {
+  id: string;
+  username: string;
   mpg: number;
   tankCapacity: number;
 }
