@@ -8,11 +8,10 @@ import { AppComponent } from './app.component';
 import { HeaderComponent } from './header/header.component';
 import { HomeComponent } from './home/home.component';
 import { LoginComponent } from './login/login.component';
-import { ProfilepageComponent } from './profilepage/profilepage.component';
 import { SignupComponent } from './signup/signup.component';
+import { UserComponent } from './user/user.component';
 import { WeatherComponent } from './weather/weather.component';
 import { WeatherService } from './weather/weather.service';
-import { UserComponent } from './user/user.component';
 
 @NgModule({
   declarations: [
@@ -21,7 +20,7 @@ import { UserComponent } from './user/user.component';
     HeaderComponent,
     WeatherComponent,
     AboutusandfaqComponent,
-    ProfilepageComponent,
+  
     SignupComponent,
     LoginComponent,
     UserComponent

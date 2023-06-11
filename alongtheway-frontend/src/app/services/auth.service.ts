@@ -14,6 +14,10 @@ export class AuthService {
   private username$ = new BehaviorSubject<string>('');
   private userId$ = new BehaviorSubject<string | null>(null);
 
+  // Add new properties for MPG and tank capacity.
+  private mpg$ = new BehaviorSubject<number | null>(null);
+  private tankCapacity$ = new BehaviorSubject<number | null>(null);
+
   get isLoggedIn(): Observable<boolean> {
     return this.isLoggedIn$.asObservable();
   }
@@ -24,6 +28,14 @@ export class AuthService {
 
   get getUserId(): Observable<string | null> {
     return this.userId$.asObservable();
+  }
+
+  get getMpg(): Observable<number | null> {
+    return this.mpg$.asObservable();
+  }
+
+  get getTankCapacity(): Observable<number | null> {
+    return this.tankCapacity$.asObservable();
   }
 
   constructor(
@@ -47,12 +59,15 @@ export class AuthService {
     };
     return this.http.post(url, loginData).pipe(
       tap((response: any) => {
+        console.log(response); // Log server response
         const token = response.token as string;
         this.cookieService.set('token', token); // Set the token as a cookie
         this.isLoggedIn$.next(true);
         this.username$.next(this.getUsernameFromToken(token));
         this.userId$.next(this.getUserIdFromToken(token));
         this.router.navigate(['/home']);
+        this.mpg$.next(response.mpg);
+        this.tankCapacity$.next(response.tankCapacity);
       })
     );
   }
@@ -71,6 +86,8 @@ export class AuthService {
         this.username$.next(this.getUsernameFromToken(token));
         this.userId$.next(this.getUserIdFromToken(token));
         this.router.navigate(['/home']);
+        this.mpg$.next((response as any).mpg);
+        this.tankCapacity$.next((response as any).tankCapacity);
       })
     );
   }
@@ -89,6 +106,8 @@ export class AuthService {
     this.isLoggedIn$.next(!!token);
     this.username$.next(token ? this.getUsernameFromToken(token) : '');
     this.userId$.next(token ? this.getUserIdFromToken(token) : null);
+    this.mpg$.next(null);
+    this.tankCapacity$.next(null);
   }
 
   private getUsernameFromToken(token: string | null): string {
