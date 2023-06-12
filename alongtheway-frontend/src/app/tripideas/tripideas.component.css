@@ -1,0 +1,11 @@
+.roadtrip {
+  border: 1px solid #ccc;
+  margin-bottom: 20px;
+  padding: 10px;
+  border-radius: 5px;
+}
+
+.roadtrip img {
+  width: 600px;
+  height: 30opx;
+}
