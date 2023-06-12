@@ -155,7 +155,7 @@
                 #{{ i + 1 }} - {{ place.name }} (Rating: {{ place.rating }} - Reviews: {{ place.user_ratings_total }})<br>
                 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Address: {{ place.vicinity }} {{ getAddressComponent(place.address_components) }}
               </div>
-              <button class="list-button">Save</button>
+              <a class="list-button" [href]="getGooglePlaceUrl(place)" target="_blank">Link</a>
             </li>
 
             <!--<li>

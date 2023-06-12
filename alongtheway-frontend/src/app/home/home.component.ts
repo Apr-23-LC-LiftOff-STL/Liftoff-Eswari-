@@ -94,7 +94,6 @@ export class HomeComponent implements OnInit {
   totalSessionAPICalls: number = 0;
   circleAPICalls: number = 0;
 
-
   @ViewChild('mpgInput') mpgInputRef!: ElementRef<HTMLInputElement>;
   @ViewChild('tankInput') tankInputRef!: ElementRef<HTMLInputElement>;
 
@@ -527,7 +526,7 @@ export class HomeComponent implements OnInit {
       this.distanceInMiles = this.distanceInMeters * 0.000621371; // Convert meters to miles
       console.log("Distance in miles: ", this.distanceInMiles);
 
-        this.boxes = routeBoxer.box(this.path, 3);
+        this.boxes = routeBoxer.box(this.path, 2);
 
       this.drawBoxes(this.boxes);
     }
@@ -855,6 +854,10 @@ export class HomeComponent implements OnInit {
         }
         break;
     }
+  }
+
+  getGooglePlaceUrl(place: any): string {
+    return 'https://www.google.com/maps/place/?q=place_id:' + place.place_id;
   }
 
 }
