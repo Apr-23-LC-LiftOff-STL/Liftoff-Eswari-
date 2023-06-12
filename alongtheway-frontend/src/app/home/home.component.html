@@ -187,8 +187,16 @@
           </div>
         </div>
         <div class="flex-container margin-between3">
-          <label class="flex-label">Number of Circles (API Calls):</label>
+          <label class="flex-label">Number of Circles:</label>
           <div class="flex-value-box">{{ this.circles.length }}</div>
+        </div>
+        <div class="flex-container margin-between3">
+          <label class="flex-label">Number of Place API Calls This Search:</label>
+          <div class="flex-value-box">{{ this.circleAPICalls }}</div>
+        </div>
+        <div class="flex-container margin-between3">
+          <label class="flex-label">Number of Place API Calls This Session:</label>
+          <div class="flex-value-box">{{ this.totalSessionAPICalls }}</div>
         </div>
       </div>
     </div>
