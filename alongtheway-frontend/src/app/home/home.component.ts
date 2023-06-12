@@ -1,6 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { Loader } from '@googlemaps/js-api-loader';
+import { Observable } from 'rxjs';
 import RouteBoxer from 'src/assets/javascript/RouteBoxer.js';
 import { environment } from 'src/environments/environments';
 import { AuthService } from '../services/auth.service';
@@ -63,8 +64,10 @@ export class HomeComponent implements OnInit {
   title = 'alongtheway-frontend';
   startLocation: string = "";
   endLocation: string = "";
-  averageMPG: number = 30;
-  tankCapacity: number = 10;
+  averageMPG: number | undefined;
+  tankCapacity: number | undefined;
+  averageMPG$: Observable<number | null> | undefined;
+  tankCapacity$: Observable<number | null> | undefined;
   totalGallonsNeeded: number = 0;
   gallonGasPrice: number = 3.5;
   gallonGasPriceString: string = "3.50";
@@ -86,6 +89,7 @@ export class HomeComponent implements OnInit {
   placeMarkers: google.maps.Marker[] = []; // Array to store the markers
   circles: google.maps.Circle[] = [];
   showSearchResults: boolean = false;
+
 
   @ViewChild('mpgInput') mpgInputRef!: ElementRef<HTMLInputElement>;
   @ViewChild('tankInput') tankInputRef!: ElementRef<HTMLInputElement>;
@@ -243,8 +247,8 @@ export class HomeComponent implements OnInit {
   }
 
   calculateRoute(): void {
-    this.averageMPG = +this.averageMPG;
-    this.tankCapacity = +this.tankCapacity;
+    // this.averageMPG = +this.averageMPG;
+    // this.tankCapacity = +this.tankCapacity;
     const apiKey = environment.apiKey;
 
     this.showSearchResults = false;
@@ -689,10 +693,20 @@ export class HomeComponent implements OnInit {
   }
 
   calculateTotalGasCost() {
-    // Retrieve the value from the gasPrice variable
     const distanceInMiles = this.distanceInMeters * 0.000621371;
-    const totalGallonsNeeded = (distanceInMiles / this.averageMPG);
-    const gasPriceTotal = (totalGallonsNeeded * Number(this.gallonGasPriceString));
+    let totalGallonsNeeded = 0;
+
+    // Check if this.averageMPG is not null before using it
+    if (this.averageMPG) {
+        totalGallonsNeeded = distanceInMiles / this.averageMPG;
+    } else {
+        // You can decide what to do here when averageMPG is null
+        // For example, return an error message or set a default value
+        console.error('Average MPG is not set');
+        return;
+    }
+
+    const gasPriceTotal = totalGallonsNeeded * Number(this.gallonGasPriceString);
 
     // Format the value as currency
     const formattedGasPrice = gasPriceTotal.toLocaleString('en-US', {
@@ -704,18 +718,39 @@ export class HomeComponent implements OnInit {
     return formattedGasPrice;
   }
 
+
   calculateTotalGallons(): string {
     const distanceInMiles = this.distanceInMeters * 0.000621371;
-    const totalGallonsNeeded = (distanceInMiles / this.averageMPG);
+    let totalGallonsNeeded = 0;
+
+    // Check if this.averageMPG is not null before using it
+    if (this.averageMPG) {
+        totalGallonsNeeded = distanceInMiles / this.averageMPG;
+    } else {
+        // You can decide what to do here when averageMPG is null
+        // For example, return an error message or set a default value
+        console.error('Average MPG is not set');
+        return '';
+    }
+
     const formattedTotalGallonsNeeded: string = totalGallonsNeeded.toFixed(1);
     return formattedTotalGallonsNeeded;
   }
 
   calculateTanksNeeded(): string {
-    let tanksNeeded = (Number(this.calculateTotalGallons()) / this.tankCapacity);
-    let tanksNeededString = tanksNeeded.toFixed(1);
-    return tanksNeededString;
+    // Check if this.tankCapacity is not null before using it
+    if (this.tankCapacity) {
+        let tanksNeeded = Number(this.calculateTotalGallons()) / this.tankCapacity;
+        let tanksNeededString = tanksNeeded.toFixed(1);
+        return tanksNeededString;
+    } else {
+        // You can decide what to do here when tankCapacity is null
+        // For example, return an error message or set a default value
+        console.error('Tank Capacity is not set');
+        return '';
+    }
   }
+
 
   calculateDriveTime(): string {
       return this.driveTime;

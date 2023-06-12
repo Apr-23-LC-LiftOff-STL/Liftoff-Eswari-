@@ -1,10 +1,10 @@
-package com.alongtheway.alongthewaybackend.models.dto;
+package com.alongtheway.alongthewaybackend.models;
 
-public class SignupForm extends LoginForm {
-
+public class CarForm {
     private int mpg;
     private int tankCapacity;
-    private String verifyPassword;
+
+    // Add getters and setters
 
     public int getMpg() {
         return mpg;
@@ -21,12 +21,5 @@ public class SignupForm extends LoginForm {
     public void setTankCapacity(int tankCapacity) {
         this.tankCapacity = tankCapacity;
     }
-
-    public String getVerifyPassword() {
-        return verifyPassword;
-    }
-
-    public void setVerifyPassword(String verifyPassword) {
-        this.verifyPassword = verifyPassword;
-    }
 }
+

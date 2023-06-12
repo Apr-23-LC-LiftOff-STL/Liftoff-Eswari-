@@ -1,12 +1,12 @@
 import { Component, OnInit } from '@angular/core';
-import { NgForm } from '@angular/forms';
-
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { AuthService } from '../services/auth.service';
+import { User, UserForUpdate } from '../user/user.model';
+import { UserService } from '../user/user.service';
 
 interface Car {
-  year: number;
-  make: string;
-  model: string;
   mpg: number;
+  tankCapacity: number;
 }
 
 @Component({
@@ -15,54 +15,113 @@ interface Car {
   styleUrls: ['./profilepage.component.css']
 })
 export class ProfilepageComponent implements OnInit {
-  
-  carList: Car[] = [];
-  editedCarIndex: number | null = null;
-  editedCar: any = {};
-  
-  constructor() { }
+  user: User = {
+    _id: '',
+    username: '',
+    mpg: { $numberInt: '0' },
+    tankCapacity: { $numberInt: '0' }
+  };
+
+  updatedUser: UserForUpdate = {
+    _id: '',
+    username: '',
+    mpg: 0,
+    tankCapacity: 0
+  };
+
+  isLoggedIn: boolean = false;
+  userId: string = '';
+  username: string = '';
+  isEditing: boolean = false;
+  editUserForm!: FormGroup;
+
+  constructor(
+    private userService: UserService,
+    private authService: AuthService,
+    private fb: FormBuilder
+  ) {}
 
   ngOnInit(): void {
+    this.authService.isLoggedIn.subscribe((isLoggedIn: boolean) => {
+      this.isLoggedIn = isLoggedIn;
+    });
+
+    this.authService.getUsername.subscribe((username: string) => {
+      this.username = username;
+    });
+
+    this.authService.getUserId.subscribe((userId: string | null) => {
+      if (userId) {
+        this.userService.getUser(userId).subscribe((user: User | null) => {
+          if (user) {
+            this.user = {
+              ...user,
+              mpg: { $numberInt: String(user.mpg) },
+              tankCapacity: { $numberInt: String(user.tankCapacity) },
+            };
+
+            this.editUserForm = this.fb.group({
+              mpg: [Number(user.mpg.$numberInt), Validators.required],
+              tankCapacity: [Number(user.tankCapacity.$numberInt), Validators.required],
+            });
+          }
+        });
+      }
+    });
   }
 
-  saveCar(formData: any): void {
-    let newCar: Car = formData;
-    this.carList.push(newCar);
-  }
+  getUserData(userId: string): void {
+    const token = this.authService.getToken();
 
-  editCar(index: number) {
-    this.editedCar = { ...this.carList[index] };
-    this.editedCarIndex = index;
-  }
-
-  saveEditedCar(editedCar: any) {
-    this.carList[this.editedCarIndex as number] = editedCar;
-    this.editedCarIndex = null;
-    this.editedCar = {};
-  }
-
-  cancelEdit() {
-    if (this.editedCarIndex !== null) {
-      this.carList[this.editedCarIndex] = { ...this.editedCar };
-      this.editedCarIndex = null;
-      this.editedCar = {};
+    if (!token) {
+      console.error('No authentication token');
+      return;
     }
-  }
-  removeCar(index: number): void {
-    this.carList.splice(index, 1);
+
+    this.userService.getUser(userId).subscribe(
+      (user: User | null) => {
+        if (user) {
+          this.user = user;
+          this.updatedUser = {
+            _id: user._id,
+            username: user.username,
+            mpg: Number(user.mpg.$numberInt),
+            tankCapacity: Number(user.tankCapacity.$numberInt)
+          };
+        } else {
+          console.error('Error fetching user data');
+        }
+      },
+      (error: any) => {
+        console.error('Error fetching user data:', error);
+      }
+    );
   }
 
-  saveChanges(index: number) {
-    this.editedCarIndex = null;
+  saveUserCarInfo(): void {
+    this.userService.updateUserCarInfo(this.user._id, this.updatedUser).subscribe(
+      (user: User) => {
+        this.user = user;
+        this.updatedUser = {
+          _id: user._id,
+          username: user.username,
+          mpg: Number(user.mpg.$numberInt),
+          tankCapacity: Number(user.tankCapacity.$numberInt)
+        };
+        console.log('User car information updated:', user);
+        this.isEditing = false; // Exit editing mode
+      },
+      (error: any) => {
+        console.error('Error updating user car information:', error);
+      }
+    );
   }
 
-  sortCarList(): void {
-    this.carList.sort((a: Car, b: Car) => a.year - b.year);
+  editCar(): void {
+    this.isEditing = true;
   }
 
-  showMyVehicles: boolean = true;
-
-  clearInputs(carForm: NgForm) {
-    carForm.resetForm();
+  cancelEdit(): void {
+    this.isEditing = false; // Exit editing mode
   }
 }

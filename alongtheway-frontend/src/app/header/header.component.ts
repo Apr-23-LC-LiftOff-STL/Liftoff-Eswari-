@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { Observable } from 'rxjs';
 import { AuthService } from '../services/auth.service';
 
 @Component({
@@ -7,23 +8,23 @@ import { AuthService } from '../services/auth.service';
   styleUrls: ['./header.component.css']
 })
 export class HeaderComponent implements OnInit {
-  username = '';
+  username$: Observable<string> | undefined;
 
   constructor(public authService: AuthService) { }
 
   ngOnInit(): void {
-    this.authService.getUsername.subscribe(username => {
-      this.username = username;
-    });
+    this.username$ = this.authService.getUsername;
   }
 
   logout(): void {
     this.authService.logout().subscribe(
-      response => {
-        // Handle logout success
+      (      response: any) => {
+        console.log('Logout successful:', response);
+        // Additional logout success logic here
       },
-      error => {
-        // Handle logout error
+      (      error: any) => {
+        console.error('Logout failed:', error);
+        // Additional logout error handling here
       }
     );
   }
