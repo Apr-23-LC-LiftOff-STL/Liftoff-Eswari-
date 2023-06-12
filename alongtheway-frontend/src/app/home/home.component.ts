@@ -1,8 +1,10 @@
 import { HttpClient } from '@angular/common/http';
 import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { Loader } from '@googlemaps/js-api-loader';
-import { environment } from 'src/environments/environments';
 import RouteBoxer from 'src/assets/javascript/RouteBoxer.js';
+import { environment } from 'src/environments/environments';
+import { AuthService } from '../services/auth.service';
+
 
 @Component({
   selector: 'app-home',
@@ -19,7 +21,8 @@ export class HomeComponent implements OnInit {
 
   environment = environment;
 
-  constructor(private http: HttpClient) { }
+  constructor(private http: HttpClient, public authService: AuthService) { }
+
 
   getWeather(point: string, lat?: number, lng?: number, time?: number): void {
     if (!lat || !lng) {
@@ -92,6 +95,19 @@ export class HomeComponent implements OnInit {
       libraries: ['places']
     });
 
+    this.authService.getMpg.subscribe(mpg => {
+      this.averageMPG = mpg;
+      // Calculate the gas cost or perform any other necessary actions
+      // this.calculateTotalGasCost();
+    });
+  
+    this.authService.getTankCapacity.subscribe(tankCapacity => {
+      this.tankCapacity = tankCapacity;
+      // Calculate the number of tanks needed or perform any other necessary actions
+      // this.calculateTanksNeeded();
+    });
+
+
     loader.load().then(() => {
       const mapElement = document.getElementById("map");
       if (mapElement) {
@@ -111,6 +127,27 @@ export class HomeComponent implements OnInit {
         this.initStopAutocomplete(i);
       }
     });
+  }
+
+
+  getUserDetails() {
+    this.authService.getMpg.subscribe(
+      (mpg) => {
+        console.log('MPG:', mpg);
+      },
+      (error) => {
+        console.error('Error retrieving MPG:', error);
+      }
+    );
+
+    this.authService.getTankCapacity.subscribe(
+      (tankCapacity) => {
+        console.log('Tank Capacity:', tankCapacity);
+      },
+      (error) => {
+        console.error('Error retrieving Tank Capacity:', error);
+      }
+    );
   }
 
   initAutocomplete(): void {

@@ -10,9 +10,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
 
-import io.jsonwebtoken.Jwts;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.Errors;
@@ -26,6 +24,7 @@ import com.alongtheway.alongthewaybackend.models.data.UserRepository;
 import com.alongtheway.alongthewaybackend.models.dto.LoginForm;
 import com.alongtheway.alongthewaybackend.models.dto.SignupForm;
 
+import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;
 
@@ -56,21 +55,26 @@ public class AuthenticationController {
         return user.get();
     }
 
-    private static void setUserInSession(HttpSession session, User user) {
-        session.setAttribute(userSessionKey, user.getId());
-    }
     private String generateToken(String username) {
-        long expirationTimeMillis = TimeUnit.MINUTES.toMillis(30); // Token expiration time: 30 minutes
-        Date expirationDate = new Date(System.currentTimeMillis() + expirationTimeMillis);
-
-        String token = Jwts.builder()
-                .claim("username", username) // Include username as a claim
-                .setExpiration(expirationDate)
-                .signWith(Keys.hmacShaKeyFor(SECRET_KEY), SignatureAlgorithm.HS256)
-                .compact();
-
-        return token;
+    User user = userRepository.findByUsername(username);
+    if (user == null) {
+        throw new IllegalArgumentException("Invalid username");
     }
+
+    long expirationTimeMillis = TimeUnit.MINUTES.toMillis(30); // Token expiration time: 30 minutes
+    Date expirationDate = new Date(System.currentTimeMillis() + expirationTimeMillis);
+
+    String token = Jwts.builder()
+            .claim("username", user.getUsername())
+            .claim("mpg", user.getMpg()) // Include mpg as a claim
+            .claim("tankCapacity", user.getTankCapacity()) // Include tankCapacity as a claim
+            .setExpiration(expirationDate)
+            .signWith(Keys.hmacShaKeyFor(SECRET_KEY), SignatureAlgorithm.HS256)
+            .compact();
+
+    return token;
+}
+
 
 
     @PostMapping("/signup")

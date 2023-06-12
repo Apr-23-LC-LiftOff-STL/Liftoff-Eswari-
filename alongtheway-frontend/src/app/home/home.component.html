@@ -67,15 +67,29 @@
 
           <h2 class="collapsible-title">Gas Calculator</h2>
 
-          <div class="flex-container margin-between">
-            <label for="average-mpg-input" class="flex-label">Average MPG:</label>
-            <input #mpgInput id="average-mpg-input" type="number" min="0" [(ngModel)]="averageMPG" class="flex-input">
-          </div>
+          <ng-container *ngIf="(authService.isLoggedIn | async); else notLoggedIn">
+            <div class="flex-container margin-between">
+              <label for="average-mpg-input" class="flex-label">Average MPG:</label>
+              <input id="average-mpg-input" type="number" min="0" [(ngModel)]="averageMPG" [value]="(authService.getMpg | async)" class="flex-input">
+            </div>
+            
+            <div class="flex-container margin-between">
+              <label for="tank-capacity-input" class="flex-label">Tank Capacity (Gallons):</label>
+              <input id="tank-capacity-input" type="number" min="0" [(ngModel)]="tankCapacity" [value]="(authService.getTankCapacity | async)" class="flex-input">
+            </div>
+          </ng-container>
 
-          <div class="flex-container margin-between">
-            <label for="tank-capacity-input" class="flex-label">Tank Capacity (Gallons):</label>
-            <input #tankInput id="tank-capacity-input" type="number" min="0" [(ngModel)]="tankCapacity" class="flex-input">
-          </div>
+          <ng-template #notLoggedIn>
+            <div class="flex-container margin-between">
+              <label for="average-mpg-input" class="flex-label">Average MPG:</label>
+              <input id="average-mpg-input" type="number" min="0" [(ngModel)]="averageMPG" class="flex-input">
+            </div>
+          
+            <div class="flex-container margin-between">
+              <label for="tank-capacity-input" class="flex-label">Tank Capacity (Gallons):</label>
+              <input id="tank-capacity-input" type="number" min="0" [(ngModel)]="tankCapacity" class="flex-input">
+            </div>
+          </ng-template>
 
           <div class="flex-container margin-between">
             <label for="gas-price-input" class="flex-label">Gas Price (Gallon):</label>
