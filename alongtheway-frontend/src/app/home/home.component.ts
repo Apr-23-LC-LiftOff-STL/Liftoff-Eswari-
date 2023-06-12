@@ -6,12 +6,12 @@ import RouteBoxer from 'src/assets/javascript/RouteBoxer.js';
 import { environment } from 'src/environments/environments';
 import { AuthService } from '../services/auth.service';
 
-
 @Component({
   selector: 'app-home',
   templateUrl: './home.component.html',
   styleUrls: ['./home.component.css']
 })
+
 export class HomeComponent implements OnInit {
 
   placesData: any = {};  // Initialized to an empty object
@@ -107,7 +107,7 @@ export class HomeComponent implements OnInit {
       // Calculate the gas cost or perform any other necessary actions
       // this.calculateTotalGasCost();
     });
-  
+
     this.authService.getTankCapacity.subscribe(tankCapacity => {
       this.tankCapacity = tankCapacity;
       // Calculate the number of tanks needed or perform any other necessary actions
@@ -230,11 +230,6 @@ export class HomeComponent implements OnInit {
   }
 
   submitForm(): void {
-//     if (!this.interest) {
-//       console.error("Interest not set");
-//       return;
-//     }
-
     this.calculateRoute();
   }
 
@@ -271,16 +266,6 @@ export class HomeComponent implements OnInit {
       console.error("Start or end location not set");
       return;
     }
-
-//     if (!this.interest) {
-//       console.error("Interest not set");
-//       return;
-//     }
-//
-//     if (!this.averageMPG || !this.tankCapacity) {
-//       console.error("Average MPG or tank capacity not set");
-//       return;
-//     }
 
     this.directionsService?.route(
       {
@@ -517,7 +502,6 @@ export class HomeComponent implements OnInit {
 
   removeStop(index: number) {
     this.stops.splice(index, 1);
-    // After this line, Angular will automatically remove the corresponding inputs
   }
 
   initStopAutocomplete(index: number): void {
@@ -718,7 +702,6 @@ export class HomeComponent implements OnInit {
     return formattedGasPrice;
   }
 
-
   calculateTotalGallons(): string {
     const distanceInMiles = this.distanceInMeters * 0.000621371;
     let totalGallonsNeeded = 0;
@@ -750,7 +733,6 @@ export class HomeComponent implements OnInit {
         return '';
     }
   }
-
 
   calculateDriveTime(): string {
       return this.driveTime;
