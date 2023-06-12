@@ -316,4 +316,5 @@ input[type="number"] {
 
 #gas-price-input {
   max-width: 46px;
+  margin-top: 2px;
 }
