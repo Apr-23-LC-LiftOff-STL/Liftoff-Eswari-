@@ -14,6 +14,7 @@
         </ng-container>
       </li>
       <li><a href="/home" class="nav-button">HOME</a></li>
+      <li><a href="/roadtrips" class="nav-button">ROAD TRIP IDEAS</a></li>
       <li><a routerLink="/about" class="nav-button">ABOUT US / FAQ</a></li>
       <li *ngIf="!(authService.isLoggedIn | async)"><a href="/login" class="nav-button">SIGN UP / LOG IN</a></li>
     </ul>
