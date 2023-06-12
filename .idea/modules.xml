@@ -2,7 +2,9 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/.idea/along-the-way.iml" filepath="$PROJECT_DIR$/.idea/along-the-way.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/alongtheway-backend.iml" filepath="$PROJECT_DIR$/.idea/modules/alongtheway-backend.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/alongtheway-backend.main.iml" filepath="$PROJECT_DIR$/.idea/modules/alongtheway-backend.main.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/alongtheway-backend.test.iml" filepath="$PROJECT_DIR$/.idea/modules/alongtheway-backend.test.iml" />
     </modules>
   </component>
 </project>
