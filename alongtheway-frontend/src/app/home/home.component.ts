@@ -100,7 +100,7 @@ export class HomeComponent implements OnInit {
       libraries: ['places']
     });
 
-     this.interest = "";
+    this.interest = "";
 
     this.authService.getMpg.subscribe(mpg => {
       this.averageMPG = mpg;
@@ -212,20 +212,20 @@ export class HomeComponent implements OnInit {
         console.error("Could not find map element");
       }
 
-      setTimeout(() => {
-        const mpgInput = this.mpgInputRef.nativeElement;
-        const tankInput = this.tankInputRef.nativeElement;
+      // setTimeout(() => {
+      //   const mpgInput = this.mpgInputRef.nativeElement;
+      //   const tankInput = this.tankInputRef.nativeElement;
 
-        mpgInput.addEventListener("change", () => {
-          this.averageMPG = Number(mpgInput.value);
-          console.log("Average MPG:", this.averageMPG);
-        });
+      //   mpgInput.addEventListener("change", () => {
+      //     this.averageMPG = Number(mpgInput.value);
+      //     console.log("Average MPG:", this.averageMPG);
+      //   });
 
-        tankInput.addEventListener("change", () => {
-          this.tankCapacity = Number(tankInput.value);
-          console.log("Tank Capacity:", this.tankCapacity);
-        });
-      });
+      //   tankInput.addEventListener("change", () => {
+      //     this.tankCapacity = Number(tankInput.value);
+      //     console.log("Tank Capacity:", this.tankCapacity);
+      //   });
+      // });
     });
   }
 
@@ -702,7 +702,7 @@ export class HomeComponent implements OnInit {
     } else {
         // You can decide what to do here when averageMPG is null
         // For example, return an error message or set a default value
-        console.error('Average MPG is not set');
+        // console.error('Average MPG is not set');
         return;
     }
 
@@ -729,7 +729,7 @@ export class HomeComponent implements OnInit {
     } else {
         // You can decide what to do here when averageMPG is null
         // For example, return an error message or set a default value
-        console.error('Average MPG is not set');
+        // console.error('Average MPG is not set');
         return '';
     }
 
@@ -746,7 +746,7 @@ export class HomeComponent implements OnInit {
     } else {
         // You can decide what to do here when tankCapacity is null
         // For example, return an error message or set a default value
-        console.error('Tank Capacity is not set');
+        // console.error('Tank Capacity is not set');
         return '';
     }
   }

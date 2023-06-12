@@ -70,24 +70,24 @@
           <ng-container *ngIf="(authService.isLoggedIn | async); else notLoggedIn">
             <div class="flex-container margin-between">
               <label for="average-mpg-input" class="flex-label">Average MPG:</label>
-              <input id="average-mpg-input" type="number" min="0" [(ngModel)]="averageMPG" [value]="(authService.getMpg | async)" class="flex-input">
+              <input #mpgInputRef id="average-mpg-input" type="number" min="0" [(ngModel)]="averageMPG" [value]="(authService.getMpg | async)" class="flex-input">
             </div>
             
             <div class="flex-container margin-between">
               <label for="tank-capacity-input" class="flex-label">Tank Capacity (Gallons):</label>
-              <input id="tank-capacity-input" type="number" min="0" [(ngModel)]="tankCapacity" [value]="(authService.getTankCapacity | async)" class="flex-input">
+              <input #tankInputRef id="tank-capacity-input" type="number" min="0" [(ngModel)]="tankCapacity" [value]="(authService.getTankCapacity | async)" class="flex-input">
             </div>
           </ng-container>
 
           <ng-template #notLoggedIn>
             <div class="flex-container margin-between">
               <label for="average-mpg-input" class="flex-label">Average MPG:</label>
-              <input id="average-mpg-input" type="number" min="0" [(ngModel)]="averageMPG" class="flex-input">
+              <input #mpgInputRef id="average-mpg-input" type="number" min="0" [(ngModel)]="averageMPG" class="flex-input">
             </div>
           
             <div class="flex-container margin-between">
               <label for="tank-capacity-input" class="flex-label">Tank Capacity (Gallons):</label>
-              <input id="tank-capacity-input" type="number" min="0" [(ngModel)]="tankCapacity" class="flex-input">
+              <input #tankInputRef id="tank-capacity-input" type="number" min="0" [(ngModel)]="tankCapacity" class="flex-input">
             </div>
           </ng-template>
 

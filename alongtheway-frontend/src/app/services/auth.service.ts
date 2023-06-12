@@ -34,11 +34,6 @@ export class AuthService {
     this.initializeAuthState();
   }
 
-  getToken(): string | null {
-    const token = this.cookieService.get('token');
-    return token ? `Bearer ${token}` : null;
-  }
-
   login(username: string, password: string): Observable<any> {
     const url = 'http://localhost:8080/login';
     const loginData = {
@@ -46,63 +41,35 @@ export class AuthService {
       password: password
     };
     return this.http.post(url, loginData).pipe(
-      tap((response: any) => {
-        console.log(response); // Log server response
-        const token = response.token as string;
-        this.cookieService.set('token', token); // Set the token as a cookie
-        this.isLoggedIn$.next(true);
-        this.username$.next(this.getUsernameFromToken(token));
-        this.userId$.next(this.getUserIdFromToken(token));
-        this.router.navigate(['/home']);
-        this.mpg$.next(response.mpg);
-        this.tankCapacity$.next(response.tankCapacity);
-      })
-    );
-  }
-
-  signup(username: string, password: string): Observable<any> {
-    const url = 'http://localhost:8080/signup';
-    const signupData = {
-      username: username,
-      password: password
-    };
-    return this.http.post(url, signupData).pipe(
       tap(response => {
         const token = (response as any).token as string;
-        this.cookieService.set('token', token); // Set the token as a cookie
+        localStorage.setItem('token', token);
         this.isLoggedIn$.next(true);
         this.username$.next(this.getUsernameFromToken(token));
         this.mpg$.next(token ? this.getMpgFromToken(token) : 0);
         this.tankCapacity$.next(token ? this.getTankCapacityFromToken(token) : 0);
         this.router.navigate(['/home']);
-        this.mpg$.next((response as any).mpg);
-        this.tankCapacity$.next((response as any).tankCapacity);
       })
     );
   }
 
   logout(): Observable<any> {
-    this.cookieService.delete('token'); // Remove the token cookie
+    localStorage.removeItem('token');
     this.isLoggedIn$.next(false);
     this.username$.next('');
-    this.userId$.next(null);
-    this.router.navigate(['/login']); // Navigate to the login page
-    return this.http.post<any>('/logout', {});
+    return this.http.post<any>('http://localhost:8080/logout', {});
   }
+  
 
   private initializeAuthState(): void {
-    const token = this.cookieService.get('token'); // Retrieve the token from the cookie
+    const token = localStorage.getItem('token');
     this.isLoggedIn$.next(!!token);
     this.username$.next(token ? this.getUsernameFromToken(token) : '');
     this.mpg$.next(token ? this.getMpgFromToken(token) : 0);
     this.tankCapacity$.next(token ? this.getTankCapacityFromToken(token) : 0);
   }
 
-  private getUsernameFromToken(token: string | null): string {
-    if (!token) {
-      return '';
-    }
-
+  private getUsernameFromToken(token: string): string {
     const decodedToken: any = jwt_decode(token);
     return decodedToken.username || '';
   }
