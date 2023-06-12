@@ -81,6 +81,7 @@ export class HomeComponent implements OnInit {
   isCollapsibleCollapsed: boolean = false;
   isSecondCollapsibleCollapsed: boolean = true;
   isThirdCollapsibleCollapsed: boolean = true;
+  isFourthCollapsibleCollapsed: boolean = true;
   loading: boolean = false; // Add loading flag property
   service!: google.maps.places.PlacesService;
   places: any[] = [];
@@ -89,7 +90,9 @@ export class HomeComponent implements OnInit {
   placeMarkers: google.maps.Marker[] = []; // Array to store the markers
   circles: google.maps.Circle[] = [];
   showSearchResults: boolean = false;
-
+  debugShapes: string = "none";
+  totalSessionAPICalls: number = 0;
+  circleAPICalls: number = 0;
 
   @ViewChild('mpgInput') mpgInputRef!: ElementRef<HTMLInputElement>;
   @ViewChild('tankInput') tankInputRef!: ElementRef<HTMLInputElement>;
@@ -135,7 +138,6 @@ export class HomeComponent implements OnInit {
       }
     });
   }
-
 
   getUserDetails() {
     this.authService.getMpg.subscribe(
@@ -231,6 +233,10 @@ export class HomeComponent implements OnInit {
 
   submitForm(): void {
     this.calculateRoute();
+//
+//     setTimeout(() => {
+//       this.displaySearchShapes();
+//     }, 500); // 1000 milliseconds = 1 second
   }
 
   handlePlacesData(placesData: any) {
@@ -242,8 +248,6 @@ export class HomeComponent implements OnInit {
   }
 
   calculateRoute(): void {
-    // this.averageMPG = +this.averageMPG;
-    // this.tankCapacity = +this.tankCapacity;
     const apiKey = environment.apiKey;
 
     this.showSearchResults = false;
@@ -271,11 +275,10 @@ export class HomeComponent implements OnInit {
       {
         origin: this.startLocation,
         destination: this.endLocation,
-        waypoints: this.stops.map(stop => ({ location: stop.location, stopover: true })),
-        travelMode: google.maps.TravelMode.DRIVING
+        waypoints: this.stops.map((stop) => ({ location: stop.location, stopover: true })),
+        travelMode: google.maps.TravelMode.DRIVING,
       },
       (result, status) => {
-
         this.clearBoxes();
 
         if (status === google.maps.DirectionsStatus.OK) {
@@ -284,36 +287,32 @@ export class HomeComponent implements OnInit {
 
           // Code for grabbing drive time
           if (result && result.routes && result.routes.length > 0 && result.routes[0].legs && result.routes[0].legs.length > 0) {
+            // Calculate drive time
             let totalDriveTime = 0;
-
             for (const leg of result.routes[0].legs) {
               if (leg.duration && leg.duration.value) {
                 totalDriveTime += leg.duration.value;
               } else {
-                console.error('Invalid leg duration:', leg);
+                console.error("Invalid leg duration:", leg);
               }
             }
-
             const minutes = Math.floor((totalDriveTime % 3600) / 60);
-
             let driveTime;
             if (totalDriveTime <= 59 * 60) {
-              driveTime = `${minutes} minute${minutes !== 1 ? 's' : ''}`;
+              driveTime = `${minutes} minute${minutes !== 1 ? "s" : ""}`;
             } else {
               const hours = Math.floor(totalDriveTime / 3600);
-              driveTime = `${hours} hour${hours !== 1 ? 's' : ''} ${minutes} minute${minutes !== 1 ? 's' : ''}`;
+              driveTime = `${hours} hour${hours !== 1 ? "s" : ""} ${minutes} minute${minutes !== 1 ? "s" : ""}`;
             }
-
             this.driveTime = driveTime;
           } else {
-            console.error('Invalid directions response:', result);
+            console.error("Invalid directions response:", result);
           }
 
+          // Calculate total distance
           let totalDistanceInMeters = 0;
-
           if (result && result.routes && result.routes.length > 0) {
             const route = result.routes[0];
-
             if (route && route.legs && route.legs.length > 0) {
               for (const leg of route.legs) {
                 if (leg.distance && leg.distance.value) {
@@ -322,176 +321,128 @@ export class HomeComponent implements OnInit {
               }
             }
           }
-
           this.distanceInMeters = totalDistanceInMeters;
           this.distanceInMiles = this.distanceInMeters * 0.000621371;
 
+          // Process the route
           if (result && result.routes && result.routes.length > 0) {
-              const tempRoute = result.routes[0].overview_path;
+            const tempRoute = result.routes[0].overview_path;
 
-              this.clearPlaceMarkers();
+            this.clearPlaceMarkers();
 
-              // Clear circles from the map
-              for (let circle of this.circles) {
-                  circle.setMap(null);
-              }
-              this.circles = []; // Reset the circles array
+            for (const box of this.boxpolys) {
+              box.setMap(null);
+            }
+            for (const circle of this.circles) {
+              circle.setMap(null);
+            }
 
-              let lastMarkerPosition = null;
-              let milesBetweenMarkers = 0;
-              let circleRadius = 0;
+            this.circles = []; // Reset the circles array
 
-              if (this.distanceInMiles <= 250) {
-                milesBetweenMarkers = 12; //converted to meters
-                circleRadius = 8 * 1609.34;
-              } else {
-                milesBetweenMarkers = 40;
-                circleRadius = 31 * 1609.34;
-              }
+            let lastMarkerPosition = null;
+            let milesBetweenMarkers = 0;
+            let circleRadius = 0;
 
-              // Loop through each waypoint
-              for (let i = 0; i < tempRoute.length; i++) {
-                  let currentPosition = tempRoute[i];
+            if (this.distanceInMiles <= 250) {
+              milesBetweenMarkers = 12; // Converted to meters
+              circleRadius = 8 * 1609.34;
+            } else {
+              milesBetweenMarkers = 40;
+              circleRadius = 31 * 1609.34;
+            }
 
-                  // If this is the first iteration, always add marker and circle
-                  if (i === 0) {
-                      let marker = new google.maps.Marker({
-                          position: currentPosition,
-                          title: 'Waypoint ' + (i + 1)
-                      });
-                      this.markers.push(marker);
-                      lastMarkerPosition = currentPosition;
+            // Loop through each waypoint
+            for (let i = 0; i < tempRoute.length; i++) {
+              const currentPosition = tempRoute[i];
 
-                      // Create and store circle
-                      let circle = new google.maps.Circle({
-                          center: currentPosition,
-                          radius: circleRadius
-                      });
-                      this.circles.push(circle);
-                      continue; // Continue to the next iteration
-                  }
+              // If this is the first iteration, always add marker and circle
+              if (i === 0) {
+                const marker = new google.maps.Marker({
+                  position: currentPosition,
+                  title: "Waypoint " + (i + 1),
+                });
+                this.markers.push(marker);
+                lastMarkerPosition = currentPosition;
 
-                  // If this is the last iteration, always add marker and circle
-                  if (i === tempRoute.length - 1) {
-                      let marker = new google.maps.Marker({
-                          position: currentPosition,
-                          title: 'Waypoint ' + (i + 1)
-                      });
-                      this.markers.push(marker);
-
-                      // Create and store circle
-                      let circle = new google.maps.Circle({
-                          center: currentPosition,
-                          radius: circleRadius
-                      });
-                      this.circles.push(circle);
-                      break; // End the loop
-                  }
-
-                  // For other waypoints, check if the distance is greater than set amount of miles before adding marker and circle
-                  if (lastMarkerPosition && this.calculateDistanceInMiles(lastMarkerPosition, currentPosition) >= milesBetweenMarkers) {
-                      let marker = new google.maps.Marker({
-                          position: currentPosition,
-                          title: 'Waypoint ' + (i + 1)
-                      });
-                      this.markers.push(marker);
-
-                      // Update lastMarkerPosition to current position
-                      lastMarkerPosition = currentPosition;
-
-                      // Create and store circle
-                      let circle = new google.maps.Circle({
-                          center: currentPosition,
-                          radius: circleRadius
-                      });
-                      this.circles.push(circle);
-                  }
+                // Create and store circle
+                const circle = new google.maps.Circle({
+                  center: currentPosition,
+                  radius: circleRadius,
+                });
+                this.circles.push(circle);
+                continue; // Continue to the next iteration
               }
 
-              console.log("Number of Place API Requests: " + this.circles.length)
+              // If this is the last iteration, always add marker and circle
+              if (i === tempRoute.length - 1) {
+                const marker = new google.maps.Marker({
+                  position: currentPosition,
+                  title: "Waypoint " + (i + 1),
+                });
+                this.markers.push(marker);
 
+                // Create and store circle
+                const circle = new google.maps.Circle({
+                  center: currentPosition,
+                  radius: circleRadius,
+                });
+                this.circles.push(circle);
+
+                if (lastMarkerPosition && this.calculateDistanceInMiles(lastMarkerPosition, currentPosition) <= 5) {
+                  this.circles.splice(this.circles.length - 1, 1);
+                }
+
+                break; // End the loop
+              }
+
+              // For other waypoints, check if the distance is greater than the set amount of miles before adding marker and circle
+              if (lastMarkerPosition && this.calculateDistanceInMiles(lastMarkerPosition, currentPosition) >= milesBetweenMarkers) {
+                const marker = new google.maps.Marker({
+                  position: currentPosition,
+                  title: "Waypoint " + (i + 1),
+                });
+                this.markers.push(marker);
+
+                // Update lastMarkerPosition to current position
+                lastMarkerPosition = currentPosition;
+
+                // Create and store circle
+                const circle = new google.maps.Circle({
+                  center: currentPosition,
+                  radius: circleRadius,
+                });
+                this.circles.push(circle);
+              }
+            }
+
+              this.createRouteBoxes(result);
+
+            // Get destination time for weather forecast
+            let destinationTime;
+            const duration = result?.routes[0]?.legs[0]?.duration?.value;
+            const lat = result?.routes[0]?.legs[0]?.end_location.lat();
+            const lng = result?.routes[0]?.legs[0]?.end_location.lng();
+            if (duration) {
+              destinationTime = Date.now() / 1000 + duration;
+            }
+            this.getWeather("end-input", lat, lng, destinationTime);
+
+            // Get the direction steps
+            const steps = result?.routes[0]?.legs[0]?.steps;
+            if (steps) {
+              this.showSteps(steps);
+            }
           } else {
-              // Handle the case where result is null or doesn't have the expected structure
-              console.error('Invalid result:', result);
+            console.error("Invalid result:", result);
           }
 
-          //this.createRouteBoxes(result);
-
-          // THIS IS THE LINE THAT TURNS ON PLACE SEARCH
-          // DO NOT UNCOMMENT IT UNLESS YOU KNOW WHAT YOU ARE DOING
-          // IF YOU ENABLE IT YOU WILL DRAIN OUR ACCOUNT BALANCE
-          // TALK TO JONATHAN IF YOU WANT TO TEST IT
-          //this.searchPlacesAlongRoute();
-
-          // calculate the midpoint of the route + old places code
-          // const midLat = (result!.routes[0].bounds.getNorthEast().lat() + result!.routes[0].bounds.getSouthWest().lat()) / 2;
-          // const midLng = (result!.routes[0].bounds.getNorthEast().lng() + result!.routes[0].bounds.getSouthWest().lng()) / 2;
-
-          // console.log('Midpoint:', midLat, midLng);
-
-          // new google.maps.Marker({
-          //   position: {lat: midLat, lng: midLng},
-          //   map: this.map,
-          //   title: 'Midpoint'
-          // });
-
-          // make the Google Places API request using the PlacesService
-
-          //     const placesService = new google.maps.places.PlacesService(this.map as google.maps.Map);
-          //     placesService.nearbySearch({
-          //           location: {lat: midLat, lng: midLng},
-          //           radius: 10000,
-          //           type: this.interest
-          //     }, (results, status) => {
-          //   if (status === google.maps.places.PlacesServiceStatus.OK) {
-          //     this.handlePlacesData({results: results, status: status});
-          //   } else {
-          //     console.error("Places API request failed:", status);
-          //   }
-          // });
-
-          // handle the placesData
-          // this.http.get(placesUrl).subscribe((placesData: any) => {
-          //   this.handlePlacesData(placesData);
-          // });
-
-          //Get destination time for weather forecast
-          let destinationTime;
-          let duration = result?.routes[0]?.legs[0]?.duration?.value;
-          let lat = result?.routes[0]?.legs[0]?.end_location.lat();
-          let lng = result?.routes[0]?.legs[0]?.end_location.lng();
-
-          if (duration) {
-            destinationTime = Date.now() / 1000 + duration;
-          }
-
-          this.getWeather("end-input", lat, lng, destinationTime);
-
-          // Get the direction steps
-          const steps = result?.routes[0]?.legs[0]?.steps;
-          if (steps) {
-            this.showSteps(steps);
-          }
-
-//           // Calculate gas usage //This is old code no longer needed
-//           const distanceMeters = result?.routes[0]?.legs[0]?.distance?.value;
-//           if (distanceMeters) {
-//             const distanceMiles = distanceMeters * 0.000621371; // Convert meters to miles
-//             const tanksNeeded = distanceMiles / (this.averageMPG * this.tankCapacity);
-//             console.log("Tanks of gas needed:", tanksNeeded);
-//
-//             // Display gas usage
-//             const gasUsageInfoElement = document.getElementById("gas-usage-info");
-//             if (gasUsageInfoElement) {
-//               gasUsageInfoElement.textContent = `Distance: ${distanceMiles.toFixed(2)} miles. Tanks of gas needed: ${tanksNeeded.toFixed(2)}`;
-//             }
-//           } else {
-//             console.error("Could not calculate distance");
-//           }
         } else {
           console.error("Directions request failed:", status);
         }
-      });
+
+        this.displaySearchShapes();
+      }
+    );
   }
 
   addStop() {
@@ -575,78 +526,27 @@ export class HomeComponent implements OnInit {
       this.distanceInMiles = this.distanceInMeters * 0.000621371; // Convert meters to miles
       console.log("Distance in miles: ", this.distanceInMiles);
 
-      if ((this.distanceInMiles > 0) && (this.distanceInMiles <= 99.9)) {
-        this.boxes = routeBoxer.box(this.path, 1.5);
-      } else if ((this.distanceInMiles >= 100) && (this.distanceInMiles <= 499.9)) {
-        this.boxes = routeBoxer.box(this.path, 10);
-      } else if ((this.distanceInMiles >= 500) && (this.distanceInMiles <= 999.9)) {
-        this.boxes = routeBoxer.box(this.path, 20);
-      } else if (this.distanceInMiles >= 1000) {
         this.boxes = routeBoxer.box(this.path, 2);
-      }
 
-      console.log('Boxes:', this.boxes);
       this.drawBoxes(this.boxes);
     }
   }
 
   drawBoxes(boxes: google.maps.LatLngBounds[]): void {
-//       this.boxpolys = new Array(boxes.length);
-//       this.circles = []; // Initialize circles array
-//
-//       for (let i = 0; i < boxes.length; i++) {
-//         this.boxpolys[i] = new google.maps.Rectangle({
-//           bounds: boxes[i],
-//           fillOpacity: 0,
-//           strokeOpacity: 1.0,
-//           strokeColor: '#000000',
-//           strokeWeight: 1,
-//           map: this.map as google.maps.Map
-//         });
-//
-//         const bounds = boxes[i];
-//         const center = bounds.getCenter();
-//
-//         const circle = new google.maps.Circle({
-//           center: center,
-//           radius: 49999,
-//           fillColor: '#0000FF',
-//           fillOpacity: 0.5,
-//           strokeColor: '#000000',
-//           strokeOpacity: 1.0,
-//           strokeWeight: 1,
-//         });
-//
-//         this.circles.push(circle);
-//       }
-//
-//       // Create a temporary array
-//       let temporaryArray = [];
-//
-//       // Store the first element of the original array
-//       if (this.circles.length > 0) {
-//         temporaryArray.push(this.circles[0]);
-//       }
-//
-//       // Store every 5th element of the original array
-//       for (let i = 14; i < this.circles.length; i += 15) {
-//         temporaryArray.push(this.circles[i]);
-//       }
-//
-//       // Store the last element of the original array
-//       if (this.circles.length > 0) {
-//         temporaryArray.push(this.circles[this.circles.length - 1]);
-//       }
-//
-//       // Set 'this.circles' equal to the temporary array
-//       this.circles = temporaryArray;
-//
-//       // Draw the filtered circles on the map
-//       for (const circle of this.circles) {
-//         circle.setMap(this.map as google.maps.Map);
-//       }
+      this.boxpolys = new Array(boxes.length);
+      console.log("BOXPOLY LENGTH: " + this.boxpolys.length);
+      console.log("NUMBER OF BOXES: " + this.boxes.length);
 
-
+      for (let i = 0; i < boxes.length; i++) {
+        this.boxpolys[i] = new google.maps.Rectangle({
+          bounds: boxes[i],
+          fillOpacity: 0,
+          strokeOpacity: 1.0,
+          strokeColor: '#000000',
+          strokeWeight: 1//,
+          //map: this.map as google.maps.Map
+        });
+      }
   }
 
   clearBoxes(): void {
@@ -668,6 +568,10 @@ export class HomeComponent implements OnInit {
 
   toggleThirdCollapsible(): void {
     this.isThirdCollapsibleCollapsed = !this.isThirdCollapsibleCollapsed;
+  }
+
+  toggleFourthCollapsible(): void {
+      this.isFourthCollapsibleCollapsed = !this.isFourthCollapsibleCollapsed;
   }
 
   distanceInMetersToMiles(): string {
@@ -739,6 +643,9 @@ export class HomeComponent implements OnInit {
   }
 
   searchPlacesAlongRoute(): void {
+      this.circleAPICalls = this.circles.length;
+      this.totalSessionAPICalls += this.circles.length;
+
       const minimumRating = 1; // Minimum rating to include in the results
       this.showSearchResults = true;
 
@@ -897,5 +804,60 @@ export class HomeComponent implements OnInit {
   }
   return '';
 }
+
+  displaySearchShapes(): void {
+    for (const box of this.boxpolys) {
+      box.setMap(null);
+    }
+    for (const circle of this.circles) {
+      circle.setMap(null);
+    }
+    switch (this.debugShapes) {
+      case 'none':
+        for (const circle of this.circles) {
+          circle.setMap(null);
+        }
+        for (const box of this.boxpolys) {
+          box.setMap(null);
+        }
+        break;
+      case 'circles':
+        for (const box of this.boxpolys) {
+            box.setMap(null);
+        }
+        for (const circle of this.circles) {
+            circle.setMap(this.map);
+        }
+        break;
+      case 'routeboxer':
+        for (const circle of this.circles) {
+            circle.setMap(null);
+        }
+        for (const box of this.boxpolys) {
+            box.setMap(this.map);
+        }
+        break;
+      case 'both':
+        for (const circle of this.circles) {
+            circle.setMap(this.map);
+        }
+        for (const box of this.boxpolys) {
+            box.setMap(this.map);
+        }
+        break;
+      default:
+        for (const circle of this.circles) {
+          circle.setMap(null);
+        }
+        for (const box of this.boxpolys) {
+          box.setMap(null);
+        }
+        break;
+    }
+  }
+
+  getGooglePlaceUrl(place: any): string {
+    return 'https://www.google.com/maps/place/?q=place_id:' + place.place_id;
+  }
 
 }
