@@ -72,7 +72,7 @@
               <label for="average-mpg-input" class="flex-label">Average MPG:</label>
               <input #mpgInputRef id="average-mpg-input" type="number" min="0" [(ngModel)]="averageMPG" [value]="(authService.getMpg | async)" class="flex-input">
             </div>
-            
+
             <div class="flex-container margin-between">
               <label for="tank-capacity-input" class="flex-label">Tank Capacity (Gallons):</label>
               <input #tankInputRef id="tank-capacity-input" type="number" min="0" [(ngModel)]="tankCapacity" [value]="(authService.getTankCapacity | async)" class="flex-input">
@@ -84,7 +84,7 @@
               <label for="average-mpg-input" class="flex-label">Average MPG:</label>
               <input #mpgInputRef id="average-mpg-input" type="number" min="0" [(ngModel)]="averageMPG" class="flex-input">
             </div>
-          
+
             <div class="flex-container margin-between">
               <label for="tank-capacity-input" class="flex-label">Tank Capacity (Gallons):</label>
               <input #tankInputRef id="tank-capacity-input" type="number" min="0" [(ngModel)]="tankCapacity" class="flex-input">
@@ -168,6 +168,31 @@
         </div>
       </div>
     </div>
+
+    <!-- Third Collapsible -->
+    <div class="collapsible" [ngClass]="{ 'collapsed': isFourthCollapsibleCollapsed }">
+      <div class="collapsible-header" (click)="toggleFourthCollapsible()">
+        DEVELOPER TOOLS <span class="arrow-icon"></span>
+      </div>
+      <div class="collapsible-content" [ngClass]="{ 'collapsed': isFourthCollapsibleCollapsed }" [ngStyle]="{ 'pointer-events': isFourthCollapsibleCollapsed ? 'none' : 'auto' }">
+        <div class="form-container">
+          <div class="flex-container">
+            <label for="debugShapes" class="flex-label">Show Search Tools:</label>
+            <select id="debugShapes" [(ngModel)]="debugShapes" class="flex-input" (ngModelChange)="displaySearchShapes()">
+              <option value="none">None</option>
+              <option value="circles">Circles</option>
+              <option value="routeboxer">RouteBoxer</option>
+              <option value="both">Circles and RouteBoxer</option>
+            </select>
+          </div>
+        </div>
+        <div class="flex-container margin-between3">
+          <label class="flex-label">Number of Circles (API Calls):</label>
+          <div class="flex-value-box">{{ this.circles.length }}</div>
+        </div>
+      </div>
+    </div>
+
   </div>
 
   <!-- Map Container -->

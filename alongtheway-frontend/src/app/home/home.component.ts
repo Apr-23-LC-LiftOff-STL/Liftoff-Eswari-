@@ -81,6 +81,7 @@ export class HomeComponent implements OnInit {
   isCollapsibleCollapsed: boolean = false;
   isSecondCollapsibleCollapsed: boolean = true;
   isThirdCollapsibleCollapsed: boolean = true;
+  isFourthCollapsibleCollapsed: boolean = true;
   loading: boolean = false; // Add loading flag property
   service!: google.maps.places.PlacesService;
   places: any[] = [];
@@ -89,6 +90,7 @@ export class HomeComponent implements OnInit {
   placeMarkers: google.maps.Marker[] = []; // Array to store the markers
   circles: google.maps.Circle[] = [];
   showSearchResults: boolean = false;
+  debugShapes: string = "none";
 
 
   @ViewChild('mpgInput') mpgInputRef!: ElementRef<HTMLInputElement>;
@@ -135,7 +137,6 @@ export class HomeComponent implements OnInit {
       }
     });
   }
-
 
   getUserDetails() {
     this.authService.getMpg.subscribe(
@@ -385,6 +386,17 @@ export class HomeComponent implements OnInit {
                           radius: circleRadius
                       });
                       this.circles.push(circle);
+
+                      //WRITE CODE HERE
+
+                      console.log("HI" + this.circles.length);
+
+                      if (lastMarkerPosition && this.calculateDistanceInMiles(lastMarkerPosition, currentPosition) <= 5) {
+                        this.circles.splice(this.circles.length - 1, 1);
+                      }
+
+                      console.log("HI" + this.circles.length);
+
                       break; // End the loop
                   }
 
@@ -406,6 +418,7 @@ export class HomeComponent implements OnInit {
                       });
                       this.circles.push(circle);
                   }
+
               }
 
               console.log("Number of Place API Requests: " + this.circles.length)
@@ -415,13 +428,7 @@ export class HomeComponent implements OnInit {
               console.error('Invalid result:', result);
           }
 
-          //this.createRouteBoxes(result);
-
-          // THIS IS THE LINE THAT TURNS ON PLACE SEARCH
-          // DO NOT UNCOMMENT IT UNLESS YOU KNOW WHAT YOU ARE DOING
-          // IF YOU ENABLE IT YOU WILL DRAIN OUR ACCOUNT BALANCE
-          // TALK TO JONATHAN IF YOU WANT TO TEST IT
-          //this.searchPlacesAlongRoute();
+          this.createRouteBoxes(result);
 
           // calculate the midpoint of the route + old places code
           // const midLat = (result!.routes[0].bounds.getNorthEast().lat() + result!.routes[0].bounds.getSouthWest().lat()) / 2;
@@ -575,78 +582,25 @@ export class HomeComponent implements OnInit {
       this.distanceInMiles = this.distanceInMeters * 0.000621371; // Convert meters to miles
       console.log("Distance in miles: ", this.distanceInMiles);
 
-      if ((this.distanceInMiles > 0) && (this.distanceInMiles <= 99.9)) {
-        this.boxes = routeBoxer.box(this.path, 1.5);
-      } else if ((this.distanceInMiles >= 100) && (this.distanceInMiles <= 499.9)) {
-        this.boxes = routeBoxer.box(this.path, 10);
-      } else if ((this.distanceInMiles >= 500) && (this.distanceInMiles <= 999.9)) {
-        this.boxes = routeBoxer.box(this.path, 20);
-      } else if (this.distanceInMiles >= 1000) {
-        this.boxes = routeBoxer.box(this.path, 2);
-      }
+        this.boxes = routeBoxer.box(this.path, 3);
 
-      console.log('Boxes:', this.boxes);
       this.drawBoxes(this.boxes);
     }
   }
 
   drawBoxes(boxes: google.maps.LatLngBounds[]): void {
-//       this.boxpolys = new Array(boxes.length);
-//       this.circles = []; // Initialize circles array
-//
-//       for (let i = 0; i < boxes.length; i++) {
-//         this.boxpolys[i] = new google.maps.Rectangle({
-//           bounds: boxes[i],
-//           fillOpacity: 0,
-//           strokeOpacity: 1.0,
-//           strokeColor: '#000000',
-//           strokeWeight: 1,
-//           map: this.map as google.maps.Map
-//         });
-//
-//         const bounds = boxes[i];
-//         const center = bounds.getCenter();
-//
-//         const circle = new google.maps.Circle({
-//           center: center,
-//           radius: 49999,
-//           fillColor: '#0000FF',
-//           fillOpacity: 0.5,
-//           strokeColor: '#000000',
-//           strokeOpacity: 1.0,
-//           strokeWeight: 1,
-//         });
-//
-//         this.circles.push(circle);
-//       }
-//
-//       // Create a temporary array
-//       let temporaryArray = [];
-//
-//       // Store the first element of the original array
-//       if (this.circles.length > 0) {
-//         temporaryArray.push(this.circles[0]);
-//       }
-//
-//       // Store every 5th element of the original array
-//       for (let i = 14; i < this.circles.length; i += 15) {
-//         temporaryArray.push(this.circles[i]);
-//       }
-//
-//       // Store the last element of the original array
-//       if (this.circles.length > 0) {
-//         temporaryArray.push(this.circles[this.circles.length - 1]);
-//       }
-//
-//       // Set 'this.circles' equal to the temporary array
-//       this.circles = temporaryArray;
-//
-//       // Draw the filtered circles on the map
-//       for (const circle of this.circles) {
-//         circle.setMap(this.map as google.maps.Map);
-//       }
+      this.boxpolys = new Array(boxes.length);
 
-
+      for (let i = 0; i < boxes.length; i++) {
+        this.boxpolys[i] = new google.maps.Rectangle({
+          bounds: boxes[i],
+          fillOpacity: 0,
+          strokeOpacity: 1.0,
+          strokeColor: '#000000',
+          strokeWeight: 1//,
+          //map: this.map as google.maps.Map
+        });
+      }
   }
 
   clearBoxes(): void {
@@ -668,6 +622,10 @@ export class HomeComponent implements OnInit {
 
   toggleThirdCollapsible(): void {
     this.isThirdCollapsibleCollapsed = !this.isThirdCollapsibleCollapsed;
+  }
+
+  toggleFourthCollapsible(): void {
+      this.isFourthCollapsibleCollapsed = !this.isFourthCollapsibleCollapsed;
   }
 
   distanceInMetersToMiles(): string {
@@ -897,5 +855,50 @@ export class HomeComponent implements OnInit {
   }
   return '';
 }
+
+  displaySearchShapes(): void {
+    switch (this.debugShapes) {
+      case 'none':
+        for (const circle of this.circles) {
+          circle.setMap(null);
+        }
+        for (const box of this.boxpolys) {
+          box.setMap(null);
+        }
+        break;
+      case 'circles':
+        for (const box of this.boxpolys) {
+            box.setMap(null);
+        }
+        for (const circle of this.circles) {
+            circle.setMap(this.map);
+        }
+        break;
+      case 'routeboxer':
+        for (const circle of this.circles) {
+            circle.setMap(null);
+        }
+        for (const box of this.boxpolys) {
+            box.setMap(this.map);
+        }
+        break;
+      case 'both':
+        for (const circle of this.circles) {
+            circle.setMap(this.map);
+        }
+        for (const box of this.boxpolys) {
+            box.setMap(this.map);
+        }
+        break;
+      default:
+        for (const circle of this.circles) {
+          circle.setMap(null);
+        }
+        for (const box of this.boxpolys) {
+          box.setMap(null);
+        }
+        break;
+    }
+  }
 
 }
