@@ -74,7 +74,7 @@ export class HomeComponent implements OnInit {
   map: google.maps.Map | null = null;
   directionsService: google.maps.DirectionsService | null = null;
   directionsRenderer: google.maps.DirectionsRenderer | null = null;
-  interest: string = "restaurant";
+  interest: string = "";
   isCollapsibleCollapsed: boolean = false;
   isSecondCollapsibleCollapsed: boolean = true;
   isThirdCollapsibleCollapsed: boolean = true;
@@ -85,6 +85,7 @@ export class HomeComponent implements OnInit {
   markers: google.maps.Marker[] = []; // Array to store the markers
   placeMarkers: google.maps.Marker[] = []; // Array to store the markers
   circles: google.maps.Circle[] = [];
+  showSearchResults: boolean = false;
 
   @ViewChild('mpgInput') mpgInputRef!: ElementRef<HTMLInputElement>;
   @ViewChild('tankInput') tankInputRef!: ElementRef<HTMLInputElement>;
@@ -94,6 +95,8 @@ export class HomeComponent implements OnInit {
       apiKey: environment.apiKey,
       libraries: ['places']
     });
+
+     this.interest = "";
 
     this.authService.getMpg.subscribe(mpg => {
       this.averageMPG = mpg;
@@ -244,6 +247,10 @@ export class HomeComponent implements OnInit {
     this.tankCapacity = +this.tankCapacity;
     const apiKey = environment.apiKey;
 
+    this.showSearchResults = false;
+    this.places = [];
+    this.interest = "";
+
     console.log("Calculating route...");
     console.log("Start location:", this.startLocation);
     console.log("End location:", this.endLocation);
@@ -288,7 +295,27 @@ export class HomeComponent implements OnInit {
 
           // Code for grabbing drive time
           if (result && result.routes && result.routes.length > 0 && result.routes[0].legs && result.routes[0].legs.length > 0) {
-            this.driveTime = result.routes[0].legs[0].duration?.text ?? 'Unknown';
+            let totalDriveTime = 0;
+
+            for (const leg of result.routes[0].legs) {
+              if (leg.duration && leg.duration.value) {
+                totalDriveTime += leg.duration.value;
+              } else {
+                console.error('Invalid leg duration:', leg);
+              }
+            }
+
+            const minutes = Math.floor((totalDriveTime % 3600) / 60);
+
+            let driveTime;
+            if (totalDriveTime <= 59 * 60) {
+              driveTime = `${minutes} minute${minutes !== 1 ? 's' : ''}`;
+            } else {
+              const hours = Math.floor(totalDriveTime / 3600);
+              driveTime = `${hours} hour${hours !== 1 ? 's' : ''} ${minutes} minute${minutes !== 1 ? 's' : ''}`;
+            }
+
+            this.driveTime = driveTime;
           } else {
             console.error('Invalid directions response:', result);
           }
@@ -695,110 +722,114 @@ export class HomeComponent implements OnInit {
   }
 
   searchPlacesAlongRoute(): void {
-//       const radiusMiles = 1; // Set the radius for searching places in miles
-//       const minimumRating = 4; // Minimum rating to include in the results
-//
-//       // Clear all markers from the map
-//       this.clearPlaceMarkers();
-//
-//       // Clear the places list
-//       this.places = [];
-//
-//       const promises: Promise<google.maps.places.PlaceResult[]>[] = [];
-//
-//             this.circles.forEach((circle: google.maps.Circle) => {
-//               const center = circle.getCenter(); // Get the center of the circle
-//               const radius = circle.getRadius(); // Get the radius of the circle in meters
-//
-//               if (center) {
-//                 const request = {
-//                   location: center,
-//                   radius: radius,
-//                   type: 'restaurant' // Set the type of place you want to search for
-//                 };
-//
-//                 const promise = new Promise<google.maps.places.PlaceResult[]>((resolve, reject) => {
-//                   this.service.nearbySearch(request, (results: google.maps.places.PlaceResult[] | null, status: google.maps.places.PlacesServiceStatus, pagination: google.maps.places.PlaceSearchPagination | null) => {
-//                     if (status === google.maps.places.PlacesServiceStatus.OK && results !== null) {
-//                       // Filter results based on minimum rating
-//                       console.log('Number of place results before filtering:', results);
-//                       const filteredResults = results.filter((place: google.maps.places.PlaceResult) =>
-//                         place.rating && place.rating >= minimumRating && place.user_ratings_total && place.user_ratings_total > 100
-//                       );
-//
-//                       console.log('Number of place results after filtering:', results);
-//
-//                       resolve(filteredResults); // Resolve with filtered results
-//                     } else {
-//                       resolve([]); // Resolve with an empty array if no results
-//                     }
-//                   });
-//                 });
-//
-//                 promises.push(promise);
-//               }
-//             });
-//
-//       // Wait for all promises to resolve
-//       Promise.all(promises)
-//         .then((resultsArray: google.maps.places.PlaceResult[][]) => {
-//           // Concatenate all the filtered results from each request
-//           const combinedResults = resultsArray.reduce((accumulator, currentArray) => accumulator.concat(currentArray), []);
-//
-//           // Log the number of place results
-//           console.log('Number of initial place results for entire route: ', combinedResults.length);
-//
-//           // Remove duplicate results based on place ID
-//           const uniqueResults = this.removeDuplicateResults(combinedResults);
-//
-//           console.log('Number of initial place results after duplicates are removed: ', uniqueResults.length);
-//
-//           // Sort the unique results by rating in descending order
-//           uniqueResults.sort((a: google.maps.places.PlaceResult, b: google.maps.places.PlaceResult) => (b.rating ?? 0) - (a.rating ?? 0));
-//
-// //           // Get the top-rated results up to the maximum limit
-// //           const topResults = uniqueResults.slice(0, maxResults);
-//
-//           // Process the search results here
-//           this.updatePlacesList(uniqueResults); // Update the places list with the filtered results
-//
-//           // Add markers for each place
-//                   uniqueResults.forEach((place: google.maps.places.PlaceResult) => {
-//                     const placeLocation = place.geometry!.location;
-//                     const marker = new google.maps.Marker({
-//                       position: placeLocation,
-//                       map: this.map,
-//                       title: place.name
-//                     });
-//
-//                     // Create an info window for the marker
-//                     const infoWindow = new google.maps.InfoWindow({
-//                       content: `<strong>${place.name}</strong><br>${place.vicinity}`
-//                     });
-//
-//                     // Add a click event listener to the marker
-//                     marker.addListener('click', () => {
-//                       // Close the previously open info window
-//                       if (this.openInfoWindow) {
-//                         this.openInfoWindow.close();
-//                       }
-//
-//                       // Open the new info window
-//                       infoWindow.open(this.map, marker);
-//                       this.openInfoWindow = infoWindow; // Update the currently open info window
-//                     });
-//
-//                     // Store the marker in the markers array
-//                     this.markers.push(marker);
-//                   });
-//
-//           console.log('Places search completed.');
-//           this.loading = false; // Disable loading flag after search completion
-//         })
-//         .catch(() => {
-//           console.error('Error occurred while searching for places.');
-//           this.loading = false; // Disable loading flag in case of error
-//         });
+      const minimumRating = 1; // Minimum rating to include in the results
+      this.showSearchResults = true;
+
+      if (this.interest == "") {
+        return;
+      }
+
+      // Clear all markers from the map
+      this.clearPlaceMarkers();
+
+      // Clear the places list
+      this.places = [];
+
+      const promises: Promise<google.maps.places.PlaceResult[]>[] = [];
+
+            this.circles.forEach((circle: google.maps.Circle) => {
+              const center = circle.getCenter(); // Get the center of the circle
+              const radius = circle.getRadius(); // Get the radius of the circle in meters
+
+              if (center) {
+                const request = {
+                  location: center,
+                  radius: radius,
+                  type: this.interest // Set the type of place you want to search for
+                };
+
+                const promise = new Promise<google.maps.places.PlaceResult[]>((resolve, reject) => {
+                  this.service.nearbySearch(request, (results: google.maps.places.PlaceResult[] | null, status: google.maps.places.PlacesServiceStatus, pagination: google.maps.places.PlaceSearchPagination | null) => {
+                    if (status === google.maps.places.PlacesServiceStatus.OK && results !== null) {
+                      // Filter results based on minimum rating
+                      console.log('Number of place results before filtering:', results);
+                      const filteredResults = results.filter((place: google.maps.places.PlaceResult) =>
+                        place.rating && place.rating >= minimumRating && place.user_ratings_total && place.user_ratings_total > 3
+                      );
+
+                      console.log('Number of place results after filtering:', results);
+
+                      resolve(filteredResults); // Resolve with filtered results
+                    } else {
+                      resolve([]); // Resolve with an empty array if no results
+                    }
+                  });
+                });
+
+                promises.push(promise);
+              }
+            });
+
+      // Wait for all promises to resolve
+      Promise.all(promises)
+        .then((resultsArray: google.maps.places.PlaceResult[][]) => {
+          // Concatenate all the filtered results from each request
+          const combinedResults = resultsArray.reduce((accumulator, currentArray) => accumulator.concat(currentArray), []);
+
+          // Log the number of place results
+          console.log('Number of initial place results for entire route: ', combinedResults.length);
+
+          // Remove duplicate results based on place ID
+          const uniqueResults = this.removeDuplicateResults(combinedResults);
+
+          console.log('Number of initial place results after duplicates are removed: ', uniqueResults.length);
+
+          // Sort the unique results by rating in descending order
+          uniqueResults.sort((a: google.maps.places.PlaceResult, b: google.maps.places.PlaceResult) => (b.rating ?? 0) - (a.rating ?? 0));
+
+//           // Get the top-rated results up to the maximum limit
+//           const topResults = uniqueResults.slice(0, maxResults);
+
+          // Process the search results here
+          this.updatePlacesList(uniqueResults); // Update the places list with the filtered results
+
+          // Add markers for each place
+                  uniqueResults.forEach((place: google.maps.places.PlaceResult) => {
+                    const placeLocation = place.geometry!.location;
+                    const marker = new google.maps.Marker({
+                      position: placeLocation,
+                      map: this.map,
+                      title: place.name
+                    });
+
+                    // Create an info window for the marker
+                    const infoWindow = new google.maps.InfoWindow({
+                      content: `<strong>${place.name}</strong><br>${place.vicinity}`
+                    });
+
+                    // Add a click event listener to the marker
+                    marker.addListener('click', () => {
+                      // Close the previously open info window
+                      if (this.openInfoWindow) {
+                        this.openInfoWindow.close();
+                      }
+
+                      // Open the new info window
+                      infoWindow.open(this.map, marker);
+                      this.openInfoWindow = infoWindow; // Update the currently open info window
+                    });
+
+                    // Store the marker in the markers array
+                    this.placeMarkers.push(marker);
+                  });
+
+          console.log('Places search completed.');
+          this.loading = false; // Disable loading flag after search completion
+        })
+        .catch(() => {
+          console.error('Error occurred while searching for places.');
+          this.loading = false; // Disable loading flag in case of error
+        });
     }
 
   removeDuplicateResults(results: google.maps.places.PlaceResult[]): google.maps.places.PlaceResult[] {
@@ -842,7 +873,7 @@ export class HomeComponent implements OnInit {
       return R * c;
   }
 
-getAddressComponent(addressComponents: any[]): string {
+  getAddressComponent(addressComponents: any[]): string {
   if (addressComponents && addressComponents.length > 0) {
     const administrativeArea = addressComponents.find(component => component.types.includes('administrative_area_level_1'));
     return administrativeArea ? administrativeArea.short_name : '';

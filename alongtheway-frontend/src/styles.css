@@ -4,12 +4,14 @@
 } */
 
 html {
-  background-color: #e3e4eb;
+  background-color: #ebecf0;
+  overflow: hidden;
 }
 
 body {
   font-family: 'Roboto', sans-serif;
-  font-size: 16px;
+  font-size: 14px;
+  font-weight: 400;
 }
 
 
