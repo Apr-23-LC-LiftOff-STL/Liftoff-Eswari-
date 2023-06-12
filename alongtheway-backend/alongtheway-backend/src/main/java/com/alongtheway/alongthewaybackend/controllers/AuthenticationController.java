@@ -1,4 +1,6 @@
 package com.alongtheway.alongthewaybackend.controllers;
+
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
@@ -9,18 +11,14 @@ import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.validation.BeanPropertyBindingResult;
 import org.springframework.validation.Errors;
-import org.springframework.validation.ValidationUtils;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.alongtheway.alongthewaybackend.controllers.security.JwtTokenProvider;
 import com.alongtheway.alongthewaybackend.models.User;
 import com.alongtheway.alongthewaybackend.models.data.UserRepository;
 import com.alongtheway.alongthewaybackend.models.dto.LoginForm;
@@ -34,14 +32,11 @@ import io.jsonwebtoken.security.Keys;
 @CrossOrigin(origins = "http://localhost:4200")
 public class AuthenticationController {
 
-    @Value("${app.jwt.secret}")
-    private String secretKey;
+    // Generate a secure secret key for HS256 algorithm
+    private static final byte[] SECRET_KEY = Keys.secretKeyFor(SignatureAlgorithm.HS256).getEncoded();
 
     @Autowired
     private UserRepository userRepository;
-
-    @Autowired
-    private JwtTokenProvider jwtTokenProvider;
 
     private static final String userSessionKey = "user";
 
@@ -60,28 +55,31 @@ public class AuthenticationController {
         return user.get();
     }
 
-    private static void setUserInSession(HttpSession session, User user) {
-        session.setAttribute(userSessionKey, user.getId());
-    }
     private String generateToken(String username) {
-        long expirationTimeMillis = TimeUnit.MINUTES.toMillis(30); // Token expiration time: 30 minutes
-        Date expirationDate = new Date(System.currentTimeMillis() + expirationTimeMillis);
-
-        String token = Jwts.builder()
-                .claim("username", username) // Include username as a claim
-                .setExpiration(expirationDate)
-                .signWith(Keys.hmacShaKeyFor(SECRET_KEY), SignatureAlgorithm.HS256)
-                .compact();
-
-        return token;
+    User user = userRepository.findByUsername(username);
+    if (user == null) {
+        throw new IllegalArgumentException("Invalid username");
     }
+
+    long expirationTimeMillis = TimeUnit.MINUTES.toMillis(30); // Token expiration time: 30 minutes
+    Date expirationDate = new Date(System.currentTimeMillis() + expirationTimeMillis);
+
+    String token = Jwts.builder()
+            .claim("username", user.getUsername())
+            .claim("mpg", user.getMpg()) // Include mpg as a claim
+            .claim("tankCapacity", user.getTankCapacity()) // Include tankCapacity as a claim
+            .setExpiration(expirationDate)
+            .signWith(Keys.hmacShaKeyFor(SECRET_KEY), SignatureAlgorithm.HS256)
+            .compact();
+
+    return token;
+}
 
 
 
     @PostMapping("/signup")
-    public ResponseEntity<?> signup(@RequestBody SignupForm signupForm, HttpServletRequest request) {
-      Errors errors = validateSignupForm(signupForm);
-      if (errors.hasErrors()) {
+    public ResponseEntity<?> processSignupForm(@RequestBody SignupForm signupForm, Errors errors) {
+        if (errors.hasErrors()) {
             // Return the validation errors as a JSON response
             return ResponseEntity.badRequest().body(errors.getAllErrors());
         }
@@ -103,37 +101,10 @@ public class AuthenticationController {
 
         // Create a new user
         User newUser = new User(signupForm.getUsername(), signupForm.getPassword());
-        newUser = this.userRepository.save(newUser);  // Save the newUser and use the returned persisted user
-        setUserInSession(request.getSession(), newUser);
+        userRepository.save(newUser);
 
-        // Generate JWT token
-        String token = jwtTokenProvider.generateToken(newUser.getId(), newUser.getUsername());
-
-        // Return success message and token as JSON
-        Map<String, String> response = new HashMap<>();
-        response.put("message", "Sign-up successful");
-        response.put("token", token);
-        return ResponseEntity.ok(response);
+        return ResponseEntity.ok("Sign-up successful");
     }
-
-    private Errors validateSignupForm(SignupForm signupForm) {
-    Errors errors = new BeanPropertyBindingResult(signupForm, "signupForm");
-
-    // Perform validation using Spring's ValidationUtils or custom validation code
-    ValidationUtils.rejectIfEmptyOrWhitespace(errors, "username", "field.required");
-    ValidationUtils.rejectIfEmptyOrWhitespace(errors, "password", "field.required");
-    ValidationUtils.rejectIfEmptyOrWhitespace(errors, "verifyPassword", "field.required");
-
-    // Custom validation: Check if passwords match
-    if (!signupForm.getPassword().equals(signupForm.getVerifyPassword())) {
-        errors.rejectValue("verifyPassword", "password.mismatch");
-    }
-
-    // Add more validation rules as needed
-
-    return errors;
-}
-
 
     @PostMapping("/login")
     public ResponseEntity<?> processLoginForm(@Valid @RequestBody LoginForm loginForm, HttpServletRequest request,
@@ -151,7 +122,9 @@ public class AuthenticationController {
         }
 
         // Generate JWT token
-        String token = jwtTokenProvider.generateToken(user.getId(), user.getUsername());
+        String token = generateToken(user.getUsername());
+
+        // Set the token in the response
 
         // Return the token in the response
         Map<String, String> response = new HashMap<>();
@@ -159,3 +132,4 @@ public class AuthenticationController {
         return ResponseEntity.ok(response);
     }
 }
+
